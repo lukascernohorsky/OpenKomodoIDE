@@ -1,12 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 r"""
     build.py -- Main build script for Mozilla-devel
 
     Usage:
-        python build.py [<options>] configure <configure-options>
-        python build.py [<options>] all
-        python build.py [<options>] <some-other-target>
+        python3 build.py [<options>] configure <configure-options>
+        python3 build.py [<options>] all
+        python3 build.py [<options>] <some-other-target>
 
     Standalone Options:
         -h, --help          Print this help and exit
@@ -30,9 +30,9 @@ r"""
     
     Suggested configurations are:
     * Komodo 9.0.x release builds:
-        python build.py configure -k 9.0 --with-crashreport-symbols
+        python3 build.py configure -k 9.0 --with-crashreport-symbols
     * Komodo 9.0 development builds:
-        python build.py configure -k 9.10
+        python3 build.py configure -k 9.10
 """
 #
 # Development Notes:
@@ -84,8 +84,9 @@ import shutil
 import pprint
 import time
 import glob
-import urllib
-import urllib2
+import urllib.request
+import urllib.parse
+import urllib.error
 import string
 import types
 import logging
@@ -117,14 +118,14 @@ def _getChangeNum():
         changestr = 0  # fallback
     try:
         changenum = int(changestr)
-    except ValueError, ex:
+    except ValueError as ex:
         # pull off front number (good enough for our purposes)
         try:
             changenum = int(re.match("(\d+)", changestr).group(1))
             log.warn("simplifying complex changenum from 'svnversion': %s -> %s"
                      " (see `svnversion --help` for details)",
                      changestr, changenum)
-        except AttributeError, ex:
+        except AttributeError as ex:
             changenum = 0
             log.warn("Failed to get changenum, using 0 instead")
     return changenum
@@ -680,11 +681,11 @@ def _reporthook(numblocks, blocksize, filesize, url=None):
 def _download_url(url, dst):
     log.info("get url '%s' to '%s'", url, dst)
     if sys.stdout.isatty():
-        urllib.urlretrieve(url, dst,
+        urllib.request.urlretrieve(url, dst,
                            lambda nb, bs, fs, url=url: _reporthook(nb,bs,fs,url))
         sys.stdout.write('\n')
     else:
-        urllib.urlretrieve(url, dst)
+        urllib.request.urlretrieve(url, dst)
 
 
 # Recipe: dedent (0.1.2)
@@ -702,8 +703,8 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     """
     DEBUG = False
     if DEBUG: 
-        print "dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
-              % (tabsize, skip_first_line)
+        print("dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
+              % (tabsize, skip_first_line))
     indents = []
     margin = None
     for i, line in enumerate(lines):
@@ -720,7 +721,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 break
         else:
             continue # skip all-whitespace lines
-        if DEBUG: print "dedent: indent=%d: %r" % (indent, line)
+        if DEBUG: print("dedent: indent=%d: %r" % (indent, line))
         if margin is None:
             margin = indent
         else:
@@ -1013,7 +1014,7 @@ def target_configure(argv):
              "p4-changenum=",
              "compiler=", "gcc=", "gxx=",
              "moz-objdir="])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         raise BuildError("configure: %s" % str(msg))
 
     for opt, optarg in optlist:
@@ -2720,7 +2721,7 @@ def build(argv):
         target = argv[0]
         try:
             targetFunc = getattr(sys.modules[__name__], 'target_' + target)
-        except AttributeError, e:
+        except AttributeError as e:
             log.error("no '%s' (function target_%s()) target exists"\
                       % (target, target))
             return 1
@@ -2728,7 +2729,7 @@ def build(argv):
         # Run the target.
         try:
             newArgv = targetFunc(argv)
-        except BuildError, ex:
+        except BuildError as ex:
             log.error("%s: %s", target, str(ex))
             if log.isEnabledFor(logging.DEBUG):
                 print
@@ -2753,7 +2754,7 @@ def _helpOnTargets(targets):
     for target in targets:
         try:
             targetFunc = getattr(sys.modules[__name__], 'target_' + target)
-        except AttributeError, e:
+        except AttributeError as e:
             log.error("no '%s' (function target_%s()) target exists"\
                       % (target, target))
             return 1
@@ -2877,7 +2878,7 @@ def main(argv):
     try:
         optlist, args = getopt.getopt(argv[1:], "htvf:c:",
             ["help", "targets", "verbose", "config"])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         log.error(str(msg))
         log.error("Your invocation was: %s. Try 'build --help'.\n" % argv)
         return 1
