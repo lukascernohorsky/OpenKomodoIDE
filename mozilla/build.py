@@ -855,6 +855,7 @@ def target_configure(argv):
             ----------  ----------------------  ------  ------  ----------
             3100        FIREFOX_31_0_RELEASE    9.0.X  31.0.X   31.00
             3500        FIREFOX_35_0_RELEASE    9.0.X  35.0.X   35.00
+            14000       FIREFOX_140_0_RELEASE   12.0.X 140.0.X 140.00
 
     Other Options:
         -r, --reconfigure
