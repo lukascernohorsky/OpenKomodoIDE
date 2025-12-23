@@ -56,8 +56,29 @@ Komodo IDE has several remote services that are required to get the full functio
 
 ## Building Komodo
 
-Note that these are simplified steps of the building process, for a more in-depth
-guide check (outdated) [BUILD.txt](docs/BUILD.txt).
+Note that these are simplified steps of the building process. For a more in-depth
+guide check:
+- [BUILD.txt](docs/BUILD.txt) (legacy build instructions)
+- [Linux_build_guide_modern.md](docs/Linux_build_guide_modern.md) (modern build instructions for Ubuntu 22.04+, Fedora 36+)
+
+### Modern Build System (Recommended)
+
+The modern build system supports:
+- **Python 3** (required)
+- **Firefox 140 ESR** (latest ESR version)
+- **Modern Linux distributions** (Ubuntu 22.04+, Fedora 36+)
+- **Containerized builds** (Docker support)
+
+For detailed modern build instructions, see [Linux_build_guide_modern.md](docs/Linux_build_guide_modern.md).
+
+### Legacy Build System
+
+The legacy build system is still available for compatibility but uses:
+- Python 2.7
+- Firefox 35
+- Older toolchain
+
+For legacy build instructions, see [BUILD.txt](docs/BUILD.txt).
 
 ### Building on Windows
 
