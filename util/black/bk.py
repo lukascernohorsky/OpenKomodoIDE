@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2000-2001 ActiveState Tool Corporation.
 # See the file LICENSE.txt for licensing information.
 
@@ -77,7 +77,7 @@ def ParseBlackFile(blackFileName):
     file, pathname, description = imp.find_module(baseName, [dirName])
     try:
         blackfile = imp.load_module(baseName, file, pathname, description)
-    except ImportError, e:
+    except ImportError as e:
         out.startErrorItem()
         out.write("black: There was a problem importing your project "\
             "configuration file: '%s'\n" % blackFileName)
@@ -830,7 +830,7 @@ if __name__ == '__main__':
     try:
         optlist, args = getopt.getopt(sys.argv[1:], 'vqf:',\
             ['quiet', 'verbose', 'version'])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         out.startErrorItem()
         out.write("%s: error in options: %s\n" % (sys.argv[0], msg))
         out.write("Try 'bk help'.")
@@ -894,7 +894,7 @@ if __name__ == '__main__':
         os.chdir(os.path.dirname(blackFileName))
         try:
             blackFile = ParseBlackFile(blackFileName)
-        except black.BlackError, e:
+        except black.BlackError as e:
             out.write("\n")
             out.startErrorItem()
             out.write("black: error parsing blackfile '%s': %s" %\
@@ -911,7 +911,7 @@ if __name__ == '__main__':
         shell = Shell(getattr(blackFile, "commandOverrides", {}))
         retval = tmCmd.OneCmd(shell, args)
         sys.exit(retval)
-    except black.BlackError, msg:
+    except black.BlackError as msg:
         out.write("\n")
         out.startErrorItem()
         out.write("black: error running '%s': %s" % (" ".join(args), msg))
