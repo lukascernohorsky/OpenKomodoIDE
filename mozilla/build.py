@@ -92,6 +92,7 @@ import types
 import logging
 import subprocess
 import json
+import platform
 
 sys.path.insert(0, join(dirname(__file__), "..", "util"))
 import which
@@ -144,6 +145,20 @@ gPlat2BinDir = {
     'hp-uxB': os.path.abspath('bin-hpux'),
     'darwin': os.path.abspath('bin-darwin'),
     'freebsd6': os.path.abspath('bin-freebsd-x86'),
+    'freebsd7': os.path.abspath('bin-freebsd-x86'),
+    'freebsd8': os.path.abspath('bin-freebsd-x86'),
+    'freebsd9': os.path.abspath('bin-freebsd-x86'),
+    'freebsd10': os.path.abspath('bin-freebsd-x86'),
+    'freebsd11': os.path.abspath('bin-freebsd-x86'),
+    'freebsd12': os.path.abspath('bin-freebsd-x86'),
+    'freebsd13': os.path.abspath('bin-freebsd-x86'),
+    'freebsd14': os.path.abspath('bin-freebsd-x86'),
+    'netbsd': os.path.abspath('bin-netbsd-x86'),
+    'openbsd': os.path.abspath('bin-openbsd-x86'),
+    'minix3': os.path.abspath('bin-minix3-x86'),
+    'gentoo': os.path.abspath('bin-gentoo-x86'),
+    'linux_aarch64': os.path.abspath('bin-linux-arm64'),
+    'linux_arm64': os.path.abspath('bin-linux-arm64'),
 }
 
 
@@ -286,7 +301,7 @@ def _validatePython(config):
     related linking options) *cannot be used to specify a particular Python
     framework*. Instead it'll pick the latest one from /Library/Frameworks.
     
-    This is fine as long as
+    This is fine as int as
         /Library/Frameworks/Python.framework/Versions/Current
     is of the same X.Y version as the siloed Python.
     
@@ -478,6 +493,35 @@ def _setupMozillaEnv():
             ldflags = os.environ.get('LDFLAGS', '').split(' ')
             ldflags.append("-lrt")
             os.environ['LDFLAGS'] = ' '.join(ldflags)
+    
+    # Detect ARM64 platform
+    if sys.platform.startswith("linux") and (platform.machine() == "aarch64" or platform.machine() == "arm64"):
+        log.info("Detected ARM64 platform")
+        # Set appropriate environment variables for ARM64
+        os.environ['PLATFORM'] = 'linux-arm64'
+        if 'linux_aarch64' not in gPlat2BinDir:
+            gPlat2BinDir['linux_aarch64'] = os.path.abspath('bin-linux-arm64')
+        if 'linux_arm64' not in gPlat2BinDir:
+            gPlat2BinDir['linux_arm64'] = os.path.abspath('bin-linux-arm64')
+    
+    # Detect BSD platforms
+    if sys.platform.startswith("freebsd"):
+        log.info("Detected FreeBSD platform")
+        os.environ['PLATFORM'] = 'freebsd'
+    elif sys.platform.startswith("netbsd"):
+        log.info("Detected NetBSD platform")
+        os.environ['PLATFORM'] = 'netbsd'
+    elif sys.platform.startswith("openbsd"):
+        log.info("Detected OpenBSD platform")
+        os.environ['PLATFORM'] = 'openbsd'
+    elif sys.platform.startswith("minix"):
+        log.info("Detected Minix3 platform")
+        os.environ['PLATFORM'] = 'minix3'
+    
+    # Detect Gentoo
+    if sys.platform.startswith("linux") and exists("/etc/gentoo-release"):
+        log.info("Detected Gentoo platform")
+        os.environ['PLATFORM'] = 'gentoo'
 
 
 def _applyMozillaPatch(patchFile, mozSrcDir):
@@ -667,7 +711,7 @@ def _getMozSrcInfo(scheme):
 
 
 def _reporthook(numblocks, blocksize, filesize, url=None):
-    #print "reporthook(%s, %s, %s)" % (numblocks, blocksize, filesize)
+    #print("reporthook(%s, %s, %s)") % (numblocks, blocksize, filesize)
     base = os.path.basename(url)
     #XXX Should handle possible filesize=-1.
     try:
@@ -726,7 +770,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
             margin = indent
         else:
             margin = min(margin, indent)
-    if DEBUG: print "dedent: margin=%r" % margin
+    if DEBUG: print("dedent: margin=%r" % margin)
 
     if margin is not None and margin > 0:
         for i, line in enumerate(lines):
@@ -738,7 +782,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 elif ch == '\t':
                     removed += tabsize - (removed % tabsize)
                 elif ch in '\r\n':
-                    if DEBUG: print "dedent: %r: EOL -> strip up to EOL" % line
+                    if DEBUG: print("dedent: %r: EOL -> strip up to EOL" % line)
                     lines[i] = lines[i][j:]
                     break
                 else:
@@ -746,8 +790,8 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                                      "line %r while removing %d-space margin"
                                      % (ch, line, margin))
                 if DEBUG:
-                    print "dedent: %r: %r -> removed %d/%d"\
-                          % (line, ch, removed, margin)
+                    print("dedent: %r: %r -> removed %d/%d"\
+                          % (line, ch, removed, margin))
                 if removed == margin:
                     lines[i] = lines[i][j+1:]
                     break
@@ -1432,7 +1476,7 @@ characters (that is a best guess). (I suspect it is cygwin but don't
 know that for sure.) If you exceed this you will see subtle errors like
 the following when all paths involved *do* exist:
 
-    nsinstall: cannot copy install.rdf to <some-long-path>: \\
+    nsinstall: cannot copy install.rdf to <some-int-path>: \\
         The system cannot find the path specified.
 
 Currently the longest known sub-path in the Mozilla tree is:
@@ -1447,7 +1491,7 @@ characters. Yours is:
     (length %s)
 
 You need to do one or more of the following to work around this problem
-(in order of quickest-hack to better long-term solution):
+(in order of quickest-hack to better int-term solution):
 
 1. Use the "--src-tree-name" and/or "--build-tag" configure options to
    specify a shorter name than the current:
@@ -2630,18 +2674,18 @@ def _relpath(path, relto=None):
 
     pathParts = _splitall(pathRemainder)[1:] # drop the leading root dir
     relToParts = _splitall(relToRemainder)[1:] # drop the leading root dir
-    #print "_relpath: pathPaths=%s" % pathParts
-    #print "_relpath: relToPaths=%s" % relToParts
+    #print("_relpath: pathPaths=%s") % pathParts
+    #print("_relpath: relToPaths=%s") % relToParts
     for pathPart, relToPart in zip(pathParts, relToParts):
         if _equal(pathPart, relToPart):
             # drop the leading common dirs
             del pathParts[0]
             del relToParts[0]
-    #print "_relpath: pathParts=%s" % pathParts
-    #print "_relpath: relToParts=%s" % relToParts
+    #print("_relpath: pathParts=%s") % pathParts
+    #print("_relpath: relToParts=%s") % relToParts
     # Relative path: walk up from "relto" dir and walk down "path".
     relParts = [os.curdir] + [os.pardir]*len(relToParts) + pathParts
-    #print "_relpath: relParts=%s" % relParts
+    #print("_relpath: relParts=%s") % relParts
     relPath = os.path.normpath( os.path.join(*relParts) )
     return relPath
 
@@ -2733,7 +2777,6 @@ def build(argv):
         except BuildError as ex:
             log.error("%s: %s", target, str(ex))
             if log.isEnabledFor(logging.DEBUG):
-                print
                 import traceback
                 traceback.print_exception(*sys.exc_info())
             return 1
@@ -2761,9 +2804,9 @@ def _helpOnTargets(targets):
             return 1
         doc = targetFunc.__doc__
         if doc:
-            print target+" -- "+doc
+            print(target+" -- "+doc)
         else:
-            print "No help for target '%s'." % target
+            print("No help for target '%s'." % target)
 
 
 def _listTargets():
@@ -2807,29 +2850,29 @@ def _listTargets():
                 grouped[title] = [target]
     for memberList in grouped.values(): memberList.sort()
     groups = []
-    titles = groupMap.values()
+    titles = list(groupMap.values())
     titles.sort()
 
-    print "                    Mozilla-devel BUILD TARGETS"
-    print "                    ==========================="
+    print("                    Mozilla-devel BUILD TARGETS")
+    print("                    ===========================")
     for order, title in titles:
         if title not in grouped: continue
-        print '\n' + title + ':'
-        #XXX long form output
+        print('\n' + title + ':')
+        #XXX int form output
         #for target in grouped[title]:
-        #    print "  %-20s" % target
+        #    print("  %-20s") % target
         #    doc = docmap[target]
         #    if doc:
-        #        print "    "+doc
+        #        print("    ")+doc
         #    if "\n" not in doc:
-        #        print
+        #        print(for) target in grouped[title]:
         for target in grouped[title]:
             doc = docmap[target]
             if doc:
                 doc = doc.splitlines()[0]
             if len(doc) > 53:
                 doc = doc[:50] + "..."
-            print "  %-20s  %s" % (target, doc)
+            print("  %-20s  %s" % (target, doc))
 
 
 # Recipe: pretty_logging (0.1) in C:\trentm\tm\recipes\cookbook

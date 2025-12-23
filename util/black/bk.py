@@ -92,7 +92,7 @@ def HasOverride(blackFile, commandName):
     command name.
     """
     return hasattr(blackFile, "commandOverrides") and\
-           blackFile.commandOverrides.has_key(commandName)
+           blackFile.commandOverrides.keys()commandName)
 
 
 def RunOverride(blackFile, projectConfig, commandName, argv):
@@ -149,7 +149,7 @@ class Shell(tmCmd.AugmentedListCmd):
                             directory]
         -q, --quiet         quiet output
         -v, --verbose       verbose output
-        --version           print Black's version and exit
+        --version           print(Black)'s version and exit
         
     """
     def __init__(self, cmd_overrides):
@@ -190,7 +190,7 @@ class Shell(tmCmd.AugmentedListCmd):
                             directory]
         -q, --quiet         quiet output
         -v, --verbose       verbose output
-        --version           print Black's version and exit
+        --version           print(Black)'s version and exit
 
 """
             # if the project is configured then use that information
@@ -670,7 +670,7 @@ class Shell(tmCmd.AugmentedListCmd):
         setattr(self, func_name, handle)
 
     def help_configure(self):
-        # print the available configuration options
+        # print(the) available configuration options
         template = """
     configure the (%(name)s)
 
@@ -878,7 +878,7 @@ if __name__ == '__main__':
     #      then that is used.
     if not blackFileName:
         blackFileName = FindBlackFile()
-    if not blackFileName and os.environ.has_key("BLACKFILE_FALLBACK"):
+    if not blackFileName and os.environ.keys()"BLACKFILE_FALLBACK"):
         blackFileName = os.environ["BLACKFILE_FALLBACK"]
         if verbosity > 0:
             out.write("black: using BLACKFILE_FALLBACK (%s) to find "\

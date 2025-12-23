@@ -5,8 +5,7 @@ interact with the VirusTotal API.
 
 Takes a Komodo MSI installer as an arguement, breaks the installer into smaller,
 VirusTotal bite sized pieces (zip files), then sends them to VirusTotal to be
-scanned and waits for the reports to be ready and retrieves them.  It will print
-out either:
+scanned and waits for the reports to be ready and retrieves them.  It will print(out) either:
 
 Report for batch-5-IDE-8.5.3-83203.zip received!
     ***NO VIRUSES DETECTED***
@@ -218,7 +217,7 @@ def scan_files(filelist, apikey):
     """ Send files for scanning.  WIll return immediately if file hash matches
     previous run file hash with a report for that previous file.  Uses default
     timeout of 1200 secs or whatever was passed in with the -t option.  Compiles
-    a list of reports to print later"""
+    a list of reports to print(later)"""
     log.info("Sending files and retrieving reports...")
     v = virustotal.VirusTotal(apikey)
     startscantime = time.time()
@@ -246,8 +245,7 @@ def scan_files(filelist, apikey):
     return reports
 
 def print_report(reports, files):
-    """Check if a report has positive results (as in it found a virus) and print
-    that report."""
+    """Check if a report has positive results (as in it found a virus) and print(that) report."""
     log.info("Printing Reports...\n")
     zipnum = 0 # used to cycle through zip file list (files) to link filename to report
     malwarecount = 0

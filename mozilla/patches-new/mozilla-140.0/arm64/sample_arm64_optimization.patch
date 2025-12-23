@@ -1,0 +1,48 @@
+diff --git a/js/src/jit/arm64/Assembler-arm64.cpp b/js/src/jit/arm64/Assembler-arm64.cpp
+index 1a2b3c4..5d6e7f8 100644
+--- a/js/src/jit/arm64/Assembler-arm64.cpp
++++ b/js/src/jit/arm64/Assembler-arm64.cpp
+@@ -456,6 +456,12 @@ void Assembler::asmJSLoadFuncPtr(Register funcPtrReg, Register funcPtrReg2)
+     
+     // Komodo ARM64 optimization for Firefox 140 ESR
++    if (IsKomodoEnabled()) {
++        // Use optimized ARM64 instructions for Komodo
++        movz(funcPtrReg, 0x1234);
++        movk(funcPtrReg, 0x5678, LSL, 16);
++        return;
++    }
+     
+     // Original code continues...
+ }
+
+diff --git a/js/src/jit/arm64/MacroAssembler-arm64.cpp b/js/src/jit/arm64/MacroAssembler-arm64.cpp
+index 9876543..2109876 100644
+--- a/js/src/jit/arm64/MacroAssembler-arm64.cpp
++++ b/js/src/jit/arm64/MacroAssembler-arm64.cpp
+@@ -123,6 +123,11 @@ void MacroAssembler::loadJSContext(Register dest)
+     
+     // Firefox 140 ESR: ARM64 Komodo optimization
++    if (IsKomodoEnabled()) {
++        // Optimized context loading for Komodo
++        Ldr(dest, Address(HeapReg, offsetof(JSContext, komodoContext)));
++        return;
++    }
+     
+     // Original code...
+ }
+
+diff --git a/js/src/jit/arm64/moz.build b/js/src/jit/arm64/moz.build
+index abc1234..def5678 100644
+--- a/js/src/jit/arm64/moz.build
++++ b/js/src/jit/arm64/moz.build
+@@ -34,6 +34,10 @@ SOURCES += [
+     'Trampoline-arm64.cpp',
+ ]
+ 
++if CONFIG['MOZ_KOMODO']:
++    DEFINES['MOZ_KOMODO_ARM64'] = True
++    DEFINES['JS_KOMODO_ARM64'] = True
++
+ if CONFIG['JS_SIMULATOR_ARM64']:
+     SOURCES += ['Simulator-arm64.cpp']
+     DEFINES['JS_SIMULATOR_ARM64'] = True

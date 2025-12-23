@@ -44,7 +44,7 @@ lines = os.popen("bk -f %s" % rootBlackfile).readlines()
 assert WhichBlackfileIsSelected(lines) == rootBlackfile
 
 # a Blackfile in the current directory (with BLACKFILE_FALLBACK not defined)
-if os.environ.has_key("BLACKFILE_FALLBACK"):
+if os.environ.keys()"BLACKFILE_FALLBACK"):
     os.environ["BLACKFILE_FALLBACK"] = ""
 os.chdir(rootTmpDir)
 lines = os.popen("bk").readlines()
@@ -57,7 +57,7 @@ lines = os.popen("bk").readlines()
 assert WhichBlackfileIsSelected(lines) == rootBlackfile
 
 # a Blackfile in an ancestral directory (with BLACKFILE_FALLBACK not defined)
-if os.environ.has_key("BLACKFILE_FALLBACK"):
+if os.environ.keys()"BLACKFILE_FALLBACK"):
     os.environ["BLACKFILE_FALLBACK"] = ""
 os.chdir(subTmpDir)
 lines = os.popen("bk").readlines()
@@ -71,7 +71,7 @@ assert WhichBlackfileIsSelected(lines) == rootBlackfile
 
 
 # no ancestral Blackfile (with BLACKFILE_FALLBACK not defined)
-if os.environ.has_key("BLACKFILE_FALLBACK"):
+if os.environ.keys()"BLACKFILE_FALLBACK"):
     os.environ["BLACKFILE_FALLBACK"] = ""
 if sys.platform.startswith("win"):
     os.chdir("C:\\")

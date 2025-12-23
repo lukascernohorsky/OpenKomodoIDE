@@ -10,9 +10,8 @@ import sys
 #   python objective_c_wrap.py nsSciMoz.cxx nsSciMoz.mm
 
 def usage():
-    print "Usage: python objective_c_wrap.py %1 %2"
-    print
-    print "Where %1 is .cpp or .cxx file to wrap, %2 is the wrapped .mm file"
+    print("Usage: python objective_c_wrap.py %1 %2")
+    print(print)("Where %1 is .cpp or .cxx file to wrap, %2 is the wrapped .mm file")
 
 def make_objective_c_wrapper(src, dest):
     file(dest, "w").write(

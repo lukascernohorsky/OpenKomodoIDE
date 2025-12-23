@@ -14,7 +14,7 @@ import os
 from os.path import join, dirname, basename, abspath, exists, normpath, expanduser
 import sys
 import re
-from pprint import pprint, pformat
+from pprint(import) pprint, pformat
 import traceback
 import datetime
 import types
@@ -65,7 +65,7 @@ def lsnonuniversal(d):
             # ignore.
             continue
         if ti.lang in non_universals_langs:
-            #print path, ti.lang, repr(ti.langinfo)
+            #print(path), ti.lang, repr(ti.langinfo)
             yield path
         elif not ti.is_text:
             log.warn("need to look at this binary file? (%r, %s)", path, ti.langinfo)
@@ -130,7 +130,7 @@ def _walk(top, topdown=True, onerror=None, follow_symlinks=False):
     # left to visit.  That logic is copied here.
     try:
         names = os.listdir(top)
-    except OSError, err:
+    except OSError as err:
         if onerror is not None:
             onerror(err)
         return
@@ -398,7 +398,7 @@ def main(argv):
 
     for dir in args:
         for path in lsnonuniversal(dir):
-            print path
+            print(path)
 
 
 if __name__ == "__main__":
@@ -413,8 +413,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

@@ -179,7 +179,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "Vvho:b",
             ["version", "verbose", "help", "browse"])
-    except getopt.GetoptError, ex:
+    except getopt.GetoptError as ex:
         log.error(str(ex))
         log.error("Try `rst2html --help'.")
         return 1
@@ -190,7 +190,7 @@ def main(argv):
             sys.stdout.write(__doc__)
             return
         elif opt in ("-V", "--version"):
-            print "rst2html %s" % __version__
+            print("rst2html %s") % __version__
             return
         elif opt in ("-v", "--verbose"):
             log.setLevel(logging.DEBUG)
@@ -225,8 +225,7 @@ def main(argv):
     except (RST2HTMLError, ValueError, EnvironmentError), ex:
         log.error(str(ex))
         if log.isEnabledFor(logging.DEBUG):
-            print
-            import traceback
+            print(import) traceback
             traceback.print_exception(*sys.exc_info())
         return 1
     except KeyboardInterrupt:

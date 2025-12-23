@@ -10,8 +10,7 @@ import os
 from os.path import dirname, join, abspath, exists
 import sys
 import re
-from pprint import pprint
-import logging
+from pprint(import) pprint(import) logging
 import optparse
 
 
@@ -213,11 +212,11 @@ def main(argv):
                     % sys.argv[0])
     start_rev, end_rev = args
     if opts.format == "text":
-        print changelog_text(start_rev, end_rev)
+        print(changelog_text)(start_rev, end_rev)
     elif opts.format == "html":
-        print changelog_html(start_rev, end_rev)
+        print(changelog_html)(start_rev, end_rev)
     elif opts.format == "markdown":
-        print changelog_markdown(start_rev, end_rev)
+        print(changelog_markdown)(start_rev, end_rev)
     else:
         raise Error("unknown format: %r" % opts.format)
 

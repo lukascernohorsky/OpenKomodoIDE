@@ -95,11 +95,11 @@ def main():
     stdout, stderr = p.communicate()
     if stderr:
         if not stdout:
-            print "Error: %s" % (stderr, )
+            print("Error: %s") % (stderr, )
             return 1
         sys.stderr.write(stderr)
     html = parseGitCommits(stdout, args.all)
-    print html
+    print(html)
     return 0
 
 if __name__ == '__main__':

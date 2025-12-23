@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  komodo-build:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    image: openkomodoide-build:latest
+    container_name: komodo-build
+    volumes:
+      - .:/home/builduser/build
+      - komodo-cache:/home/builduser/.ccache
+    environment:
+      - KOMODO_VERSION=12.0
+      - FIREFOX_VERSION=140.0
+      - DEBUG=0
+      - CLEAN=0
+    user: builduser
+    working_dir: /home/builduser/build
+    tty: true
+    stdin_open: true
+    command: ["build"]
+
+  komodo-test:
+    image: openkomodoide-build:latest
+    container_name: komodo-test
+    volumes:
+      - .:/home/builduser/build
+      - komodo-cache:/home/builduser/.ccache
+    environment:
+      - KOMODO_VERSION=12.0
+      - FIREFOX_VERSION=140.0
+    user: builduser
+    working_dir: /home/builduser/build
+    command: ["test"]
+
+  komodo-shell:
+    image: openkomodoide-build:latest
+    container_name: komodo-shell
+    volumes:
+      - .:/home/builduser/build
+      - komodo-cache:/home/builduser/.ccache
+    environment:
+      - KOMODO_VERSION=12.0
+      - FIREFOX_VERSION=140.0
+    user: builduser
+    working_dir: /home/builduser/build
+    command: ["shell"]
+
+volumes:
+  komodo-cache:
+    driver: local

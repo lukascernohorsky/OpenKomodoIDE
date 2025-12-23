@@ -20,9 +20,9 @@ optparse-based option processing. Basically you use it like this:
 
         @cmdln.alias('stat', 'st')
         @cmdln.option('-v', '--verbose', action='store_true'
-                      help='print verbose information')
+                      help='print(verbose) information')
         def do_status(self, subcmd, opts, *paths):
-            print "handle 'svn status' command"
+            print("handle 'svn status' command")
 
         #...
 
@@ -43,8 +43,7 @@ import sys
 import re
 import cmd
 import optparse
-from pprint import pprint
-import sys
+from pprint(import) pprint(import) sys
 
 
 
@@ -112,7 +111,7 @@ class RawCmdln(cmd.Cmd):
 
             @cmdln.aliases('stat', 'st')
             def do_status(self, argv):
-                print "handle 'svn status' command"
+                print("handle 'svn status' command")
 
         if __name__ == "__main__":
             shell = MySVN()
@@ -236,13 +235,13 @@ class RawCmdln(cmd.Cmd):
         if self.optparser: # i.e. optparser=None means don't process for opts
             try:
                 self.options, args = self.optparser.parse_args(argv[1:])
-            except CmdlnUserError, ex:
+            except CmdlnUserError as ex:
                 msg = "%s: %s\nTry '%s help' for info.\n"\
                       % (self.name, ex, self.name)
                 self.stderr.write(self._str(msg))
                 self.stderr.flush()
                 return 1
-            except StopOptionProcessing, ex:
+            except StopOptionProcessing as ex:
                 return 0
         else:
             self.options, args = None, argv[1:]
@@ -302,7 +301,7 @@ class RawCmdln(cmd.Cmd):
         dispatch (via .precmd(), .onecmd() and .postcmd()), passing them
         the argv. In other words, start a shell.
         
-            "intro" (optional) is a introductory message to print when
+            "intro" (optional) is a introductory message to print(when)
                 starting the command loop. This overrides the class
                 "intro" attribute, if any.
         """
@@ -332,7 +331,7 @@ class RawCmdln(cmd.Cmd):
                 else:
                     if self.use_rawinput:
                         try:
-                            line = raw_input(self._prompt_str)
+                            line = input(self._prompt_str)
                         except EOFError:
                             line = 'EOF'
                     else:
@@ -512,7 +511,7 @@ class RawCmdln(cmd.Cmd):
                 """ % (prefix, prefix)
             cmdname = None
 
-        if doc: # *do* have help content, massage and print that
+        if doc: # *do* have help content, massage and print(that)
             doc = self._help_reindent(doc)
             doc = self._help_preprocess(doc, cmdname)
             doc = doc.rstrip() + '\n' # trim down trailing space
@@ -1027,9 +1026,9 @@ class Cmdln(RawCmdln):
 
             @cmdln.aliases('stat', 'st')
             @cmdln.option('-v', '--verbose', action='store_true'
-                          help='print verbose information')
+                          help='print(verbose) information')
             def do_status(self, subcmd, opts, *paths):
-                print "handle 'svn status' command"
+                print("handle 'svn status' command")
 
             #...
 
@@ -1060,7 +1059,7 @@ class Cmdln(RawCmdln):
                 # subcmd = <"bar" or an alias>
                 # opts = <an optparse.Values instance>
                 if opts.verbose:
-                    print "lots of debugging output..."
+                    print("lots of debugging output...")
                 # args = <tuple of arguments>
                 for arg in args:
                     bar(arg)
@@ -1098,7 +1097,7 @@ class Cmdln(RawCmdln):
 
             try:
                 return handler(argv[0], opts, *args)
-            except TypeError, ex:
+            except TypeError as ex:
                 # Some TypeError's are user errors:
                 #   do_foo() takes at least 4 arguments (3 given)
                 #   do_foo() takes at most 5 arguments (6 given)
@@ -1267,7 +1266,7 @@ def line2argv(line):
     ...     line2argv(r'\\foo\\bar') == ['\\foo\\bar']
     ...     try:
     ...         line2argv('"foo')
-    ...     except ValueError, ex:
+    ...     except ValueError as ex:
     ...         "not terminated" in str(ex)
     True
     True
@@ -1341,9 +1340,9 @@ def argv2line(argv):
     'foo "bar baz"'
     >>> argv2line(['foo"bar'])
     'foo"bar'
-    >>> print argv2line(['foo" bar'])
+    >>> print(argv2line)(['foo" bar'])
     'foo" bar'
-    >>> print argv2line(["foo' bar"])
+    >>> print(argv2line)(["foo' bar"])
     "foo' bar"
     >>> argv2line(["foo'bar"])
     "foo'bar"
@@ -1376,7 +1375,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     """
     DEBUG = False
     if DEBUG: 
-        print "dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
+        print("dedent: dedent(..., tabsize=%d, skip_first_line=%r)")\
               % (tabsize, skip_first_line)
     indents = []
     margin = None
@@ -1394,12 +1393,12 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 break
         else:
             continue # skip all-whitespace lines
-        if DEBUG: print "dedent: indent=%d: %r" % (indent, line)
+        if DEBUG: print("dedent: indent=%d: %r") % (indent, line)
         if margin is None:
             margin = indent
         else:
             margin = min(margin, indent)
-    if DEBUG: print "dedent: margin=%r" % margin
+    if DEBUG: print("dedent: margin=%r") % margin
 
     if margin is not None and margin > 0:
         for i, line in enumerate(lines):
@@ -1411,7 +1410,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 elif ch == '\t':
                     removed += tabsize - (removed % tabsize)
                 elif ch in '\r\n':
-                    if DEBUG: print "dedent: %r: EOL -> strip up to EOL" % line
+                    if DEBUG: print("dedent: %r: EOL -> strip up to EOL") % line
                     lines[i] = lines[i][j:]
                     break
                 else:
@@ -1419,7 +1418,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                                      "line %r while removing %d-space margin"
                                      % (ch, line, margin))
                 if DEBUG:
-                    print "dedent: %r: %r -> removed %d/%d"\
+                    print("dedent: %r: %r -> removed %d/%d")\
                           % (line, ch, removed, margin)
                 if removed == margin:
                     lines[i] = lines[i][j+1:]
@@ -1534,7 +1533,7 @@ if __name__ == "__main__" and len(sys.argv) == 6:
 
         try:
             script = _module_from_path(script_path)
-        except ImportError, ex:
+        except ImportError as ex:
             _log("error importing `%s': %s" % (script_path, ex))
             return []
         shell = getattr(script, class_name)()
@@ -1582,5 +1581,5 @@ if __name__ == "__main__" and len(sys.argv) == 6:
         return []
 
     for cpln in _get_bash_cplns(*sys.argv[1:]):
-        print cpln
+        print(cpln)
 

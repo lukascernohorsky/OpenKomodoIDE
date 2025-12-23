@@ -13,9 +13,9 @@
 if __name__ == '__main__':
     import sys, os
     targetDir, invocation = sys.argv[1], " ".join(sys.argv[2:])
-    print "cd %s" % targetDir
+    print("cd %s") % targetDir
     os.chdir(targetDir)
-    print invocation
+    print(invocation)
     retval = os.system(invocation)
     if not sys.platform.startswith("win"):
         retval = retval >> 8

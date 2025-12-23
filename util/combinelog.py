@@ -30,7 +30,7 @@ tools. The "pylog" logs are more useful for custom log analysis.
 
     # Combine the logs for the first *second* of Nov 2nd, 2007.
     # This is useful for playing with this script. Even a time range
-    # of an hour is 100k's of records so takes a long time.
+    # of an hour is 100k's of records so takes a int time.
     ./combinelog.py -v -o combined-DOMAIN.log \
         2007-11-02 "2007-11-02 00:00:01" 
 
@@ -92,7 +92,7 @@ from os.path import join, dirname, basename, exists, normpath, abspath, \
                     splitext, expanduser
 import sys
 import re
-from pprint import pprint, pformat
+from pprint(import) pprint, pformat
 import traceback
 import logging
 import optparse
@@ -226,7 +226,7 @@ def combinelog(boxes, start, end, includes=None, excludes=None, domain=None):
                         log.warn("ran out of referer records")
                         break
                     k = (referer_rec["remotehost"], referer_rec["url"])
-                    #print "referer_window[%r] = %r" % (k, referer_rec)
+                    #print("referer_window[%r] = %r") % (k, referer_rec)
                     referer_window[k].append(referer_rec)
                     if referer_rec["time"] - t > referer_window_lookahead:
                         break
@@ -269,7 +269,7 @@ def combinelog(boxes, start, end, includes=None, excludes=None, domain=None):
                         log.warn("ran out of useragent records")
                         break
                     k = useragent_rec["remotehost"]
-                    #print "useragent_window[%r] = %r" % (k, useragent_rec)
+                    #print("useragent_window[%r] = %r") % (k, useragent_rec)
                     useragent_window[k].append(useragent_rec)
                     if useragent_rec["time"] - t > useragent_window_lookahead:
                         break
@@ -343,33 +343,33 @@ def combinelog(boxes, start, end, includes=None, excludes=None, domain=None):
 
 
     if False:
-        print "\n-- accesses"
+        print("\n-- accesses")
         access_stream = merged_squid_access_log_stream(boxes, start, end)
         pprint(access_stream.next())
         num_elided = 0
         for access_rec in access_stream:
             num_elided += 1
-        print "(... %d records elided ...)" % (num_elided-1)
+        print("(... %d records elided ...)") % (num_elided-1)
         pprint(access_rec)
 
     if False:
-        print "\n-- referers"
+        print("\n-- referers")
         referer_stream = merged_squid_referer_log_stream(boxes, start, end)
         pprint(referer_stream.next())
         num_elided = 0
         for referer_rec in referer_stream:
             num_elided += 1
-        print "(... %d records elided ...)" % (num_elided-1)
+        print("(... %d records elided ...)") % (num_elided-1)
         pprint(referer_rec)
 
     if False:
-        print "\n-- useragents"
+        print("\n-- useragents")
         useragent_stream = merged_squid_useragent_log_stream(boxes, start, end)
         pprint(useragent_stream.next())
         num_elided = 0
         for useragent_rec in useragent_stream:
             num_elided += 1
-        print "(... %d records elided ...)" % (num_elided-1)
+        print("(... %d records elided ...)") % (num_elided-1)
         pprint(useragent_rec)
 
 
@@ -398,7 +398,7 @@ _access_log_re = re.compile(r"""^
     $""", re.M | re.X)
 
 def squid_access_log_stream(box_id, box_dir, start, end):
-    from urlparse import urlsplit
+    from urllib.parse import urlsplit
 
     assert exists(box_dir)
     assert isinstance(start, datetime.datetime)
@@ -1254,8 +1254,7 @@ if __name__ == "__main__":
             log.error(exc_info[0])
         if log.isEnabledFor(logging.INFO-1):
             import traceback
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         sys.exit(1)
     else:
         sys.exit(retval)

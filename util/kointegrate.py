@@ -673,7 +673,7 @@ class HelpIniAction(argparse.Action):
     def __init__(self, *args, **kwargs):
         super(HelpIniAction, self).__init__(*args, nargs=0, **kwargs)
     def __call__(self, parser, namespace, values, option_string=None):
-        print textwrap.dedent("""
+        print(textwrap).dedent("""
             Configuring %s
             --------------------------
 
@@ -1411,7 +1411,7 @@ def _one_line_summary_from_text(text, length=78,
 
 # Recipe: query_yes_no (1.0)
 def _query_yes_no(question, default="yes"):
-    """Ask a yes/no question via raw_input() and return their answer.
+    """Ask a yes/no question via input() and return their answer.
 
     "question" is a string that is presented to the user.
     "default" is the presumed answer if the user just hits <Enter>.
@@ -1433,7 +1433,7 @@ def _query_yes_no(question, default="yes"):
 
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return default
         elif choice in valid.keys():

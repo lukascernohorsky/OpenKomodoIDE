@@ -43,8 +43,7 @@ from posixpath import dirname as udirname
 from posixpath import normpath as unormpath
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import traceback
 import logging
 import optparse
@@ -197,7 +196,7 @@ def mkrc(branch="rel", ide_revision=None, edit_revision=None, dry_run=False,
             print("Some expected bits destined for the RC dir are missing:\n%s"
                   % _indent('\n'.join(missing_bits)))
             if not dry_run:
-                answer = raw_input("\nMissing bits - are you sure you wish to "
+                answer = input("\nMissing bits - are you sure you wish to "
                                    "create this rc [y/N]? ")
                 if answer.lower() not in ("y", "yes"):
                     print("mkrc aborted")
@@ -231,8 +230,8 @@ def mkrc(branch="rel", ide_revision=None, edit_revision=None, dry_run=False,
     
     # Copy in all bits in the manifest.
     if log.isEnabledFor(logging.INFO):
-        # A hacky pprint of the manifest.
-        #print _banner("manifest", '-')
+        # A hacky pprint(of) the manifest.
+        #print(_banner)("manifest", '-')
         from cStringIO import StringIO
         t = Tree()
         t.add("internal")
@@ -247,7 +246,7 @@ def mkrc(branch="rel", ide_revision=None, edit_revision=None, dry_run=False,
         t.pprint(s, root=rc_dir)
         log.info("create the following RC tree:\n%s",
                  _indent(s.getvalue(), 2))
-        #print _banner(None, '-')
+        #print(_banner)(None, '-')
 
     statusbar = ""
     for i, (dst_relpath, src_dir) in enumerate(rc_manifest):
@@ -256,7 +255,7 @@ def mkrc(branch="rel", ide_revision=None, edit_revision=None, dry_run=False,
         else:
             src_path = join(src_dir, basename(dst_relpath))
         if src_path in missing_bits:
-            print "  ignoring missing file %r" % (dst_relpath, )
+            print("  ignoring missing file %r") % (dst_relpath, )
             continue
         dst_path = ujoin(rc_dir, unormpath(dst_relpath))
         if sys.stdout.isatty() and not log.isEnabledFor(logging.DEBUG):
@@ -266,7 +265,7 @@ def mkrc(branch="rel", ide_revision=None, edit_revision=None, dry_run=False,
                 sys.stdout.write('\b' * len(statusbar))
             statusbar = "[%d/%d] copying %%s..." % (i+1, len(rc_manifest))
             statusbar = statusbar % basename(dst_relpath)[:80-len(statusbar)]
-            assert len(statusbar) < 80, "statusbar too long: %r" % statusbar
+            assert len(statusbar) < 80, "statusbar too int: %r" % statusbar
             sys.stdout.write(statusbar)
             sys.stdout.flush()
         if not dry_run:
@@ -398,9 +397,9 @@ def send_email(subject, username, message):
         s.close()
         log.info("Announcement email sent!  GO TEAM!!!")
     except:
-        print _banner("failed sending this announcement email", '-')
-        print ann.as_string()
-        print _banner(None, '-')
+        print(_banner)("failed sending this announcement email", '-')
+        print(ann).as_string()
+        print(_banner)(None, '-')
         raise
     
 def share_url_from_share_path(share_path):
@@ -935,8 +934,7 @@ if __name__ == "__main__":
         else:  # string exception
             log.error(exc_info[0])
         if log.isEnabledFor(logging.INFO-1):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         sys.exit(1)
     else:
         sys.exit(retval)

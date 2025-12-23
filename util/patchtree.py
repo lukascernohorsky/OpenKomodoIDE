@@ -205,12 +205,12 @@ def _getPatchInfo(dirname):
             pass
     try:
         file, path, desc = imp.find_module("__patchinfo__", [dirname])
-    except ImportError, ex:
+    except ImportError as ex:
         return None
     try:
         patchinfo = imp.load_module("__patchinfo__", file, path, desc)
         return patchinfo
-    except SyntaxError, ex:
+    except SyntaxError as ex:
         errinfo = ex.args[1]
         raise Error("syntax error in patchinfo file: %s:%d: %r"
                     % (errinfo[0], errinfo[1], errinfo[3]))
@@ -622,7 +622,7 @@ def _loadPatchLog(logDir, logFilename=None):
     try:
         file, path, desc = imp.find_module(patchLogName, [logDir])
         patchLog = imp.load_module(patchLogName, file, path, desc)
-    except ImportError, ex:
+    except ImportError as ex:
         raise Error("could not find a patch log in the given log "
                     "directory, '%s': %s" % (logDir, ex))
     return patchLog
@@ -1145,7 +1145,7 @@ actions = %s
         log.debug("removing temporary working dir '%s'", tempDir)
         try:
             sh.rm(tempDir)
-        except EnvironmentError, ex:
+        except EnvironmentError as ex:
             log.warn("could not remove temp working dir '%s': %s",
                      tempDir, ex)
         if sys.platform.startswith("win") and oldTmpDir is not None:
@@ -1162,7 +1162,7 @@ def main(argv):
         optlist, args = getopt.getopt(argv[1:], "hvVc:L:R",
             ["help", "verbose", "version", "config=", "log-dir=",
              "dry-run"])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         raise Error("patchtree: %s" % str(msg))
     config = None
     logDir = None
@@ -1173,7 +1173,7 @@ def main(argv):
             sys.stdout.write(__doc__)
             return 0
         elif opt in ("-V", "--version"):
-            print "patchtree %s" % __version__
+            print("patchtree %s" % __version__)
             return 0
         elif opt in ("-v", "--verbose"):
             log.setLevel(logging.DEBUG)
@@ -1220,8 +1220,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             log.error("%s: %s", exc_info[0].__name__, exc_info[1])
         sys.exit(1)

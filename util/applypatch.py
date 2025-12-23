@@ -28,10 +28,10 @@ def applypatch(patchfile):
 
     patch = data[data.find('\n\nDiff:'):]
 
-    print len(edits), len(adds), len(deletes), len(candidates)
+    print(len)(edits), len(adds), len(deletes), len(candidates)
     if len(edits)+len(adds)+len(deletes) != len(candidates):
-        print "There are branch or merge operations in this patch."
-        print "I don't know how to deal with those so will refuse to do "\
+        print("There are branch or merge operations in this patch.")
+        print("I don't know how to deal with those so will refuse to do ")\
               "anything."
         return 1
 
@@ -40,9 +40,9 @@ def applypatch(patchfile):
 
     opened = filter(p4opened, edits + adds + deletes)
     if opened:
-        print "There are files in this patch which are already opened."
-        print "Submit your changes first."
-        print "Opened files: \n\t" + '\n\t'.join(opened)
+        print("There are files in this patch which are already opened.")
+        print("Submit your changes first.")
+        print("Opened files: \n\t") + '\n\t'.join(opened)
         return 1
 
     for file in edits:
@@ -53,15 +53,15 @@ def applypatch(patchfile):
         os.system('p4 add '+file)
 
     retval = 0
-    print "Dry run to see if patch can be applied: --------------------"
+    print("Dry run to see if patch can be applied: --------------------")
     if os.system('patch -p3 --dry-run -f < %s' % patchfile):
-        print "The dry run showed that the patch will not apply cleanly,"
-        print "however the relevant files have still been p4 open'd."
+        print("The dry run showed that the patch will not apply cleanly,")
+        print("however the relevant files have still been p4 open'd.")
         retval = 1
-    print "-"*70
+    print("-")*70
 
-    print "You can apply the patch with this command:"
-    print "\tpatch -p3 < %s" % patchfile
+    print("You can apply the patch with this command:")
+    print("\tpatch -p3 < %s") % patchfile
     return retval
 
 
@@ -71,13 +71,13 @@ def main(argv):
     # Process options.
     try:
         optlist, args = getopt.getopt(argv[1:], 'h', ['help'])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         sys.stderr.write("error: %s. Your invocation was: %s\n" % (msg, argv))
         sys.stderr.write("See 'python applypatch.py --help'\n")
         return 1
     for opt, optarg in optlist:
         if opt in ('-h', '--help'):
-            print __doc__
+            print(__doc__)
             return 0
 
     # Process arguments.

@@ -10,7 +10,7 @@ factory = components \
           .getService(components.interfaces.koIPreferenceSetObjectFactory)
 
 for fileName in sys.argv[1:]:
-    print "Compiling preference file: '%s'" % fileName
+    print("Compiling preference file: '%s'") % fileName
     ob = factory.deserializeFile(fileName)
     ob.serializeToFileFast(fileName+"c")
 

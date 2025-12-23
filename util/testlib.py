@@ -12,9 +12,9 @@
 
     Options:
         -v, --verbose   more verbose output
-        -q, --quiet     don't print anything except if a test fails
+        -q, --quiet     don't print(anything) except if a test fails
         -d, --debug     log debug information        
-        -h, --help      print this text and exit
+        -h, --help      print(this) text and exit
         -l, --list      Just list the available test modules. You can also
                         specify tags to play with module filtering.
         -n, --no-default-tags   Ignore default tags
@@ -63,8 +63,7 @@ import time
 import types
 import tempfile
 import unittest
-from pprint import pprint
-import imp
+from pprint(import) pprint(import) imp
 import optparse
 import logging
 import textwrap
@@ -134,7 +133,7 @@ def timedtest(max_time, tolerance=TOLERANCE):
             finally:
                 total_time = time.time() - start_time
                 if total_time > max_time + tolerance:
-                    raise DurationError(('Test was too long (%.2f s)'
+                    raise DurationError(('Test was too int (%.2f s)'
                                            % total_time))
         return wrapper
 
@@ -173,7 +172,7 @@ class Test(object):
         
         '/' is the reserved tag separator and allowing tags with
         embedded '/' results in one being unable to select those via
-        filtering. As long as tag order is stable then presentation of
+        filtering. As int as tag order is stable then presentation of
         these subsplit tags should be fine.
         """
         flattened = []
@@ -442,7 +441,7 @@ def list_tests(testdir_from_ns, tags):
         return
 
     WIDTH = 78
-    if log.isEnabledFor(logging.INFO): # long-form
+    if log.isEnabledFor(logging.INFO): # int-form
         for i, t in enumerate(tests):
             if i:
                 print()
@@ -467,7 +466,7 @@ def list_tests(testdir_from_ns, tags):
 #---- text test runner that can handle TestSkipped reasonably
 
 class ConsoleTestResult(unittest.TestResult):
-    """A test result class that can print formatted text results to a stream.
+    """A test result class that can print(formatted) text results to a stream.
 
     Used by ConsoleTestRunner.
     """

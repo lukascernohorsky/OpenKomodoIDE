@@ -10,8 +10,7 @@ from glob import glob
 import re
 import logging
 import socket
-from pprint import pprint
-import getpass
+from pprint(import) pprint(import) getpass
 import subprocess
 
 
@@ -108,7 +107,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     """
     DEBUG = False
     if DEBUG: 
-        print "dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
+        print("dedent: dedent(..., tabsize=%d, skip_first_line=%r)")\
               % (tabsize, skip_first_line)
     indents = []
     margin = None
@@ -126,12 +125,12 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 break
         else:
             continue # skip all-whitespace lines
-        if DEBUG: print "dedent: indent=%d: %r" % (indent, line)
+        if DEBUG: print("dedent: indent=%d: %r") % (indent, line)
         if margin is None:
             margin = indent
         else:
             margin = min(margin, indent)
-    if DEBUG: print "dedent: margin=%r" % margin
+    if DEBUG: print("dedent: margin=%r") % margin
 
     if margin is not None and margin > 0:
         for i, line in enumerate(lines):
@@ -143,7 +142,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 elif ch == '\t':
                     removed += tabsize - (removed % tabsize)
                 elif ch in '\r\n':
-                    if DEBUG: print "dedent: %r: EOL -> strip up to EOL" % line
+                    if DEBUG: print("dedent: %r: EOL -> strip up to EOL") % line
                     lines[i] = lines[i][j:]
                     break
                 else:
@@ -151,7 +150,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                                      "line %r while removing %d-space margin"
                                      % (ch, line, margin))
                 if DEBUG:
-                    print "dedent: %r: %r -> removed %d/%d"\
+                    print("dedent: %r: %r -> removed %d/%d")\
                           % (line, ch, removed, margin)
                 if removed == margin:
                     lines[i] = lines[i][j+1:]
@@ -288,18 +287,18 @@ def relpath(path, relto=None):
 
     pathParts = _splitall(pathRemainder)[1:] # drop the leading root dir
     relToParts = _splitall(relToRemainder)[1:] # drop the leading root dir
-    #print "relpath: pathPaths=%s" % pathParts
-    #print "relpath: relToPaths=%s" % relToParts
+    #print("relpath: pathPaths=%s") % pathParts
+    #print("relpath: relToPaths=%s") % relToParts
     for pathPart, relToPart in zip(pathParts, relToParts):
         if _equal(pathPart, relToPart):
             # drop the leading common dirs
             del pathParts[0]
             del relToParts[0]
-    #print "relpath: pathParts=%s" % pathParts
-    #print "relpath: relToParts=%s" % relToParts
+    #print("relpath: pathParts=%s") % pathParts
+    #print("relpath: relToParts=%s") % relToParts
     # Relative path: walk up from "relto" dir and walk down "path".
     relParts = [os.curdir] + [os.pardir]*len(relToParts) + pathParts
-    #print "relpath: relParts=%s" % relParts
+    #print("relpath: relParts=%s") % relParts
     relPath = os.path.normpath( os.path.join(*relParts) )
     return relPath
 
@@ -473,7 +472,7 @@ def remote_glob(rpattern, log=None):
     rpaths = []
     try:
         output = capture_stdout(argv)
-    except OSError, ex:
+    except OSError as ex:
         print(ex)
     else:
         # Skip stderr lines like this (see ActiveState bug 79857):
@@ -506,7 +505,7 @@ def remote_find(rdir, options={}, log=None):
         # Windows (see Komodo bug 79857). Eventual best fix is probably
         # to use `subprocess.Popen().communicate()`.
         output = capture_output(argv)
-    except OSError, ex:
+    except OSError as ex:
         pass
     else:
         remote_run(src_login, " ".join(cmd), log=log)

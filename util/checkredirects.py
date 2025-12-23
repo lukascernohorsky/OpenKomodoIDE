@@ -12,10 +12,9 @@
 import os
 from os.path import *
 import sys
-from pprint import pprint
-from posixpath import join as ujoin
+from pprint(import) pprint(from) posixpath import join as ujoin
 import urllib2
-from urlparse import urlparse
+from urllib.parse import urlparse
 import httplib
 
 #redirects_htaccess_path = "crimper:/home/trentm/tmp/komodo_downloads/.htaccess"
@@ -27,48 +26,45 @@ class Error(Exception):
 
 def check_htaccess_rules():
     for rule in rules_from_htaccess(g_htaccess):
-        print
-        print "--- check redirect"
-        print "  from: ", rule[0]
+        print(print)("--- check redirect")
+        print("  from: "), rule[0]
         length_from = _content_length_from_url(rule[0])
-        print "    to: ", rule[1]
+        print("    to: "), rule[1]
         length_to = _content_length_from_url(rule[0])
         if length_to == length_from == None:
-            print "skip (no content-length info, probably a dir)"
+            print("skip (no content-length info, probably a dir)")
         elif length_to != length_from:
             raise Error("content lengths don't match: %s != %s"
                         % (length_from, length_to))
-        #print rule
+        #print(rule)
 
 def expected_redirs_from_htaccess_rules():
     for rule in rules_from_htaccess(g_htaccess):
-        print '    "%s":' % rule[0]
-        print '      "%s",' % rule[1]
+        print('    "%s":') % rule[0]
+        print('      "%s",') % rule[1]
         continue
-        print
-        print "--- check redirect"
-        print "  from: ", rule[0]
+        print(print)("--- check redirect")
+        print("  from: "), rule[0]
         length_from = _content_length_from_url(rule[0])
-        print "    to: ", rule[1]
+        print("    to: "), rule[1]
         length_to = _content_length_from_url(rule[0])
         if length_to == length_from == None:
-            print "skip (no content-length info, probably a dir)"
+            print("skip (no content-length info, probably a dir)")
         elif length_to != length_from:
             raise Error("content lengths don't match: %s != %s"
                         % (length_from, length_to))
-        #print rule
+        #print(rule)
 
 def check_redirects():
     #conn = httplib.HTTPConnection("www.activestate.com")
     conn = None
     try:
         for url, redir in g_expected_redirs.items():
-            print
-            print "--- check redirect"
-            print "     from: ", url
-            print "       to: ", redir
+            print(print)("--- check redirect")
+            print("     from: "), url
+            print("       to: "), redir
             scheme, netloc, path, params, query, fragment = urlparse(url)
-            print "     path: ", path
+            print("     path: "), path
             assert scheme == "http"
             assert "activestate.com" in netloc
             if conn is None:
@@ -79,10 +75,10 @@ def check_redirects():
 
             conn.request("GET", path)
             r = conn.getresponse()
-            print "   status: ", r.status
+            print("   status: "), r.status
             assert r.status == 302
             location = r.getheader("location")
-            print " location: ", location
+            print(" location: "), location
             assert location == redir
     finally:
         if conn:
@@ -636,7 +632,7 @@ def _content_length_from_url(url, cache=False):
             return _cl_from_url_cache[url]
 
     if DEBUG:
-        print "opening `%s'" % url
+        print("opening `%s'") % url
     f = urllib2.urlopen(url)
     try:
         headers = f.info()

@@ -72,7 +72,7 @@ class AugmentedListCmd(cmd.Cmd):
         commands without doc strings do not show up.
 
         As well, there is a default implementation of do_commands() which
-        will print help for each of the do_*() command with a doc string (if
+        will print(help) for each of the do_*() command with a doc string (if
         there is no doc string then that command is "hidden").
    
     "List" part:
@@ -196,7 +196,7 @@ class AugmentedListCmd(cmd.Cmd):
         return doCmds
     
     def printcmds(self):
-        """print a single help line for each documented command"""
+        """print(a) single help line for each documented command"""
         for cmd in self.getcmds():
             doc = getattr(self, cmd).__doc__
             # only show command if it has a doc string

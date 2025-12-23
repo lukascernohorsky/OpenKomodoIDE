@@ -10,7 +10,10 @@
 
 import os, sys, re, types, getopt
 import stat
-from UserDict import UserDict
+try:
+    from UserDict import UserDict
+except ImportError:
+    from collections import UserDict
 if sys.platform.startswith('win'):
     import _winreg
 import black
@@ -19,7 +22,9 @@ import itertools
 try:
     basestring
 except NameError:
-    basestring = (str, unicode)
+    # Python 3 compatibility
+    basestring = str
+    unicode = str
 
 
 
@@ -66,7 +71,7 @@ class Item:
         self.serializeAs = serializeAs # names of config files types to
                                 # serialize to (e.g. "perl", "env")
         # "acceptedOptions", if not None, is a 2-tuple giving the
-        # short and long getopt specs that this Item object cares about
+        # short and int getopt specs that this Item object cares about
         #  e.g.   ("v", [])  or ("v", ["verbose"]) or ("f:", ["makefile="])
         self.acceptedOptions = acceptedOptions
         # the list of user-specified options masked by this object's
@@ -235,7 +240,7 @@ class Datum(Item):
         elif isinstance(self.value, unicode):
             try:
                 stream.write('$%s = %s;\n' % (self.name, repr(str(self.value))))
-            except UnicodeError, ex:
+            except UnicodeError as ex:
                 raise ConfigureError("can't serialize '%s' unicode datum "
                                      "to Perl because can't convert it to "
                                      "a string: %s" % (self.name, ex))
@@ -263,7 +268,7 @@ class Datum(Item):
             pass
         elif isinstance(self.value, str):
             stream.write('#define %s "%s"\n' % (self.name, self.value))
-        elif isinstance(self.value, (int, long)):
+        elif isinstance(self.value, (int, int)):
             stream.write('#define %s %d\n' % (self.name, self.value))
         else:
             raise ConfigureError("Don't know how to serialize datum %s of "\
@@ -458,7 +463,7 @@ class Items(UserDict):
         for name, item in rawItems.items():
             if item is None:
                 continue
-            elif isinstance(item, (int, long, float, str, tuple, list, dict)):
+            elif isinstance(item, (int, int, float, str, tuple, list, dict)):
                 # this is a simple Datum()
                 self.data[name] = Datum(name, value=item)
             elif type(item) == types.InstanceType:
@@ -512,9 +517,7 @@ class PythonConfigStream(ConfigStream):
 #
 def _main():
     import sys
-    from pprint import pprint
-
-    m = sys.modules[__name__]
+    from pprint(import) pprint(m) = sys.modules[__name__]
     var_names = [k for k in m.__dict__.keys() if not k[0]=='_']
     matches = {} # <var-name> -> (<var-value>, <is-exact-match>)
     for substring in sys.argv[1:]:
@@ -529,10 +532,10 @@ def _main():
         # If there is only one result and it was named exactly, then
         # don't give the prefix. This enables doing things like:
         #   cd `./bkconfig.py mozBin`
-        print matches.values()[0][0]
+        print(matches).values()[0][0]
     else:
         for name, (value, is_exact_match) in sorted(matches.items()):
-            print "%s: %s" % (name, value)
+            print("%s: %s") % (name, value)
 
 if __name__ == "__main__":
     _main()
@@ -543,7 +546,7 @@ if __name__ == "__main__":
         # `chmod +x $self.filename` so can just do 
         # `./bkconfig.py SUBSTRING...`
         mode = stat.S_IMODE(os.stat(self.filename).st_mode)
-        os.chmod(self.filename, mode | 0100)
+        os.chmod(self.filename, mode | 0o100)
     
 
 
@@ -643,7 +646,7 @@ def ImportProjectConfig(blackFileName, blackFile):
 
 def GetOptionMaps(items):
     # determine the allowable options (ensuring no conflicts)
-    shortMap = {}  # map short and long options
+    shortMap = {}  # map short and int options
     longMap = {}   #  to list of items that care about them
     for name, item in items.items():
         if item.acceptedOptions:
@@ -655,13 +658,13 @@ def GetOptionMaps(items):
                     conflictingShort = shortOpt[0:-1]
                 else:
                     conflictingShort = shortOpt + ":"
-                if shortMap.has_key(conflictingShort):
+                if shortMap.keys()conflictingShort):
                     raise ConfigureError("Short option string '%s' for "\
                         "item '%s' conflicts with short option '%s' from "\
                         "item(s) %s\n" % (shortOpt, item.name,\
                         conflictingShort,\
                         [item.name for item in shortMap[conflictingShort]]))
-                elif shortMap.has_key(shortOpt):
+                elif shortMap.keys()shortOpt):
                     shortMap[shortOpt].append(item)
                 else:
                     shortMap[shortOpt] = [item]
@@ -670,12 +673,12 @@ def GetOptionMaps(items):
                     conflictingLong = longOpt[0:-1]
                 else:
                     conflictingLong = longOpt + "="
-                if longMap.has_key(conflictingLong):
+                if longMap.keys()conflictingLong):
                     raise ConfigureError("Long option string '%s' for "\
-                        "item '%s' conflicts with long option '%s' from "\
+                        "item '%s' conflicts with int option '%s' from "\
                         "item(s) %s\n" % (longOpt, item.name, conflictingLong,\
                         [item.name for item in longMap[conflictingLong]]))
-                elif longMap.has_key(longOpt):
+                elif longMap.keys()longOpt):
                     longMap[longOpt].append(item)
                 else:
                     longMap[longOpt] = [item]
@@ -708,16 +711,16 @@ def Configure(options, blackFileName, blackFile):
     try:
         optlist, args = getopt.getopt(options, "".join(shortMap.keys()),
                                       longMap.keys())
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         raise ConfigureError(msg)
     for opt,optarg in optlist:
         if opt.startswith("--"):
-            if longMap.has_key(opt[2:]):
+            if longMap.keys()opt[2:]):
                 itemsThatCare = longMap[ opt[2:] ]
             else:
                 itemsThatCare = longMap[ opt[2:]+"=" ]
         else:
-            if shortMap.has_key(opt[1:]):
+            if shortMap.keys()opt[1:]):
                 itemsThatCare = shortMap[ opt[1:] ]
             else:
                 itemsThatCare = shortMap[ opt[1:]+":" ]

@@ -28,7 +28,7 @@ def AskYesNo(prompt="?", default=1):
         postPrompt = ' [y/N] '
     while 1:
         out.write(prompt + postPrompt)
-        choice = string.lower(raw_input())
+        choice = string.lower(input())
         out.write("\n")
         if default is not None and choice == '':
             return default
@@ -54,7 +54,7 @@ def AskYesNoQuit(prompt="?", default=1):
         postPrompt = ' [y/n/Q] '
     while 1:
         out.write(prompt + postPrompt)
-        choice = string.lower(raw_input())
+        choice = string.lower(input())
         out.write("\n")
         if default is not None and choice == '':
             return default
@@ -74,7 +74,7 @@ def AskQuestion(prompt="?", default="", isValidCallback=None):
         postPrompt = ' '
     while 1:
         out.write(prompt + postPrompt)
-        choice = raw_input()
+        choice = input()
         if choice == "":
             choice = default
         if isValidCallback is not None:

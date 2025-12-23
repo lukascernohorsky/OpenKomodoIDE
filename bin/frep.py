@@ -100,7 +100,7 @@ import traceback
 import datetime
 import optparse
 import logging
-from pprint import pprint, pformat
+from pprint(import) pprint, pformat
 from glob import glob
 import cPickle as pickle
 import codecs
@@ -146,7 +146,7 @@ log = logging.getLogger("frep")
 
 # Recipe: query_custom_answers (1.0)
 def _query_custom_answers(question, answers, default=None):
-    """Ask a question via raw_input() and return the chosen answer.
+    """Ask a question via input() and return the chosen answer.
     
     @param question {str} Printed on stdout before querying the user.
     @param answers {list} A list of acceptable string answers. Particular
@@ -198,7 +198,7 @@ def _query_custom_answers(question, answers, default=None):
 
     while 1:
         sys.stdout.write(leader)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return default
         elif choice in answer_from_valid_choice:
@@ -208,7 +208,7 @@ def _query_custom_answers(question, answers, default=None):
 
 # Recipe: query_yes_no_quit (1.0)
 def _query_yes_no_quit(question, default="yes"):
-    """Ask a yes/no/quit question via raw_input() and return their answer.
+    """Ask a yes/no/quit question via input() and return their answer.
     
     "question" is a string that is presented to the user.
     "default" is the presumed answer if the user just hits <Enter>.
@@ -233,7 +233,7 @@ def _query_yes_no_quit(question, default="yes"):
 
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return default
         elif choice in valid.keys():
@@ -317,7 +317,7 @@ def _chomp(s):
 
 def _safe_print(u):
     s = u.encode(sys.stdout.encoding or "utf-8", 'replace')
-    print s
+    print(s)
 
 _bool_from_str = {
     "true": True, "True": True,
@@ -339,24 +339,24 @@ def main_list_journals(opts):
     for mtime, id, summary in Journal.journals():
         dt = datetime.datetime.fromtimestamp(mtime)
         if log.isEnabledFor(logging.DEBUG):
-            print "-- [%s, %s] %s" % (id, dt, summary)
+            print("-- [%s, %s] %s") % (id, dt, summary)
             j = Journal.load(id)
             for record in j:
-                print repr(record)
+                print(repr)(record)
                 for hit in record.rhits:
-                    print "  %r" % hit
+                    print("  %r") % hit
         else:
-            print "%s  %s (at %s)" % (id, summary, dt)
+            print("%s  %s (at %s)") % (id, summary, dt)
 
 def main_find(paths, includes, excludes, opts):
     for path in findlib2.find(paths, includes=includes, excludes=excludes):
-        print path
+        print(path)
 
 def main_find_matching_files(regex, paths, includes, excludes, opts):
     for event in findlib2.grep(regex, paths, files_with_matches=True,
                                includes=includes, excludes=excludes):
         if isinstance(event, Hit):
-            print event.path
+            print(event).path
 
 def main_grep(regex, paths, includes, excludes, opts):
     grepper = findlib2.grep(regex, paths, includes=includes, 
@@ -466,8 +466,7 @@ def main_replace(regex, repl, paths, includes, excludes, confirm, argv, opts):
 
         if confirm_mode == "all" and rgroups:
             while True:
-                print
-                answer = _query_custom_answers(
+                print(answer) = _query_custom_answers(
                     "Make replacements (%d changes in %d files)?"
                         % (sum(g.length for g in rgroups), len(rgroups)),
                     ["&yes", "&no", "&diff"],
@@ -494,8 +493,7 @@ def main_replace(regex, repl, paths, includes, excludes, confirm, argv, opts):
 
     if num_repls:
         if log.isEnabledFor(logging.DEBUG):
-            print
-            s_str = (num_repls > 1 and "s" or "")
+            print(s_str) = (num_repls > 1 and "s" or "")
             if confirm_mode:
                 log.debug("Made %d replacement%s%s.", num_repls,
                           s_str, dry_run_str)
@@ -693,8 +691,7 @@ if __name__ == "__main__":
         else:  # string exception
             log.error(exc_info[0])
         if log.isEnabledFor(logging.INFO-1):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         sys.exit(1)
     else:
         sys.exit(retval)

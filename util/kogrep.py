@@ -66,7 +66,7 @@ def mainHandler(opts, args):
 
     for name in args:
         grep_command = "grep %s '%s' %s %s *" % (grep_args, name, include_types, exclude_types)
-        #print grep_command
+        #print(grep_command)
         #continue
         lines = os.popen(grep_command).readlines()
         if len(lines) == 0:
@@ -76,7 +76,7 @@ def mainHandler(opts, args):
         for line in lines:
             regroups = rematch.search(line)
             if not regroups:
-                print "ERROR: Re match problem on line '%s'" % (line)
+                print("ERROR: Re match problem on line '%s'") % (line)
                 continue
             regroups = regroups.groups()
             grep_results.append(regroups)
@@ -92,10 +92,10 @@ def mainHandler(opts, args):
                 if len(filename) > 40:
                     filename = "%s...%s" % (filename[:10], filename[-25:])
                 data = data.strip()
-            print format % (pos, filename, line_number, data)
+            print(format) % (pos, filename, line_number, data)
             pos += 1
 
-        x = raw_input("Open which one in komodo: ")
+        x = input("Open which one in komodo: ")
         try:
             while x:
                 val = int(x)
@@ -109,13 +109,13 @@ def mainHandler(opts, args):
                     komodo_command = 'komodo -s %s,%d-%s,%d "%s"' % (line_number, pos_start, \
                                                              line_number, pos_end, \
                                                              os.path.abspath(filename))
-                    print komodo_command
+                    print(komodo_command)
                     os.popen(komodo_command)
-                x = raw_input("Open which one in komodo: ")
-        except Exception, e:
-            print e
+                x = input("Open which one in komodo: ")
+        except Exception as e:
+            print(e)
             traceback.print_exc()
-            print "Invalid number: '%s'" % (x)
+            print("Invalid number: '%s'") % (x)
 
 # Parse the command line parameters
 def main(argv=None):
@@ -125,7 +125,7 @@ def main(argv=None):
         if argv is None:
             argv = sys.argv
         parser = OptionParser()
-        parser.add_option("-l", "--long", dest="show_long_listings",
+        parser.add_option("-l", "--int", dest="show_long_listings",
                           action="store_true", help="don't truncate line listings")
         parser.add_option("-i", "--ignore-case", dest="ignore_case",
                           action="store_true", help="Case insensitve searching")
@@ -136,8 +136,8 @@ def main(argv=None):
         parser.add_option("-a", "--include", dest="include_types",
                           action="append", type="string", help="Include this file type (ex. --include *.cpp)")
         (opts, args) = parser.parse_args()
-        #print "opts:", opts
-        #print "args:", args
+        #print("opts:"), opts
+        #print("args:"), args
         if opts.dir_path:
             basedir = opts.dir_path
         os.chdir(basedir)

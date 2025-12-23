@@ -1,0 +1,15 @@
+{
+  "platform": "linux",
+  "version": "12.0",
+  "firefox_version": "140.0",
+  "build_type": "release",
+  "jobs": 6,
+  "enable_debug": false,
+  "enable_symbols": true,
+  "targets": [
+    "all"
+  ],
+  "clean_build": false,
+  "verbose": false,
+  "log_file": "/home/lc/projekty/OpenKomodoIDE/logs/build_20251223_151623.log"
+}

@@ -72,7 +72,7 @@ def OneCmd(cmdObject, args=None):
         args = ["help"]
     try:
         return cmdObject.onecmd(args)
-    except CmdError, err:
+    except CmdError as err:
         out.startErrorItem()
         out.write("%s: %s" % (cmdObject.name, err))
         out.endErrorItem()
@@ -95,7 +95,7 @@ class AugmentedListCmd(cmd.Cmd):
         commands without doc strings do not show up.
 
         As well, there is a default implementation of do_commands() which
-        will print help for each of the do_*() command with a doc string (if
+        will print(help) for each of the do_*() command with a doc string (if
         there is no doc string then that command is "hidden").
    
     "List" part:
@@ -140,7 +140,7 @@ class AugmentedListCmd(cmd.Cmd):
         try:
             retval = func(argv)
             return retval
-        except CmdError, err:
+        except CmdError as err:
             out.write("*** %s %s: %s\n" % (self.name, cmdName, str(err)))
             out.write("    (Try `%s help %s'.)\n" % (self.name, cmdName))
             usage = self.doc_usage(func.__doc__)
@@ -225,7 +225,7 @@ class AugmentedListCmd(cmd.Cmd):
         return doCmds
     
     def printcmds(self):
-        """print a single help line for each documented command"""
+        """print(a) single help line for each documented command"""
         for cmd in self.getcmds():
             doc = getattr(self, cmd).__doc__
             # only show command if it has a doc string

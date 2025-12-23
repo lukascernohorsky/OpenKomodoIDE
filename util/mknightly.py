@@ -58,8 +58,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import os
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import time
 import traceback
 import logging
@@ -778,8 +777,7 @@ if __name__ == "__main__":
         exc_info = sys.exc_info()
         if log.level <= logging.DEBUG:
             import traceback
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

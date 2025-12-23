@@ -144,21 +144,21 @@ class FormattedOutput:
         #sys.stderr.write('XXX write text:%s\n' % repr(text))
         tokens = self._Parse(text)
         for ttype, token in tokens:
-            #print 'XXX token:', ttype, repr(token)
+            #print('XXX token:'), ttype, repr(token)
             if ttype == self.TT_NEWLINE:
                 self._WriteLine()
             elif ttype == self.TT_WS:
                 self._Add(ttype, token)
             elif ttype == self.TT_WORD:
-                #print 'XXX word:%s content:%s spaceLeft:%d' % (repr(token), repr(self.content), self._SpaceLeft())
+                #print('XXX word:%s content:%s spaceLeft:%d') % (repr(token), repr(self.content), self._SpaceLeft())
                 if self.wordWrapping and len(token) > self._SpaceLeft():
-                    #print 'XXX causes overflow'
+                    #print('XXX causes overflow')
                     if len(token) > self._rightMargin - len(self._GetIndentation()):
-                        #print 'XXX break up word'
+                        #print('XXX break up word')
                         while token:
                             spaceLeft = self._SpaceLeft()
                             piece, token = token[:spaceLeft], token[spaceLeft:]
-                            #print 'XXX pieces:', repr(piece), repr(token)
+                            #print('XXX pieces:'), repr(piece), repr(token)
                             self._Add(ttype, piece)
                             if token:
                                 self._WriteLine()

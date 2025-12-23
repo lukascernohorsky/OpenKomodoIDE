@@ -110,7 +110,7 @@ def Mkdir(newdir):
         if head and not os.path.isdir(head):
             Mkdir(head)
         if verbosity > 0:
-            print "mkdir %s" % repr(newdir)
+            print("mkdir %s" % repr(newdir))
         if tail:
             os.mkdir(newdir)
 
@@ -152,10 +152,10 @@ def Copy(src, dst):
             if not os.path.isdir(dstFileHead):
                 Mkdir(dstFileHead)
             if verbosity > 0:
-                print "copy %s to %s" % (repr(srcFile), repr(dstFile))
+                print("copy %s to %s" % (repr(srcFile), repr(dstFile)))
             if os.path.isfile(dstFile):
                 # make sure 'dstFile' is writeable
-                os.chmod(dstFile, 0755)
+                os.chmod(dstFile, 0o755)
             shutil.copy(srcFile, dstFile)
         elif os.path.isdir(srcFile):
             srcFiles = os.listdir(srcFile)
@@ -166,7 +166,7 @@ def Copy(src, dst):
                 d = os.path.join(dst, f)
                 try:
                     Copy(s, d)
-                except (IOError, os.error), why:
+                except (IOError, os.error) as why:
                     raise InstallError("Can't copy %s to %s: %s"\
                           % (repr(s), repr(d), str(why)))
         elif not usingWildcards:
@@ -176,7 +176,7 @@ def Copy(src, dst):
 def _RmTree_OnError(rmFunction, filePath, excInfo):
     if excInfo[0] == OSError:
         # presuming because file is read-only
-        os.chmod(filePath, 0777)
+        os.chmod(filePath, 0o777)
         rmFunction(filePath)
 
 def RmTree(dirname):

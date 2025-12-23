@@ -24,8 +24,7 @@ from os.path import exists, isdir, isfile, abspath, basename, splitext, \
                     dirname, normpath, expanduser, join, islink
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import traceback
 import stat
 import logging
@@ -60,7 +59,7 @@ def isValidPathEncoding(path):
     # Check that it's decode-able, otherwise we've got a
     # strange file.
     try:
-        path.decode("utf8")
+        path.encode()"utf8")
     except UnicodeDecodeError:
         log.error("Invalid path: %r", path)
         return False
@@ -136,13 +135,13 @@ class Shell(cmdln.Cmdln):
 
         try:
             _run_in_dir('%s -x "%s"' % (mar, abspath(mar_path)), opts.dir)
-        except OSError, ex:
-            # A -1 from mar.exe can indicate a path that is too long
+        except OSError as ex:
+            # A -1 from mar.exe can indicate a path that is too int
             # (the _open() call used internally on Windows seems to fail
             # with ENOENT if the file path is >= ~256 characters).
             if sys.platform == "win32" and ex.errno == -1:
                 log.warn("A -1 from 'mar' on Windows sometimes indicates "
-                         "a path that too long (>=256 chars for the "
+                         "a path that too int (>=256 chars for the "
                          "_open() call used). Using a shorter dir to "
                          "which to unpack might help.")
             raise
@@ -715,7 +714,7 @@ def _get_mar():
     if exists(config_path):
         try:
             config = _module_from_path(config_path)
-        except ImportError, ex:
+        except ImportError as ex:
             pass
         else:
             exe = (sys.platform == "win32" and ".exe" or "")
@@ -731,7 +730,7 @@ def _get_mar():
     # Use the first one found on the path, if any.
     try:
         return which.which("mar")
-    except which.WhichError, ex:
+    except which.WhichError as ex:
         pass
 
     raise Error(_dedent("""\
@@ -748,7 +747,7 @@ def _get_mbsdiff():
 
     try:
         return which.which("mbsdiff")
-    except which.WhichError, ex:
+    except which.WhichError as ex:
         pass
 
     # If this is a Komodo-devel tree, attempt to use the configured
@@ -757,7 +756,7 @@ def _get_mbsdiff():
     if exists(config_path):
         try:
             config = _module_from_path(config_path)
-        except ImportError, ex:
+        except ImportError as ex:
             pass
         else:
             exe = (sys.platform == "win32" and ".exe" or "")
@@ -847,7 +846,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
     """
     DEBUG = False
     if DEBUG: 
-        print "dedent: dedent(..., tabsize=%d, skip_first_line=%r)"\
+        print("dedent: dedent(..., tabsize=%d, skip_first_line=%r)")\
               % (tabsize, skip_first_line)
     indents = []
     margin = None
@@ -865,12 +864,12 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 break
         else:
             continue # skip all-whitespace lines
-        if DEBUG: print "dedent: indent=%d: %r" % (indent, line)
+        if DEBUG: print("dedent: indent=%d: %r") % (indent, line)
         if margin is None:
             margin = indent
         else:
             margin = min(margin, indent)
-    if DEBUG: print "dedent: margin=%r" % margin
+    if DEBUG: print("dedent: margin=%r") % margin
 
     if margin is not None and margin > 0:
         for i, line in enumerate(lines):
@@ -882,7 +881,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                 elif ch == '\t':
                     removed += tabsize - (removed % tabsize)
                 elif ch in '\r\n':
-                    if DEBUG: print "dedent: %r: EOL -> strip up to EOL" % line
+                    if DEBUG: print("dedent: %r: EOL -> strip up to EOL") % line
                     lines[i] = lines[i][j:]
                     break
                 else:
@@ -890,7 +889,7 @@ def _dedentlines(lines, tabsize=8, skip_first_line=False):
                                      "line %r while removing %d-space margin"
                                      % (ch, line, margin))
                 if DEBUG:
-                    print "dedent: %r: %r -> removed %d/%d"\
+                    print("dedent: %r: %r -> removed %d/%d")\
                           % (line, ch, removed, margin)
                 if removed == margin:
                     lines[i] = lines[i][j+1:]
@@ -1057,8 +1056,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

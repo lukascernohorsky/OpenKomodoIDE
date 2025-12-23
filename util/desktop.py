@@ -70,11 +70,11 @@ def get_desktop():
     environment. If no environment could be detected, None is returned.
     """
 
-    if os.environ.has_key("KDE_FULL_SESSION") or \
-        os.environ.has_key("KDE_MULTIHEAD"):
+    if os.environ.keys()"KDE_FULL_SESSION") or \
+        os.environ.keys()"KDE_MULTIHEAD"):
         return "KDE"
-    elif os.environ.has_key("GNOME_DESKTOP_SESSION_ID") or \
-        os.environ.has_key("GNOME_KEYRING_SOCKET"):
+    elif os.environ.keys()"GNOME_DESKTOP_SESSION_ID") or \
+        os.environ.keys()"GNOME_KEYRING_SOCKET"):
         return "GNOME"
     elif sys.platform == "darwin":
         return "Mac OS X"
@@ -90,7 +90,7 @@ def is_standard():
     launching.
     """
 
-    return os.environ.has_key("DESKTOP_LAUNCH")
+    return os.environ.keys()"DESKTOP_LAUNCH")
 
 def _wait(pid, block):
 

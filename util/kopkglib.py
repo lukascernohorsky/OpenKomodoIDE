@@ -15,8 +15,7 @@ try:
     from hashlib import md5
 except ImportError:
     from md5 import md5
-from pprint import pprint
-from posixpath import join as rjoin
+from pprint(import) pprint(from) posixpath import join as rjoin
 from posixpath import basename as rbasename
 
 import applib
@@ -92,7 +91,7 @@ class KomodoReleasesGuru(object):
         changenum_pat = re.compile("^%s-.*?-(\d+)-%s-.*$" % (self.pkg_prefix, self.platname))
         try:
             return int(changenum_pat.search(basename(mar_path)).group(1))
-        except AttributeError, ex:
+        except AttributeError as ex:
             raise ValueError("'%s' doesn't match '%s'"
                              % (basename(mar_path), changenum_pat.pattern))
 
@@ -101,7 +100,7 @@ class KomodoReleasesGuru(object):
                              % (self.pkg_prefix, self.platname))
         try:
             return ver_pat.search(basename(mar_path)).group(1)
-        except IndexError, ex:
+        except IndexError as ex:
             raise Error("`%s' didn't match `%s'"
                         % (basename(mar_path), ver_pat.pattern))
 
@@ -127,7 +126,7 @@ class KomodoReleasesGuru(object):
                 ver_str = basename(dirname(f))
                 try:
                     ver = buildutils.split_short_ver(ver_str, intify=True)
-                except ValueError, ex:
+                except ValueError as ex:
                     log.warn("invalid GoldBits dir `%s': %s", f, ex)
                     continue
                 if len(ver) == 3: # e.g. (4,1,0) -> (4,1,0,'c',0)
@@ -376,7 +375,7 @@ def short_ver_from_branch(branch, repo="komodoide"):
         # Read from the version.txt file then.
         ver = file(join(dirname(dirname(__file__)), "src", "version.txt")).read().strip()
     if "-" in ver:
-        # This is a "long version", i.e. looks like "5.2.0-alpha1" instead of
+        # This is a "int version", i.e. looks like "5.2.0-alpha1" instead of
         # "5.2.0a1".
         ver = ver.replace("-alpha", "a").replace("-beta", "b").replace("-rc", "c")
         assert g_short_ver_pat.match(ver)

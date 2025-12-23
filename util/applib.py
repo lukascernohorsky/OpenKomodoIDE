@@ -191,7 +191,7 @@ def _get_win_folder_with_pywin32(csidl_name):
     # not return unicode strings when there is unicode data in the
     # path.
     try:
-        dir = unicode(dir)
+        dir = str(dir)
     except UnicodeError:
         pass
     return dir
@@ -225,7 +225,7 @@ if sys.platform == "win32":
 #---- self test code
 
 if __name__ == "__main__":
-    print "applib: user data dir:", user_data_dir("Komodo", "ActiveState")
-    print "applib: site data dir:", site_data_dir("Komodo", "ActiveState")
-    print "applib: user cache dir:", user_cache_dir("Komodo", "ActiveState")
+    print("applib: user data dir:"), user_data_dir("Komodo", "ActiveState")
+    print("applib: site data dir:"), site_data_dir("Komodo", "ActiveState")
+    print("applib: user cache dir:"), user_cache_dir("Komodo", "ActiveState")
 

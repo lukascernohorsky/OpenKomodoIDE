@@ -272,7 +272,7 @@ class Report(object):
         return self.state == "ok"
 
     def __iter__(self):
-        for antivirus, report in self.scans.iteritems():
+        for antivirus, report in self.scans.items()):
             yield (
                 (antivirus, report["version"], report["update"]),
                 report["result"],
@@ -327,7 +327,7 @@ A resource can be:
     action = arguments.pop(0)
 
     if action.lower() not in ("scan", "get", ):
-        print "ERROR: unknown action"
+        print("ERROR: unknown action")
         return -1
 
     resources = []
@@ -342,17 +342,17 @@ A resource can be:
         try:
             if action.lower() == "scan":
                 report = v.scan(resource, reanalyze = True)
-                print "%s: Scan started: %s" % (resource, report, )
+                print("%s: Scan started: %s") % (resource, report, )
                 report.join()
                 q.put((resource, report))
-                print "%s: Scan finished: %s" % (resource, report, )
+                print("%s: Scan finished: %s") % (resource, report, )
 
             elif action.lower() == "get":
                 report = v.get(resource)
                 q.put((resource, report))
         
         except VirusTotal.ApiError:
-            print "VirusTotal returned a non correct response. It may be because the script does too many requests at the minute. See the parameter -l"
+            print("VirusTotal returned a non correct response. It may be because the script does too many requests at the minute. See the parameter -l")
 
     threads = []
     for resource in resources:
@@ -373,17 +373,15 @@ A resource can be:
     while not q.empty():
         resource, report = q.get()
         
-        print "=== %s ===" % (resource, )
+        print("=== %s ===") % (resource, )
 
         if report is None:
-            print "No report is available."
+            print("No report is available.")
             return 0
 
-        print "Report:"
+        print("Report:")
         for antivirus, virus in report:
-            print "- %s (%s, %s):\t%s" % (antivirus[0], antivirus[1], antivirus[2], virus, )
+            print("- %s (%s, %s):\t%s") % (antivirus[0], antivirus[1], antivirus[2], virus, )
 
-        print
-
-if __name__ == "__main__":
+        print(if) __name__ == "__main__":
     main()

@@ -30,8 +30,7 @@ import sys
 import getopt
 import types
 import re
-import pprint
-import logging
+import pprint(import) logging
 
 log = logging.getLogger("dtdgen")
 
@@ -141,8 +140,8 @@ def dtdcollect(xmlfile, dtdfile):
                         # lowercase the first letter
                         words[0] = words[0][0].lower()+words[0][1:]
                     entityName = words[0] + "".join([w[0].upper()+w[1:] for w in words[1:]])
-                except IndexError, e:
-                    print "failure on name %s" % entityVal
+                except IndexError as e:
+                    print("failure on name %s") % entityVal
                     raise
             elif entityVal in specialNames:
                 entityName = specialNames[entityVal]
@@ -153,8 +152,8 @@ def dtdcollect(xmlfile, dtdfile):
                         # lowercase the first letter
                         words[0] = words[0][0].lower()+words[0][1:]
                     entityName = words[0] + "".join([w[0].upper()+w[1:] for w in words[1:]])
-                except IndexError, e:
-                    print "failure on name %s" % entityVal
+                except IndexError as e:
+                    print("failure on name %s") % entityVal
                     raise
             
             if entityName[0].isdigit():
@@ -165,7 +164,7 @@ def dtdcollect(xmlfile, dtdfile):
                     raise Exception()
                 entityId = "%s.%s" % (entityName, attr)
             node.set(attr, "&%s;" % entityId)
-            #print "%s=%s" % (entityId, entityVal)
+            #print("%s=%s") % (entityId, entityVal)
 
             entities[entityId]=entityVal
             entityAttr = "%s=(\"|')%s\\1" % (attr, re.escape(entityVal))
@@ -268,7 +267,7 @@ def main(argv):
     try:
         optlist, args = getopt.getopt(argv[1:], "hVvo:ifdc:",
             ["help", "version", "verbose", "force", "dry-run", "chrome"])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         log.error("%s. Your invocation was: %s\n"\
                          % (msg, argv))
         log.error("See 'dtdgen --help'.\n")
@@ -312,11 +311,11 @@ def main(argv):
     xmlfile, dtdfile = args
     if os.path.isdir(xmlfile):
         if not os.path.isdir(dtdfile):
-            print "second argument must be the path to the locale directory"
+            print("second argument must be the path to the locale directory")
             sys.exit(-1)
         for root, dirs, files in os.walk(xmlfile):
             print 20*'-'
-            print root
+            print(root)
             for dname in dirs:
                 if dname == "test":
                     del dirs[dirs.index(dname)]
@@ -352,7 +351,7 @@ def main(argv):
     
         try:
             dtdgen(xmlfile, dtdfile, outfile, force)
-        except DTDGenError, ex:
+        except DTDGenError as ex:
             log.exception(ex)
 
 if __name__ == "__main__":

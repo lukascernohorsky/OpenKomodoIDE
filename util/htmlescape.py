@@ -73,7 +73,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "Vvha",
             ["version", "verbose", "help", "attribute"])
-    except getopt.GetoptError, ex:
+    except getopt.GetoptError as ex:
         log.error(str(ex))
         log.error("Try `htmlescape --help'.")
         return 1
@@ -84,7 +84,7 @@ def main(argv):
             return
         elif opt in ("-V", "--version"):
             ver = '.'.join([str(part) for part in _version_])
-            print "htmlescape %s" % ver
+            print("htmlescape %s") % ver
             return
         elif opt in ("-v", "--verbose"):
             log.setLevel(logging.DEBUG)
@@ -98,11 +98,10 @@ def main(argv):
         content = sys.stdin.read()
         escaped = htmlescape(content, attribute)
         sys.stdout.write(escaped)
-    except HTMLEscapeError, ex:
+    except HTMLEscapeError as ex:
         log.error(str(ex))
         if log.isEnabledFor(logging.DEBUG):
-            print
-            import traceback
+            print(import) traceback
             traceback.print_exception(*sys.exc_info())
         return 1
     except KeyboardInterrupt:

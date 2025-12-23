@@ -42,7 +42,7 @@ while theRest:
         fin.close()
     templateMap[key] = value
 
-print "Creating '%s' from template file '%s'.\n" % (outFileName, inFileName)
+print("Creating '%s' from template file '%s'.\n") % (outFileName, inFileName)
 
 # process file
 fin = open(inFileName, "r")

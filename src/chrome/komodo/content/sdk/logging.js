@@ -525,18 +525,17 @@ Logger.prototype.report = function(e, message, level = "EXCEPTION") {
                         stacktrace: e.stack ? require("ko/console")._parseStack(e.stack) : null
                     }
                 ],
-                user: {
-                    id: prefs.getString('analytics_ga_id', "")
-                }
+                user: {}
             }
         ]
     }
 
-    require("ko/ajax").request({
-        url: "https://notify.bugsnag.com",
-        method: 'POST',
-        body: JSON.stringify(payload)
-    });
+    // Bugsnag error reporting has been disabled
+    // require("ko/ajax").request({
+    //     url: "https://notify.bugsnag.com",
+    //     method: 'POST',
+    //     body: JSON.stringify(payload)
+    // });
 }
 
 const getStack = exports.getStack = function(ex=null, skipCount=0, indentWidth=0)

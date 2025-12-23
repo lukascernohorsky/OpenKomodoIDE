@@ -22,11 +22,10 @@ __version__ = '.'.join(map(str, __version_info__))
 
 import os
 from os.path import exists, join, basename, expanduser, splitext
-from urlparse import urljoin
+from urllib.parse import urljoin
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import traceback
 import logging
 import optparse
@@ -365,7 +364,7 @@ def _join_short_ver(ver_tuple, pad_zeros=None):
 
 # Recipe: query_yes_no (1.0)
 def _query_yes_no(question, default="yes"):
-    """Ask a yes/no question via raw_input() and return their answer.
+    """Ask a yes/no question via input() and return their answer.
     
     "question" is a string that is presented to the user.
     "default" is the presumed answer if the user just hits <Enter>.
@@ -387,7 +386,7 @@ def _query_yes_no(question, default="yes"):
 
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
             return default
         elif choice in valid.keys():
@@ -501,8 +500,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

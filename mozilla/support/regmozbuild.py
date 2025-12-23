@@ -226,7 +226,7 @@ class _MozBuildRegistry:
                             break
                     elif getattr(config, attr) != value:
                         break
-                except AttributeError, ex:
+                except AttributeError as ex:
                     # This attr is a likely a new configuration items
                     # since this mozbuild config was registered.
                     break
@@ -293,8 +293,7 @@ class _MozBuildRegistry:
 
     def unregister_zombies(self):
         """Unregister zombie builds (those whose builddir is gone)."""
-        from pprint import pprint
-        pprint(self.configs)
+        from pprint(import) pprint(pprint)(self.configs)
         for build_num, config in self.configs.items():
             obj_dir_path = join(config.buildDir, 
                                 _srcTreeName_from_config(config),

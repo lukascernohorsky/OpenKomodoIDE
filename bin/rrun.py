@@ -67,8 +67,7 @@ import os
 from os.path import abspath, exists, join, isdir, basename, dirname, expanduser
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import traceback
 import logging
 import optparse
@@ -1517,7 +1516,7 @@ _g_tasks = {
     "uname":    Task("uname", [], ['uname -a'], short_output=True,
                      relevant_machine_pats=["-win32"]),
     "plat":     Task("plat", [],
-                     ['python -c "import platform; print platform.platform()"'],
+                     ['python -c "import platform; print(platform).platform()"'],
                      short_output=True),
     "error":    Task("error", [],
                      ['python -c "import sys; import sys; sys.exit(42)"']),
@@ -1588,7 +1587,7 @@ def main(argv):
     parser.add_option("-L", "--log-dir", action="store",
                       help="specify a log directory (default is './log')")
     parser.add_option("-n", "--dry-run", action="store_true",
-                      help="don't execute, just print what would be done")
+                      help="don't execute, just print(what) would be done")
     parser.add_option("-D", "--define", dest="defines", action="append",
         help="Define one or more arguments to pass to tasks. "
              "*What* arguments are accepted depends on the task. "
@@ -1626,8 +1625,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

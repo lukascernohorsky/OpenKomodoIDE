@@ -26,12 +26,11 @@ __version__ = '.'.join(map(str, __version_info__))
 import os
 from os.path import exists, join, basename, expanduser, splitext
 from posixpath import basename as ubasename
-from urlparse import urljoin
+from urllib.parse import urljoin
 import urllib2
 import sys
 import re
-from pprint import pprint
-from glob import glob
+from pprint(import) pprint(from) glob import glob
 import traceback
 import logging
 import optparse
@@ -105,7 +104,7 @@ def koup(seeker, channel=None, dry_run=False):
                         seeker)
                     _set_update_channel(install_dir, channel)
                 return
-        except Error, ex:
+        except Error as ex:
             preamble = """\
 -------------
 There was an error determining if your currently installed Komodo is
@@ -352,11 +351,11 @@ _a_pat = re.compile(r'<a href="(.*?)">.*?</a>')
 def _links_from_url(url):
     try:
         html = urllib2.urlopen(url).read()
-    except urllib2.HTTPError, ex:
+    except urllib2.HTTPError as ex:
         if ex.code == 404:
             raise Error("`%s' not found (HTTP 404)" % url)
         raise
-    except urllib2.URLError, ex:
+    except urllib2.URLError as ex:
         if ex.args and ex.args[0] and ex.args[0][0] == 7:
             # socket error: No address associated with nodename
             raise Error("can't resolve %s" % urlparse.urlparse(url)[1])
@@ -376,7 +375,7 @@ def _capture_status(argv):
 
 # Recipe: query_user (0.2+) in /home/trentm/tm/recipes/cookbook
 def _query_user(preamble, default=None, prompt="> ", validate=None):
-    """Ask the user a question using raw_input() and looking something
+    """Ask the user a question using input() and looking something
     like this:
 
         <preamble>
@@ -432,7 +431,7 @@ def _query_user(preamble, default=None, prompt="> ", validate=None):
 ##""" % indented(default or "<empty>"))
     while True:
         if True:
-            answer = raw_input(prompt)
+            answer = input(prompt)
         else:
             sys.stdout.write(prompt)
             sys.stdout.flush()
@@ -488,7 +487,7 @@ def _is_wanted_komodo_different(ver_info, pretty_product, install_info):
         raise Error("error running '%s'" % cmd)
     try:
         dom = minidom.parseString(ver_xml)
-    except ExpatError, ex:
+    except ExpatError as ex:
         raise Error("could not determine version from `komodo --xml-version` "
                     "output: %r (%s)" % (ver_xml, ex))
     version_node = dom.getElementsByTagName("version")[0]
@@ -595,7 +594,7 @@ def _install_komodo(seeker, install_info=None, dry_run=False, channel=None):
                     _run('rd /s/q "%s"' % tmp_dir, log.debug)
                 else:
                     _run('rm -rf "%s"' % tmp_dir, log.debug)
-            except EnvironmentError, ex:
+            except EnvironmentError as ex:
                 log.warn("could not remove temp working dir '%s': %s",
                          tmp_dir, ex)
 
@@ -637,7 +636,7 @@ def _uninstall_komodo(ver, pretty_product, install_info,
             _run('rm -rf "%s"' % install_dir, log.debug)
 
 def _reporthook(numblocks, blocksize, filesize, url=None):
-    #print "reporthook(%s, %s, %s)" % (numblocks, blocksize, filesize)
+    #print("reporthook(%s, %s, %s)") % (numblocks, blocksize, filesize)
     base = os.path.basename(url)
     #XXX Should handle possible filesize=-1.
     try:
@@ -719,7 +718,7 @@ def _is_komodo_installed(ver, product, pretty_product):
         }
         try:
             return product_code_from_registry_id[registry_id]
-        except KeyError, ex:
+        except KeyError as ex:
             raise Error("don't know MSI ProductCode for %s %s: "
                         "you'll need to manually uninstall your Komodo "
                         "and then re-run this script"
@@ -1112,8 +1111,7 @@ if __name__ == "__main__":
     except:
         exc_info = sys.exc_info()
         if log.isEnabledFor(logging.DEBUG):
-            print
-            traceback.print_exception(*exc_info)
+            print(traceback).print_exception(*exc_info)
         else:
             if hasattr(exc_info[0], "__name__"):
                 #log.error("%s: %s", exc_info[0].__name__, exc_info[1])

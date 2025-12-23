@@ -3,7 +3,7 @@ Module to get the mozilla tree corresponding to a version number
 """
 
 import logging
-import urllib2, re, subprocess
+import urllib.request, urllib.error, re, subprocess
 import os.path
 import time
 from subprocess import check_call
@@ -31,8 +31,8 @@ def genTagsFromTrees(trees):
         # Hg isn't the most stable, so give it a few tries:
         for tries in range(5):
             try:
-                response = urllib2.urlopen(tags_url)
-            except urllib2.HTTPError:
+                response = urllib.request.urlopen(tags_url)
+            except urllib.error.HTTPError:
                 continue
             else:
                 break
@@ -98,7 +98,7 @@ def getTreeFromVersion(version=None):
             if ver == wanted_version:
                 log.debug("Found exact match in %s: %s", tree, tag)
                 return (tree, tag)
-        except ValueError, ex:
+        except ValueError as ex:
             # Not a correctly formatter version.
             continue
         if tree == "mozilla-release":

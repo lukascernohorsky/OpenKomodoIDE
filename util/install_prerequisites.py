@@ -487,7 +487,7 @@ def install_languages(languages):
         try:
             lang.make()
             results.append((lang, None))
-        except Exception, ex:
+        except Exception as ex:
             lang.log.exception(ex)
             results.append((lang, ex))
         except KeyboardInterrupt:
@@ -503,30 +503,30 @@ def install_languages(languages):
     color_off = sys.platform.startswith("win") and "" or "\x1B[39m"
 
     # Print the paths.
-    print ""
+    print("")
     for lang, exception in results:
         if exception is None:
             assert exists(lang.install_bin_dir), "Bin dir does not exist: %r" % (lang.install_bin_dir, )
-            print "export PATH=$PATH:%s" % (lang.install_bin_dir, )
-    print ""
+            print("export PATH=$PATH:%s") % (lang.install_bin_dir, )
+    print("")
 
     # Print the installation results.
-    print "Results:"
+    print("Results:")
     for lang, exception in results:
         if exception is None:
-            print "  %s%-12s %sOK%s%s" % (bold_on, lang.pkg_name, color_green, 
+            print("  %s%-12s %sOK%s%s") % (bold_on, lang.pkg_name, color_green, 
                                        color_off, bold_off)
         elif isinstance(exception, InstallWarning):
-            print "  %s%-12s %sWarning%s%s - %s" % (bold_on, lang.pkg_name,
+            print("  %s%-12s %sWarning%s%s - %s") % (bold_on, lang.pkg_name,
                                        color_cyan, color_off, bold_off, exception.msg)
         elif isinstance(exception, InstallException):
-            print "  %s%-12s %sError%s%s - %s" % (bold_on, lang.pkg_name,
+            print("  %s%-12s %sError%s%s - %s") % (bold_on, lang.pkg_name,
                                        color_red, color_off, bold_off, exception.msg)
             if exception.stderr:
                 stderr = "    " + "\n    ".join(exception.stderr.split("\n"))
-                print stderr
+                print(stderr)
         else:
-            print "  %s%-12s %sError%s%s - %s" % (bold_on, lang.pkg_name,
+            print("  %s%-12s %sError%s%s - %s") % (bold_on, lang.pkg_name,
                                        color_red, color_off, bold_off, exception)
 
 # ==== Main ==== #

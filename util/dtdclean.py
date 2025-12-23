@@ -214,7 +214,7 @@ def main(argv):
     try:
         optlist, args = getopt.getopt(argv[1:], "hVvo:if",
             ["help", "version", "verbose", "force"])
-    except getopt.GetoptError, msg:
+    except getopt.GetoptError as msg:
         sys.stderr.write("dtdclean: error: %s. Your invocation was: %s\n"\
                          % (msg, argv))
         sys.stderr.write("See 'dtdclean --help'.\n")
@@ -258,7 +258,7 @@ def main(argv):
 
     try:
         dtdclean(xmlfile, dtdfile, outfile, force)
-    except DTDCleanError, ex:
+    except DTDCleanError as ex:
         if log.isDebugEnabled():
             import traceback
             traceback.print_exc(file=sys.stderr)

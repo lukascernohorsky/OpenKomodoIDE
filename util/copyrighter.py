@@ -219,7 +219,7 @@ http://www.mozilla.org/MPL/
                             break
                     else:
                         lineTo += len(self.rxMPLBriefLicense)
-                        #print "  lineTo: %r" % (lines[lineTo], )
+                        #print("  lineTo: %r") % (lines[lineTo], )
                 self.replace(fileCommenter, lines, lineNo, lineTo)
             return True
         return False
@@ -395,7 +395,7 @@ class CopyrighterFileHandler:
             # empty, we simply remove the previous line too.
             if lineFrom > 0:
                 prevLine = lines[lineFrom -1].strip()
-                #print "  Previous line: %r" % (prevLine, )
+                #print("  Previous line: %r") % (prevLine, )
                 if prevLine.startswith(self.commentStart) and not \
                    prevLine.endswith(self.commentStart):
                     leftOver = prevLine[len(self.commentStart):]
@@ -406,18 +406,18 @@ class CopyrighterFileHandler:
                         lineFrom -= 1
                         inMiddleOfComment = False
         if inMiddleOfComment:
-            print "Expected comment style %r, got %r in %r" % (
+            print("Expected comment style %r, got %r in %r") % (
                     self.commentStart, line[:10] + "...", self.filename)
 
         # If the last line we replace does not end the comment, we need
         # to keep the comment going on the next line!
         if not singleLineCommentStyle and \
            not lines[lineTo-1].strip().endswith(self.commentEnd):
-            #print "Comment trails on in %r" % (self.filename, )
-            #print "  %r" % (lines[lineTo-1], )
-            #print "  %r" % (lines[lineTo], )
-            #print "  %r" % (lines[lineTo+1], )
-            #print "  %r" % (lines[lineTo+2], )
+            #print("Comment trails on in %r") % (self.filename, )
+            #print("  %r") % (lines[lineTo-1], )
+            #print("  %r") % (lines[lineTo], )
+            #print("  %r") % (lines[lineTo+1], )
+            #print("  %r") % (lines[lineTo+2], )
             if lineTo < len(lines):
                 nextLine = lines[lineTo].lstrip()
                 newlines.append(newline)
@@ -437,7 +437,7 @@ class CopyrighterFileHandler:
         while lineNo < num_lines and (not linesCheckUpTo or lineNo < linesCheckUpTo):
             line = lines[lineNo]
             if len(line) > maxLineLength:
-                log.info("%s%s:%s Line is too long, ignoring it.",
+                log.info("%s%s:%s Line is too int, ignoring it.",
                          logpadding, self.filename, lineNo+1)
             else:
                 # see if can find a copyright handler for this
@@ -822,7 +822,7 @@ if __name__ == "__main__":
         for filename in args:
             AddCopyright(filename, opts.recursive, opts.save, opts.update_only, opts.backup_files, opts.num_lines, opts.max_line_length)
 
-        print "Results:"
+        print("Results:")
 
         print("  Skipped paths     : %d" % (len(_g_skipped_paths)))
         if opts.show_files_changed:
