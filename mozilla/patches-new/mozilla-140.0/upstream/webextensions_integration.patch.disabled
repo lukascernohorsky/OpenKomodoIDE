@@ -1,0 +1,65 @@
+--- toolkit/components/extensions/moz.build.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/components/extensions/moz.build	2024-01-01 00:00:00.000000000 +0000
+@@ -123,6 +123,12 @@ if CONFIG['MOZ_WEBEXTENSIONS']:
+     SOURCES += ['Extension.jsm']
+     DEFINES['MOZ_WEBEXTENSIONS'] = True
+ 
++if CONFIG['MOZ_KOMODO'] and CONFIG['MOZ_WEBEXTENSIONS']:
++    DEFINES['MOZ_KOMODO_WEBEXTENSIONS'] = True
++    SOURCES += ['komodo/extensions/KomodoExtensions.cpp']
++    EXPORTS += ['komodo/extensions/KomodoExtensions.h']
++    CXXFLAGS += ['-DMOZ_KOMODO_WEBEXTENSIONS']
++
+ # Original WebExtensions configuration continues...
+ --- toolkit/components/extensions/Extension.jsm.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/components/extensions/Extension.jsm	2024-01-01 00:00:00.000000000 +0000
+@@ -456,6 +456,12 @@ class Extension extends ExtensionData {
+     this.id = extension.id;
+     this.version = extension.version;
+ 
++#ifdef MOZ_KOMODO_WEBEXTENSIONS
++    // Komodo WebExtensions integration for Firefox 140 ESR
++    this.komodoExtension = new KomodoExtensionWrapper(this);
++    KomodoExtensions.InitializeExtension(this);
++#endif
++
+     // Original initialization continues...
+ }
+ 
+@@ -789,6 +795,12 @@ class Extension extends ExtensionData {
+     this.emit("shutdown");
+     this.cleanup();
+ 
++#ifdef MOZ_KOMODO_WEBEXTENSIONS
++    // Cleanup Komodo WebExtensions integration
++    KomodoExtensions.CleanupExtension(this);
++    this.komodoExtension.cleanup();
++#endif
++
+     // Original cleanup continues...
+ }
+ --- toolkit/moz.configure.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/moz.configure	2024-01-01 00:00:00.000000000 +0000
+@@ -345,6 +345,12 @@ option('--enable-webextensions',
+        help='Enable WebExtensions support')
+ 
++# Komodo WebExtensions integration
++if depends('--enable-komodo', '--enable-webextensions')(lambda komodo, webext: komodo and webext):
++    set_config('MOZ_KOMODO_WEBEXTENSIONS', True)
++    set_define('MOZ_KOMODO_WEBEXTENSIONS', True)
++    add_old_configure_assignment('MOZ_KOMODO_WEBEXTENSIONS', True)
++
+ # Original WebExtensions configuration continues...
+ --- browser/components/extensions/moz.build.orig	2024-01-01 00:00:00.000000000 +0000
++++ browser/components/extensions/moz.build	2024-01-01 00:00:00.000000000 +0000
+@@ -45,6 +45,12 @@ if CONFIG['MOZ_WEBEXTENSIONS']:
+     SOURCES += ['ext-browser.js']
+     DEFINES['MOZ_WEBEXTENSIONS'] = True
+ 
++if CONFIG['MOZ_KOMODO'] and CONFIG['MOZ_WEBEXTENSIONS']:
++    DEFINES['MOZ_KOMODO_BROWSER_EXTENSIONS'] = True
++    SOURCES += ['komodo/extensions/KomodoBrowserExtensions.cpp']
++    EXPORTS += ['komodo/extensions/KomodoBrowserExtensions.h']
++    CXXFLAGS += ['-DMOZ_KOMODO_BROWSER_EXTENSIONS']
++
+ # Original browser extensions configuration continues...

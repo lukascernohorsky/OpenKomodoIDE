@@ -658,13 +658,13 @@ def GetOptionMaps(items):
                     conflictingShort = shortOpt[0:-1]
                 else:
                     conflictingShort = shortOpt + ":"
-                if shortMap.keys()conflictingShort):
+                if conflictingShort in shortMap.keys():
                     raise ConfigureError("Short option string '%s' for "\
                         "item '%s' conflicts with short option '%s' from "\
                         "item(s) %s\n" % (shortOpt, item.name,\
                         conflictingShort,\
                         [item.name for item in shortMap[conflictingShort]]))
-                elif shortMap.keys()shortOpt):
+                elif shortOpt in shortMap.keys():
                     shortMap[shortOpt].append(item)
                 else:
                     shortMap[shortOpt] = [item]
@@ -673,12 +673,12 @@ def GetOptionMaps(items):
                     conflictingLong = longOpt[0:-1]
                 else:
                     conflictingLong = longOpt + "="
-                if longMap.keys()conflictingLong):
+                if conflictingLong in longMap.keys():
                     raise ConfigureError("Long option string '%s' for "\
                         "item '%s' conflicts with int option '%s' from "\
                         "item(s) %s\n" % (longOpt, item.name, conflictingLong,\
                         [item.name for item in longMap[conflictingLong]]))
-                elif longMap.keys()longOpt):
+                elif longOpt in longMap.keys():
                     longMap[longOpt].append(item)
                 else:
                     longMap[longOpt] = [item]
@@ -715,12 +715,12 @@ def Configure(options, blackFileName, blackFile):
         raise ConfigureError(msg)
     for opt,optarg in optlist:
         if opt.startswith("--"):
-            if longMap.keys()opt[2:]):
+            if opt[2:] in longMap.keys():
                 itemsThatCare = longMap[ opt[2:] ]
             else:
                 itemsThatCare = longMap[ opt[2:]+"=" ]
         else:
-            if shortMap.keys()opt[1:]):
+            if opt[1:] in shortMap.keys():
                 itemsThatCare = shortMap[ opt[1:] ]
             else:
                 itemsThatCare = shortMap[ opt[1:]+":" ]

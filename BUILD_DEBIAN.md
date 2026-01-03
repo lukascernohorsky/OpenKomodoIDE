@@ -42,7 +42,7 @@ sudo apt update
 sudo apt upgrade -y
 
 # Install basic build tools
-sudo apt install -y build-essential git mercurial python3 python3-dev 
+sudo apt install -y build-essential git python3 python3-dev 
     python3-pip python3-venv libssl-dev libffi-dev zlib1g-dev 
     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm 
     libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev 
@@ -87,7 +87,7 @@ sudo apt install -y zip unzip tar gzip bzip2 xz-utils file
     cmake ninja-build ccache
 
 # Install version control systems
-sudo apt install -y git mercurial subversion
+sudo apt install -y git subversion
 ```
 
 ### ARM64 Specific Dependencies
@@ -99,6 +99,18 @@ sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 ```
 
 ## Build Process
+
+### Using Git Instead of Mercurial
+
+By default, the build system uses Mercurial to download Firefox source code. You can configure it to use Git instead:
+
+```bash
+# Set environment variables to use Git
+export MOZ_SOURCE_REPO=https://github.com/mozilla-firefox/firefox.git
+export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+```
+
+This will download the source code from GitHub instead of Mercurial repositories.
 
 ### Step 1: Clone the Repository
 

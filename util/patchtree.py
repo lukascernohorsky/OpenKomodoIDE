@@ -126,8 +126,7 @@ import tempfile
 import logging
 import getopt
 import imp
-import pprint
-import glob
+import pprint(import) glob
 import types
 try:
     from hashlib import md5
@@ -175,6 +174,8 @@ def _run(argv, cwd=None, stdin=None):
         p = subprocess.Popen(argv, cwd=cwd, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, stdin=subprocess.PIPE)
         if stdin is not None:
+            if isinstance(stdin, str):
+                stdin = stdin.encode('utf-8')
             p.stdin.write(stdin)
         p.stdin.close()
         stdout = p.stdout.read()
@@ -183,6 +184,8 @@ def _run(argv, cwd=None, stdin=None):
     elif subprocess.__name__ == "process":
         p = subprocess.ProcessOpen(argv, cwd=cwd)
         if stdin is not None:
+            if isinstance(stdin, str):
+                stdin = stdin.encode('utf-8')
             p.stdin.write(stdin)
         p.stdin.close()
         # Shouldn't have to worry about buffer overflow blocking for the
@@ -245,7 +248,7 @@ def _determinePatchesFromDirectory(base, actions, config):
         if hasattr(patchinfo, "remove"):
             retval = patchinfo.remove(config)
             try:
-                if isinstance(retval, basestring):
+                if isinstance(retval, str):
                     raise TypeError
                 retval = iter(retval)
             except TypeError:
@@ -260,7 +263,7 @@ def _determinePatchesFromDirectory(base, actions, config):
         if hasattr(patchinfo, "add"):
             retval = patchinfo.add(config)
             try:
-                if isinstance(retval, basestring):
+                if isinstance(retval, str):
                     raise TypeError
                 retval = iter(retval)
             except TypeError:
@@ -443,7 +446,7 @@ def _getPathsInPatch(patch, argv):
     @returns a tuple of length 2; the first item is the set of files that were
         removed, the second is the set that were added.
     """
-    if isinstance(patch, basestring):
+    if isinstance(patch, str):
         patch = patch.splitlines()
     removed = set()
     added = set()
@@ -577,6 +580,8 @@ def _applyPatch(patchExe, baseDir, patchRelPath, sourceDir, reverse=0,
         argv.append("-R")
     log.debug("run %s in '%s' (stdin '%s')", argv, sourceDir, patchFile)
     stdout, stderr, retval = _run(argv, cwd=sourceDir, stdin=patchContent)
+    if isinstance(stdout, bytes):
+        stdout = stdout.encode()'utf-8', errors='replace')
     sys.stdout.write(stdout)
     sys.stdout.flush()
     if retval:
@@ -974,7 +979,7 @@ def patch(patchesDir, sourceDir, config=None, logDir=None, dryRun=0,
             invalidActions = patchLog.actions[firstInvalidActionIndex:]
 
             if firstInvalidActionIndex > 0:
-                expected_md5 = md5(repr(patchLog.actions)).hexdigest()
+                expected_md5 = md5(repr(patchLog.actions).encode('utf-8')).hexdigest()
                 logFileFullName = join(logDir, logFilename)
                 log.debug("full name: %s", logFileFullName)
                 with open(join(sourceDir, ".patchtree-state"), "a+") as state_file:
@@ -1113,7 +1118,7 @@ actions = %s
                     if len(parts) != 2:
                         continue # invalid state?
                     state[parts[0]] = parts[1]
-            state[logFileFullName] = md5(repr(actions)).hexdigest()
+            state[logFileFullName] = md5(repr(actions).encode('utf-8')).hexdigest()
             with open(join(sourceDir, ".patchtree-state"), "w") as state_file:
                 for k, v in state.items():
                     state_file.write("%s %s\n" % (k, v))

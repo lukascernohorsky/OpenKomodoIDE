@@ -24,6 +24,10 @@ if sys.platform.startswith('win'):
 import black.configure
 from black.configure import ConfigureError
 import tmShUtil
+import logging
+
+# Set up logging
+log = logging.getLogger("bklocal")
 
 sys.path.insert(0, os.path.join("src", "python-sitelib"))
 import which
@@ -208,7 +212,7 @@ def _getDefaultPlatform(linuxDistro=False, macUniversal=True):
     try:
         return _getValidPlatforms(linuxDistro=linuxDistro,
                                   macUniversal=macUniversal)[0]
-    except IndexError, ex:
+    except IndexError as ex:
         raise ConfigureError("cannot build mozilla on this platform: '%s'"
                              % sys.platform)
 
@@ -347,13 +351,22 @@ class SiloedPythonInstallDir(black.configure.std.Datum):
     def _Determine_Do(self):
         from os.path import join
         self.applicable = 1
-        mozDist = black.configure.items["mozDist"].Get()
-        if sys.platform == "darwin":
-            macKomodoAppBuildName = black.configure.items['macKomodoAppBuildName'].Get()
-            self.value = join(mozDist, macKomodoAppBuildName,
-                "Contents", "Frameworks")
+        
+        # For Python 3, use system Python instead of siloed Python
+        siloedPyVer = black.configure.items["siloedPyVer"].Get()
+        if siloedPyVer.startswith("3."):
+            # Use system Python 3 - no siloed directory needed
+            self.value = dirname(sys.executable)
+            log.info("Using system Python %s directory: %s" % (siloedPyVer, self.value))
         else:
-            self.value = join(mozDist, "python")
+            # Legacy Python 2 - use siloed directory
+            mozDist = black.configure.items["mozDist"].Get()
+            if sys.platform == "darwin":
+                macKomodoAppBuildName = black.configure.items['macKomodoAppBuildName'].Get()
+                self.value = join(mozDist, macKomodoAppBuildName,
+                    "Contents", "Frameworks")
+            else:
+                self.value = join(mozDist, "python")
         self.determined = 1
 
 class SiloedPythonBinDir(black.configure.std.Datum):
@@ -418,7 +431,7 @@ class SiloedPythonVersion(black.configure.std.Datum):
                              siloedPythonExeName)
             try:
                 pythonExe = glob.glob(pythonExe)[0]
-            except IndexError, ex:
+            except IndexError as ex:
                 raise black.configure.ConfigureError(
                     "Could not determine %s: `%s' doesn't exist" % (
                     self.desc, pythonExe))
@@ -1079,8 +1092,8 @@ class PythonExe(black.configure.Datum):
                              % python)
         #print "HEXVER: %s" % hexverstr
         hexver = eval(hexverstr)
-        major = int((hexver & 0xff000000L) >> 24)
-        minor = int((hexver & 0x00ff0000L) >> 16)
+        major = int((hexver & 0xff000000) >> 24)
+        minor = int((hexver & 0x00ff0000) >> 16)
         return (major, minor)
 
     def _Determine_Sufficient(self):
@@ -3402,7 +3415,7 @@ class BuildNum(black.configure.Datum):
         # Simplify the possibly-complex svn version.
         try:
             changenum = int(changestr)
-        except ValueError, ex:
+        except ValueError as ex:
             # pull off front number (good enough for our purposes)
             try:
                 changenum = int(re.match("(\d+)", changestr).group(1))

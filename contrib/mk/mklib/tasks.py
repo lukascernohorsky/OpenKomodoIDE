@@ -73,7 +73,7 @@ class TaskType(type):
                 log_makefile_defn("Task", name, frame)
 
 
-class Task(object):
+class Task(object, metaclass=TaskType):
     """Base class for a Makefile.py task.
     Typically a specific task is a subclass of Task. For example:
 
@@ -87,7 +87,6 @@ class Task(object):
     
     See mk's main documentation for more details.
     """
-    __metaclass__ = TaskType
 
     default = False  # set to true to set this as the default task
 
@@ -255,9 +254,7 @@ class FileType(type):
             log_makefile_defn("File", dct["path"], frame)
 
 
-class File(object):
-    __metaclass__ = FileType
-
+class File(object, metaclass=FileType):
     def __init__(self, path, makefile=None, cfg=None):
         # Use absolute paths to guard against process cwd changes.
         path = makefile and normpath(join(makefile.dir, path)) or path
@@ -341,7 +338,7 @@ class TaskOrFileListAccessor(object):
         return rv
     
     def __get__(self, obj, objtype):
-        if isinstance(self._defn, basestring):
+        if isinstance(self._defn, str):
             raise IllegalMakefileError(
                 # '%ss': cheating, I know __str__() endswith an apostrophe
                 "%ss `%s' attribute is a string, it must "
@@ -412,7 +409,7 @@ class FileListAccessor(object):
         if obj is None:
             return None
 
-        if isinstance(self._defn, basestring):
+        if isinstance(self._defn, str):
             raise IllegalMakefileError(
                 # '%ss': cheating, I know __str__() endswith an apostrophe
                 "%ss `%s' attribute is a string, it must "
@@ -462,7 +459,7 @@ class PairsListAccessor(object):
         self._cache = None
     
     def __get__(self, obj, objtype):
-        if isinstance(self._defn, basestring):
+        if isinstance(self._defn, str):
             raise IllegalMakefileError(
                 # '%ss': cheating, I know __str__() endswith an apostrophe
                 "%ss `%s' attribute is a string, it must "

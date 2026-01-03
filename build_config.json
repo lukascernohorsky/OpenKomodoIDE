@@ -10,6 +10,6 @@
     "all"
   ],
   "clean_build": false,
-  "verbose": false,
+  "verbose": true,
   "log_file": "/home/lc/projekty/OpenKomodoIDE/logs/build_20251223_151623.log"
 }

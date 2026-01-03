@@ -92,7 +92,7 @@ def HasOverride(blackFile, commandName):
     command name.
     """
     return hasattr(blackFile, "commandOverrides") and\
-           blackFile.commandOverrides.keys()commandName)
+           commandName in blackFile.commandOverrides.keys()
 
 
 def RunOverride(blackFile, projectConfig, commandName, argv):
@@ -878,7 +878,7 @@ if __name__ == '__main__':
     #      then that is used.
     if not blackFileName:
         blackFileName = FindBlackFile()
-    if not blackFileName and os.environ.keys()"BLACKFILE_FALLBACK"):
+    if not blackFileName and "BLACKFILE_FALLBACK" in os.environ.keys():
         blackFileName = os.environ["BLACKFILE_FALLBACK"]
         if verbosity > 0:
             out.write("black: using BLACKFILE_FALLBACK (%s) to find "\

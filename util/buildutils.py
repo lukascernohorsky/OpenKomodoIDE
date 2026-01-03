@@ -577,7 +577,7 @@ def remote_md5sum(rpath, log=None):
         md5sum, rv_path = stdout.splitlines(0)[0].split()
         assert path == rv_path
         assert len(md5sum) == 32
-    except (AssertionError, ValueError, IndexError), ex:
+    except (AssertionError, ValueError, IndexError) as ex:
         raise OSError("error getting remote md5sum: unexpected output: %r"
                       % stdout)
     return md5sum
@@ -605,7 +605,7 @@ def remote_size(rpath, log=None):
         bytes, rv_path = stdout.splitlines(0)[0].split()
         assert path == rv_path
         bytes = int(bytes)
-    except (AssertionError, ValueError, IndexError), ex:
+    except (AssertionError, ValueError, IndexError) as ex:
         raise OSError("error getting remote md5sum: unexpected output: %r"
                       % stdout)
     return bytes

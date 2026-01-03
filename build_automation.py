@@ -107,21 +107,36 @@ class BuildAutomation:
             return False, "", str(e)
     
     def setup_environment(self) -> bool:
-        """Set up the build environment"""
-        print("Setting up build environment...")
+        """Set up the build environment for Firefox build"""
+        print("Setting up Firefox build environment...")
         
-        # Set environment variables
+        # Set environment variables for Firefox build
         env_vars = {
-            'PATH': f"{os.path.join(self.base_dir, 'bin')}:{os.environ.get('PATH', '')}",
+            'PATH': f"{os.path.join(self.base_dir, 'firefox')}:{os.path.join(self.base_dir, 'bin')}:{os.environ.get('PATH', '')}",
             'MOZCONFIG': os.path.join(self.base_dir, 'mozconfig'),
             'LD_LIBRARY_PATH': os.path.join(self.base_dir, 'lib'),
             'PLATFORM': self.config['platform'],
             'BUILD_TYPE': self.config['build_type'],
-            'MAKEFLAGS': f"-j{self.config['jobs']}"
+            'MAKEFLAGS': f"-j{self.config['jobs']}",
+            'MOZILLA_OFFICIAL': '1',
+            'MOZ_TELEMETRY_REPORTING': '1',
+            'MOZ_ADDON_SIGNING': '1',
+            'MOZ_REQUIRE_SIGNING': '1'
         }
         
         for key, value in env_vars.items():
             os.environ[key] = value
+        
+        # Set platform-specific variables
+        if self.config['platform'].startswith('linux'):
+            os.environ['CC'] = 'gcc'
+            os.environ['CXX'] = 'g++'
+        elif self.config['platform'] == 'macos':
+            os.environ['CC'] = 'clang'
+            os.environ['CXX'] = 'clang++'
+        elif self.config['platform'] == 'windows':
+            os.environ['CC'] = 'cl'
+            os.environ['CXX'] = 'cl'
         
         print(f"Environment set up for {self.config['platform']}")
         return True
@@ -147,40 +162,70 @@ class BuildAutomation:
         return True
     
     def configure_build(self) -> bool:
-        """Configure the build"""
-        print("Configuring build...")
+        """Configure the build using Firefox's mach system"""
+        print("Configuring build using Firefox mach system...")
         
-        # Build configure command
-        cmd = f"python3 mozilla/build.py configure -k {self.config['version']}"
+        # Use Firefox's mach build system
+        mach_path = os.path.join(self.base_dir, 'firefox', 'mach')
+        if not os.path.exists(mach_path):
+            print(f"✗ Firefox mach not found at {mach_path}")
+            return False
         
+        # Build configure command using mach
+        cmd = f"{mach_path} configure"
+        
+        # Add build type options
         if self.config['enable_debug']:
             cmd += " --enable-debug"
-        
-        if self.config['enable_symbols']:
-            cmd += " --with-crashreport-symbols"
+        else:
+            cmd += " --enable-release"
         
         # Add platform-specific options
         if self.config['platform'] == 'linux-arm64':
             cmd += " --target=aarch64-linux-gnu"
-        elif self.config['platform'] in ['freebsd', 'netbsd', 'openbsd']:
-            cmd += f" --target={self.config['platform']}"
+        elif self.config['platform'] == 'macos':
+            cmd += " --target=x86_64-apple-darwin"
+        elif self.config['platform'] == 'windows':
+            cmd += " --target=x86_64-pc-mingw32"
+        
+        # Add symbol options
+        if self.config['enable_symbols']:
+            cmd += " --with-crashreport-symbols"
         
         print(f"Running: {cmd}")
         
-        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir)
+        # Set up environment for mach
+        env = os.environ.copy()
+        env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+        env['PATH'] = f"{os.path.join(self.base_dir, 'firefox')}:{env['PATH']}"
+        
+        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
         
         if success:
             print("✓ Build configuration successful")
             return True
         else:
             print(f"✗ Build configuration failed: {stderr}")
+            print(f"stdout: {stdout}")
             return False
     
     def clean_build(self) -> bool:
-        """Clean the build directory"""
-        print("Cleaning build directory...")
+        """Clean the build directory using mach"""
+        print("Cleaning build directory using mach...")
         
-        success, stdout, stderr = self.run_command("python3 mozilla/build.py clean", cwd=self.base_dir)
+        mach_path = os.path.join(self.base_dir, 'firefox', 'mach')
+        if not os.path.exists(mach_path):
+            print(f"✗ Firefox mach not found at {mach_path}")
+            return False
+        
+        cmd = f"{mach_path} clobber"
+        
+        # Set up environment for mach
+        env = os.environ.copy()
+        env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+        env['PATH'] = f"{os.path.join(self.base_dir, 'firefox')}:{env['PATH']}"
+        
+        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
         
         if success:
             print("✓ Build directory cleaned")
@@ -190,10 +235,22 @@ class BuildAutomation:
             return False
     
     def distclean_build(self) -> bool:
-        """Completely clean the build"""
-        print("Performing distclean...")
+        """Completely clean the build using mach"""
+        print("Performing distclean using mach...")
         
-        success, stdout, stderr = self.run_command("python3 mozilla/build.py distclean", cwd=self.base_dir)
+        mach_path = os.path.join(self.base_dir, 'firefox', 'mach')
+        if not os.path.exists(mach_path):
+            print(f"✗ Firefox mach not found at {mach_path}")
+            return False
+        
+        cmd = f"{mach_path} clobber"
+        
+        # Set up environment for mach
+        env = os.environ.copy()
+        env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+        env['PATH'] = f"{os.path.join(self.base_dir, 'firefox')}:{env['PATH']}"
+        
+        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
         
         if success:
             print("✓ Distclean successful")
@@ -203,18 +260,40 @@ class BuildAutomation:
             return False
     
     def build_targets(self) -> bool:
-        """Build the specified targets"""
+        """Build the specified targets using mach"""
         print(f"Building targets: {', '.join(self.config['targets'])}")
+        
+        mach_path = os.path.join(self.base_dir, 'firefox', 'mach')
+        if not os.path.exists(mach_path):
+            print(f"✗ Firefox mach not found at {mach_path}")
+            return False
         
         all_success = True
         
         for target in self.config['targets']:
             print(f"\nBuilding target: {target}")
             
-            cmd = f"python3 mozilla/build.py {target}"
+            # Map target names to mach commands
+            if target == 'all':
+                cmd = f"{mach_path} build"
+            elif target == 'faster':
+                cmd = f"{mach_path} build faster"
+            elif target == 'debug':
+                cmd = f"{mach_path} build --debug"
+            elif target == 'release':
+                cmd = f"{mach_path} build --release"
+            else:
+                cmd = f"{mach_path} build {target}"
+            
             print(f"Running: {cmd}")
             
-            success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir)
+            # Set up environment for mach
+            env = os.environ.copy()
+            env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+            env['PATH'] = f"{os.path.join(self.base_dir, 'firefox')}:{env['PATH']}"
+            env['MOZ_MAKE_FLAGS'] = f"-j{self.config['jobs']}"
+            
+            success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
             
             if success:
                 print(f"✓ Target {target} built successfully")
@@ -227,10 +306,22 @@ class BuildAutomation:
         return all_success
     
     def create_packages(self) -> bool:
-        """Create distribution packages"""
-        print("Creating packages...")
+        """Create distribution packages using mach"""
+        print("Creating packages using mach...")
         
-        success, stdout, stderr = self.run_command("python3 mozilla/build.py packages", cwd=self.base_dir)
+        mach_path = os.path.join(self.base_dir, 'firefox', 'mach')
+        if not os.path.exists(mach_path):
+            print(f"✗ Firefox mach not found at {mach_path}")
+            return False
+        
+        cmd = f"{mach_path} package"
+        
+        # Set up environment for mach
+        env = os.environ.copy()
+        env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+        env['PATH'] = f"{os.path.join(self.base_dir, 'firefox')}:{env['PATH']}"
+        
+        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
         
         if success:
             print("✓ Packages created successfully")

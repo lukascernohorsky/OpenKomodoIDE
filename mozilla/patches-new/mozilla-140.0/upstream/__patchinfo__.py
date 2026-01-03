@@ -5,5 +5,5 @@ def applicable(config):
            config.patch_target == "mozilla"
 
 def patch_args(config):
-    # use -p1 to better match hg patches
-    return ['-p1']
+    # use default patch arguments
+    return []

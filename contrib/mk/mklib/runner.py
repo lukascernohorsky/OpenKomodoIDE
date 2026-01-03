@@ -79,7 +79,7 @@ def _regex_from_encoded_pattern(s):
             except KeyError:
                 raise ValueError("unsupported regex flag: '%s' in '%s' "
                                  "(must be one of '%s')"
-                                 % (char, s, ''.join(flag_from_char.keys())))
+                                 % (char, s, ''.join(list(flag_from_char.keys()))))
         return re.compile(s[1:idx], flags)
     else: # not an encoded regex
         return re.compile(re.escape(s))
@@ -305,7 +305,7 @@ def main(argv=sys.argv, doc=None):
     #     import configurelib
     #     del configurelib_path
     if "--configurelib-path" in argv:
-        print join(dirname(dirname(abspath(__file__))))
+        print(join(dirname(dirname(abspath(__file__)))))
         return 0
     
     setup_logging(sys.stdout)
@@ -341,7 +341,7 @@ def main(argv=sys.argv, doc=None):
         else:  # string exception
             log.error(exc_info[0])
         if log.isEnabledFor(logging.INFO-1):
-            print
+            print()
             traceback.print_exception(*exc_info)
         sys.exit(1)
     else:

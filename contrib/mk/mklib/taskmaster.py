@@ -66,7 +66,7 @@ class TaskMaster(object):
         elif hasattr(filter, "search"):
             tasks = [t for t in self.tasks if filter.search(t.nsname)]
         else:
-            assert isinstance(filter, basestring)
+            assert isinstance(filter, str)
             tasks = self.tasks.get(filter)
 
         if not tasks:
@@ -83,7 +83,7 @@ class TaskMaster(object):
                 else:
                     doc = "(default)"
             if not doc:
-                print "mk "+task.nsname
+                print("mk "+task.nsname)
             else:
                 # 7 == len('mk ' + '  # ')
                 summary_width = WIDTH - name_width - 7
@@ -91,13 +91,13 @@ class TaskMaster(object):
                 if len(summary) > summary_width:
                     summary = summary[:summary_width-3] + "..."
                 template = "mk %%-%ds  # %%s" % name_width
-                print template % (task.nsname, summary)
+                print(template % (task.nsname, summary))
             if verbose:
                 for dep in task.deps:
-                    print "    dep %s" % dep
+                    print("    dep %s" % dep)
                 if hasattr(task, "results"):  # Alias' do not have results
                     for result in task.results:
-                        print "    result %s" % result
+                        print("    result %s" % result)
 
     def default_makefile_doc(self):
         return "`%s' has no default target.\n\n${common_task_list}\n" \
@@ -123,7 +123,7 @@ class TaskMaster(object):
         preprocessors = {
             "${common_task_list}":    self._preprocess_common_task_list,
         }
-        for marker, preprocessor in preprocessors.items():
+        for marker, preprocessor in list(preprocessors.items()):
             if marker in text:
                 text = preprocessor(text)
         return text
@@ -537,7 +537,7 @@ class _FileList(list):
         #pprint(self._files_from_canon_path, width=1)
 
     def _load_makefile(self, makefile):
-        for canon_path, file in makefile.files.items():
+        for canon_path, file in list(makefile.files.items()):
             if canon_path not in self._files_from_canon_path:
                 self._files_from_canon_path[canon_path] = []
             self._files_from_canon_path[canon_path].append(file)
@@ -586,7 +586,7 @@ class _TaskList(list):
         sub_namespaces, makefiles = table
         makefiles.append(makefile)
 
-        for task in makefile.tasks.values():
+        for task in list(makefile.tasks.values()):
             self.append(task)
 
         for include in makefile.includes:
@@ -609,7 +609,7 @@ class _TaskList(list):
             try:
                 for ns_str in ns_list:
                     table = table[0][ns_str]
-            except KeyError, ex:
+            except KeyError as ex:
                 log.debug("no such task namespace: %s", ex)
                 tables = []
             else:
@@ -620,7 +620,7 @@ class _TaskList(list):
             sub_namespaces, makefiles = tables.pop(0)
             for makefile in makefiles:
                 yield makefile
-            tables += sub_namespaces.values()
+            tables += list(sub_namespaces.values())
 
     def common(self):
         """Generate the common tasks.
@@ -636,10 +636,10 @@ class _TaskList(list):
             mk the_ns
         """
         for makefile in self._table[1]:
-            for task in makefile.tasks.values():
+            for task in list(makefile.tasks.values()):
                 if task.default or task.doc():
                     yield task
-        for ns, table in self._table[0].items():
+        for ns, table in list(self._table[0].items()):
             for makefile in table[1]:
                 if makefile.default_task:
                     yield makefile.default_task
@@ -699,7 +699,7 @@ class _TaskList(list):
             try:
                 for ns in name[:-1].split(':'):
                     table = table[0][ns]
-            except KeyError, ex:
+            except KeyError as ex:
                 log.debug("no such task namespace: %s", ex)
             else:
                 for makefile in table[1]:

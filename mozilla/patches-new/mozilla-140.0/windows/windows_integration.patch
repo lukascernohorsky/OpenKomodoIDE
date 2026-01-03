@@ -1,39 +1,38 @@
-diff --git a/toolkit/xre/nsWindowsWMain.cpp b/toolkit/xre/nsWindowsWMain.cpp
-index abc1234..def5678 100644
---- a/toolkit/xre/nsWindowsWMain.cpp
-+++ b/toolkit/xre/nsWindowsWMain.cpp
+--- toolkit/xre/nsWindowsWMain.cpp.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/xre/nsWindowsWMain.cpp	2024-01-01 00:00:00.000000000 +0000
 @@ -56,6 +56,10 @@
  #include "nsWindowsRestart.h"
  #include "mozilla/UniquePtr.h"
  
 +#ifdef MOZ_KOMODO
 +#include "komodo/WindowsRegistry.h"
++#include "komodo/WindowsIntegration.h"
 +#endif
 +
  using namespace mozilla;
  
  int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-@@ -123,6 +127,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-     
+@@ -123,6 +127,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+      
      rv = XRE_WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
      
 +#ifdef MOZ_KOMODO
 +    // Firefox 140 ESR: Windows-specific Komodo integration
 +    if (NS_SUCCEEDED(rv)) {
++      // Initialize Windows integration
++      KomodoWindowsIntegration::Initialize();
 +      // Clean up Windows registry settings
 +      KomodoWindowsRegistry::Cleanup();
 +      // Save session data
 +      KomodoWindowsRegistry::SaveSession();
++      // Finalize Windows integration
++      KomodoWindowsIntegration::Finalize();
 +    }
 +#endif
-     
      return NS_SUCCEEDED(rv) ? 0 : 1;
  }
-
-diff --git a/toolkit/xre/moz.build b/toolkit/xre/moz.build
-index 123abc4..567def8 100644
---- a/toolkit/xre/moz.build
-+++ b/toolkit/xre/moz.build
+--- toolkit/xre/moz.build.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/xre/moz.build	2024-01-01 00:00:00.000000000 +0000
 @@ -45,6 +45,10 @@ if CONFIG['OS_ARCH'] == 'WINNT':
      SOURCES += ['nsWindowsWMain.cpp']
      DEFINES['UNICODE'] = True

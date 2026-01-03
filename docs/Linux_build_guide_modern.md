@@ -17,14 +17,13 @@ This guide provides instructions for building OpenKomodoIDE on modern Linux dist
 sudo apt-get update
 sudo apt-get install -y \
     git \
-    mercurial \
     subversion \
     build-essential \
     python3 \
     python3-pip \
     python3-dev \
     python3-venv \
-    autoconf2.13 \
+    autoconf \
     automake \
     libtool \
     pkg-config \
@@ -138,13 +137,12 @@ sudo apt-get install -y \
 ```bash
 sudo dnf install -y \
     git \
-    mercurial \
     subversion \
     @development-tools \
     python3 \
     python3-pip \
     python3-devel \
-    autoconf213 \
+    autoconf \
     automake \
     libtool \
     pkgconfig \
@@ -257,10 +255,22 @@ sudo dnf install -y nodejs
 #### Python Dependencies
 ```bash
 pip3 install --upgrade pip setuptools wheel
-pip3 install mercurial six
+pip3 install six
 ```
 
 ## Build Process
+
+### Using Git Instead of Mercurial
+
+By default, the build system uses Mercurial to download Firefox source code. You can configure it to use Git instead:
+
+```bash
+# Set environment variables to use Git
+export MOZ_SOURCE_REPO=https://github.com/mozilla-firefox/firefox.git
+export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+```
+
+This will download the source code from GitHub instead of Mercurial repositories.
 
 ### 1. Configure Mozilla Build
 
@@ -353,6 +363,22 @@ python3 build.py configure --target=i686-pc-linux-gnu
 1. **Python 3**: All build scripts now use Python 3
 2. **Firefox 140 ESR**: Updated from Firefox 35
 3. **Modern Toolchain**: Uses recent compilers and build tools
+
+### Python 3 Migration in build.py
+
+The `mozilla/build.py` script has undergone significant updates for Python 3 compatibility:
+
+#### Major Changes:
+- **urllib2 → urllib.request**: All HTTP operations now use the modern urllib module
+- **Dictionary views**: `.keys()`, `.values()`, and `.items()` now return views instead of lists
+- **Python 3.11 support**: Default Python version updated to 3.11
+- **System Python**: Uses system Python 3 instead of prebuilt versions
+
+#### Backward Compatibility:
+- The script maintains compatibility with Python 2.7 where possible
+- Legacy Python 2.7 build paths remain for transitional support
+
+For detailed information on the Python 3 migration, see [PYTHON3_MIGRATION_BUILD.md](PYTHON3_MIGRATION_BUILD.md).
 4. **Container Support**: Ready for Docker/Kubernetes builds
 
 ### Backward Compatibility
@@ -403,7 +429,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y build-essential python3 autoconf2.13
+      run: sudo apt-get update && sudo apt-get install -y build-essential python3 autoconf
     
     - name: Build Mozilla
       run: |

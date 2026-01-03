@@ -1,0 +1,96 @@
+# -*- Mode: python; indent-tabs-mode: nil; tab-width: 40 -*-
+# vim: set filetype=python:
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+# Komodo-specific configuration options
+
+@depends('--help')
+def komodo_help(value):
+    if value:
+        return """
+Komodo-specific options:
+  --enable-komodo          Enable Komodo IDE integration
+  --disable-komodo         Disable Komodo IDE integration (default)
+        """
+
+# Komodo integration option
+option('--enable-komodo', env='MOZ_KOMODO',
+       help='Enable Komodo IDE integration')
+
+@depends('--enable-komodo')
+def komodo_integration(value):
+    if value:
+        return True
+
+set_config('MOZ_KOMODO', komodo_integration)
+set_define('MOZ_KOMODO', komodo_integration)
+
+# Komodo version configuration
+@depends('--enable-komodo', '--help')
+def komodo_version(komodo, help):
+    if help:
+        return "Komodo IDE version configuration"
+    if komodo:
+        return '14.0.0'
+
+set_config('MOZ_KOMODO_VERSION', komodo_version)
+set_define('MOZ_KOMODO_VERSION', komodo_version)
+
+# Komodo application configuration
+@depends('--enable-komodo')
+def komodo_app_config(komodo):
+    if komodo:
+        return namespace(
+            MOZ_APP_NAME='komodo',
+            MOZ_APP_DISPLAYNAME='Komodo IDE',
+            MOZ_APP_VERSION='14.0.0',
+            MOZ_APP_ID='komodo@activestate.com',
+            MOZ_APP_REMOTINGNAME='komodo',
+        )
+
+# Komodo branding configuration
+@depends('--enable-komodo')
+def komodo_branding(komodo):
+    if komodo:
+        return 'komodo/branding'
+
+set_config('MOZ_BRANDING_DIRECTORY', komodo_branding)
+
+# Komodo-specific features
+@depends('--enable-komodo')
+def komodo_features(komodo):
+    if komodo:
+        return namespace(
+            MOZ_KOMODO_INTEGRATION=True,
+            MOZ_KOMODO_DEVTOOLS=True,
+            MOZ_KOMODO_DEBUGGER=True,
+        )
+
+# Komodo-specific defines
+@depends('--enable-komodo')
+def komodo_defines(komodo):
+    if komodo:
+        return namespace(
+            MOZ_KOMODO_INTEGRATION=True,
+            MOZ_KOMODO_DEVTOOLS=True,
+            MOZ_KOMODO_DEBUGGER=True,
+        )
+
+# Komodo-specific components
+@depends('--enable-komodo')
+def komodo_components(komodo):
+    if komodo:
+        return [
+            'komodo.js',
+            'komodo.manifest',
+        ]
+
+# Komodo-specific modules
+@depends('--enable-komodo')
+def komodo_modules(komodo):
+    if komodo:
+        return [
+            'komodo.jsm',
+        ]

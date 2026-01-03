@@ -24,7 +24,7 @@ class ConfigurationType(type):
             log_makefile_defn("Configuration", name, frame)
 
 
-class Configuration(object):
+class Configuration(object, metaclass=ConfigurationType):
     """A basic configuration object.
     
     This lightly wraps a config.py module typically created with a
@@ -52,7 +52,6 @@ class Configuration(object):
     If there is no Configuration class definition in a `Makefile.py'
     then `self.cfg' on Tasks will be None.
     """
-    __metaclass__ = ConfigurationType
     _path = None
     prefix = None
     dir = os.curdir  # Can be set to, say, '..' to pick up config.py up on dir.
@@ -76,7 +75,7 @@ class Configuration(object):
         This skips internal symbols (those starting with '_') and
         instance methods. It will *get* all properties.
         """
-        d = dict((k,v) for k,v in self._mod.__dict__.items()
+        d = dict((k,v) for k,v in list(self._mod.__dict__.items())
                  # Skip internal symbols of the module.
                  if not k.startswith('_'))
         # Also get all properties and public attributes (but not
@@ -123,7 +122,7 @@ class Configuration(object):
             finally:
                 if curr_dir != cfg_dir:
                     os.chdir(curr_dir)
-        except ImportError, ex:
+        except ImportError as ex:
             if not exists(self._path):
                 details = "`%s' does not exist" % self._path
                 if exists(join(dirname(self._path), "configure.py")):
@@ -145,7 +144,7 @@ class StaticConfiguration(object):
     From Configuration.as_simple_obj().
     """
     def __init__(self, **kwargs):
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             setattr(self, k, v)
 
 

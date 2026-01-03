@@ -1,0 +1,58 @@
+--- widget/cocoa/moz.build.orig	2024-01-01 00:00:00.000000000 +0000
++++ widget/cocoa/moz.build	2024-01-01 00:00:00.000000000 +0000
+@@ -34,6 +34,12 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
+     SOURCES += ['nsCocoaWindow.mm']
+     DEFINES['MOZ_WIDGET_COCOA'] = True
+ 
++if CONFIG['MOZ_KOMODO'] and CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
++    DEFINES['MOZ_KOMODO_COCOA'] = True
++    SOURCES += ['komodo/cocoa/KomodoCocoaIntegration.mm']
++    EXPORTS += ['komodo/cocoa/KomodoCocoaIntegration.h']
++    CXXFLAGS += ['-DMOZ_KOMODO_COCOA', '-fobjc-arc']
++
+ # macOS specific settings
+ if CONFIG['MOZ_WIDGET_COCOA']:
+     DEFINES['MOZ_MACOS'] = True
+--- widget/cocoa/nsCocoaWindow.mm.orig	2024-01-01 00:00:00.000000000 +0000
++++ widget/cocoa/nsCocoaWindow.mm	2024-01-01 00:00:00.000000000 +0000
+@@ -234,6 +234,12 @@ - (void)windowDidBecomeKey:(NSNotification *)aNotification
+     [self updateWindowState];
+     [self updateWindowButtons];
+ 
++#ifdef MOZ_KOMODO_COCOA
++    // Komodo Cocoa integration for Firefox 140 ESR
++    KomodoCocoaIntegration::WindowDidBecomeKey(self);
++    [mKomodoWindowWrapper windowDidBecomeKey];
++#endif
++
+     if (mWidget) {
+         mWidget->WindowActivated();
+     }
+@@ -456,6 +462,12 @@ - (void)windowWillClose:(NSNotification *)aNotification
+     [self cleanupFullscreen];
+     [self cleanupPopup];
+ 
++#ifdef MOZ_KOMODO_COCOA
++    // Cleanup Komodo Cocoa integration
++    KomodoCocoaIntegration::WindowWillClose(self);
++    [mKomodoWindowWrapper cleanup];
++#endif
++
+     if (mWidget) {
+         mWidget->WindowDeactivated();
+     }
+--- widget/cocoa/nsChildView.mm.orig	2024-01-01 00:00:00.000000000 +0000
++++ widget/cocoa/nsChildView.mm	2024-01-01 00:00:00.000000000 +0000
+@@ -123,6 +123,12 @@ - (id)initWithFrame:(NSRect)aFrame
+     if ((self = [super initWithFrame:aFrame])) {
+         mGeckoChild = nullptr;
+ 
++#ifdef MOZ_KOMODO_COCOA
++        // Initialize Komodo Cocoa integration
++        mKomodoChildView = [[KomodoChildViewWrapper alloc] initWithChildView:self];
++        KomodoCocoaIntegration::InitializeChildView(self);
++#endif
++
+         return self;
+     }
+     return nil;

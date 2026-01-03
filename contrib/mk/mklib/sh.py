@@ -91,7 +91,7 @@ def run_in_dir(cmd, cwd, logstream=_RUN_DEFAULT_LOGSTREAM, dry_run=False):
 #TODO: rehash this as a `class SH' with a default instance, proper
 #      log handling, `self.sh' on Tasks
 
-def mkdir(newdir, mode=0777, log=None, dry_run=False):
+def mkdir(newdir, mode=0o777, log=None, dry_run=False):
     """works the way a good mkdir should :)
         - already exists, silently complete
         - regular file in the way, raise an exception
@@ -154,9 +154,9 @@ def rm(path, log=None, dry_run=False):
         if os.path.isfile(path) or os.path.islink(path):
             try:
                 os.remove(path)
-            except OSError, ex:
+            except OSError as ex:
                 if ex.errno == 13: # OSError: [Errno 13] Permission denied
-                    os.chmod(path, 0777)
+                    os.chmod(path, 0o777)
                     os.remove(path)
                 else:
                     raise
@@ -322,7 +322,7 @@ def touch(path, log=None, dry_run=False):
 #---- internal support stuff
 
 def _getumask():
-    oldumask = os.umask(077)
+    oldumask = os.umask(0o77)
     os.umask(oldumask)
     return oldumask
 
@@ -350,7 +350,7 @@ def _gen_sources(patterns, target, noglob=False, log=None,
     Generates 2-tuples: (<path>, <stat result>).
     Raises OSError if a specified path does not exist.
     """
-    if isinstance(patterns, (str, unicode)):
+    if isinstance(patterns, str):
         patterns = [patterns]
     elif not patterns:
         raise TypeError("no sources specified: %r" % patterns)
@@ -384,9 +384,9 @@ def _cp(source, target, force, recursive, preserve, log, verbose,
     # call to this function or not
     DEBUG = False
     if DEBUG:
-        print "_cp(source=%r, target=%r, force=%r, recursive=%r, "\
+        print("_cp(source=%r, target=%r, force=%r, recursive=%r, "\
               "preserve=%r, log, verbose=%r)"\
-              % (source[0], target[0], force, recursive, preserve, verbose)
+              % (source[0], target[0], force, recursive, preserve, verbose))
     spath, sstat = source
     smode = sstat.st_mode
     tpath, tstat = target
@@ -411,7 +411,7 @@ def _cp(source, target, force, recursive, preserve, log, verbose,
             # "Permission denied" and offer:
             #   cp: overwrite `<target>', overriding mode 0444?
             if force:
-                os.chmod(tpath, 0777)
+                os.chmod(tpath, 0o777)
                 os.remove(tpath)
                 tstat = None
                 target = (tpath, tstat)

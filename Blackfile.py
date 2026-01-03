@@ -26,7 +26,10 @@ msi, dbg, aspackage).
 """
 
 import os, sys, os, shutil
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import time
 from os.path import join, dirname, exists, isfile, basename, abspath, \
                     isdir, splitext
@@ -2311,9 +2314,9 @@ def BuildXdebug(cfg, argv):
         "'phpsBaseDir' config var isn't valid: %r" % cfg.phpsBaseDir
 
     for shortver in phpVers:
-        print(_banner("xdebug for PHP %s" % shortver)
+        print(_banner("xdebug for PHP %s" % shortver))
 
-        )# Find the PHP build dir in which to work and ensure there is a
+        # Find the PHP build dir in which to work and ensure there is a
         # PHP build there.
         # On Windows we want:
         #   $base/[php-]$ver/Release_TS[_inline]/php.exe
@@ -2490,21 +2493,15 @@ def _updateXdebugSource(xdebugSrcDir):
         try:
             _run_in_dir(cmd, wrkDir, log.info)
         except OSError:
-            print(""%s
-If this command failed with something like:
-
-    Empty password used - try 'cvs login' with a real password
-    PAM authenticate error: User not known to the underlying \
-            authentication module
-    cvs [checkout aborted]: authorization failed: server \
-            cvs.xdebug.org rejected access to /repository for user srmread
-
-then you must manually first login to the xdebug CVS by running the following:
-
-    cvs -d %s login
-
-Enter "srmread" for the password. Now re-run "bk build xdebug".    
-%s""" % (_banner("NOTE", '-'), CVSROOT, _banner(None, '-'))
+            print(""%s)
+            print("If this command failed with something like:")
+            print("Empty password used - try 'cvs login' with a real password")
+            print("PAM authenticate error: User not known to the underlying authentication module")
+            print("cvs [checkout aborted]: authorization failed: server cvs.xdebug.org rejected access to /repository for user srmread")
+            print("then you must manually first login to the xdebug CVS by running the following:")
+            print("cvs -d %s login")
+            print("Enter 'srmread' for the password. Now re-run 'bk build xdebug'.")
+            print("%s" % (_banner("NOTE", '-'), CVSROOT, _banner(None, '-')))
             raise
 
     else: # cvs update
@@ -2550,10 +2547,19 @@ def UpdateSentinel(componentsDir, status="pristine"):
 
 
 def ExtractPrebuiltPython(cfg, argv):
-    """Unzip the prebuilt python files if they don't exist.
+    """Set up Python environment for the build.
     
-    This is required for some of the Mozilla build parts (komodo/app/xre).
+    For Python 3, use the system Python installation.
+    For legacy Python 2, extract prebuilt files (if available).
     """
+    # Check if we're using Python 3
+    if cfg.siloedPyVer.startswith("3."):
+        log.info("Using system Python %s for build (no prebuilt files needed)" % cfg.siloedPyVer)
+        # Set the Python executable to use system Python 3
+        cfg.python = sys.executable
+        return
+    
+    # Legacy Python 2 support (kept for compatibility)
     if sys.platform == "win32":
         zip_basename = "win32-%s-%s" % (cfg.architecture, cfg.compiler)
     elif sys.platform.startswith("darwin"):
@@ -2561,8 +2567,7 @@ def ExtractPrebuiltPython(cfg, argv):
     elif sys.platform.startswith("linux"):
         zip_basename = "linux-%s" % (cfg.architecture)
     else:
-        raise BuildError("ExtractPrebuiltPython:: unknown platform: %r",
-                         sys.platform)
+        raise BuildError("ExtractPrebuiltPython:: unknown platform: %r" % sys.platform)
     prebuiltDir = join("mozilla", "prebuilt", "python%s" % cfg.siloedPyVer,
                        zip_basename)
 
@@ -2571,7 +2576,7 @@ def ExtractPrebuiltPython(cfg, argv):
     if exists(prebuiltDir) \
        and os.stat(prebuiltDir).st_mtime < mtime_zip:
         log.info("removing out of date unzip of prebuilt python "
-                 "in `%s'", prebuiltDir)
+                 "in `%s'" % prebuiltDir)
         if sys.platform == "win32":
             _run('rd /s/q "%s"' % prebuiltDir)
         else:
@@ -2579,13 +2584,11 @@ def ExtractPrebuiltPython(cfg, argv):
 
     # If the dir doesn't exist then we need to crack it there.
     if not exists(prebuiltDir):
-        log.info("unzipping prebuilt python in `%s'", prebuiltDir)
+        log.info("unzipping prebuilt python in `%s'" % prebuiltDir)
         prebuiltZip = prebuiltDir + ".zip"
         if not exists(prebuiltZip):
-            raise BuildError("prebuilt Python zip doesn't exist: %s"
-                             % prebuiltZip)
-        _run_in_dir("unzip -q -d %s %s"
-                    % (basename(prebuiltDir), basename(prebuiltZip)),
+            raise BuildError("prebuilt Python zip doesn't exist: %s" % prebuiltZip)
+        _run_in_dir("unzip -q -d %s %s" % (basename(prebuiltDir), basename(prebuiltZip)),
                     dirname(prebuiltDir), log.debug)
 
 

@@ -170,7 +170,7 @@ class Makefile(object):
             sys.path.remove(dirname(self.path))
 
         self.doc = mod.__doc__
-        default_tasks = [t for t in self.tasks.values() if t.default]
+        default_tasks = [t for t in list(self.tasks.values()) if t.default]
         if not default_tasks:
             self.default_task = None
         elif len(default_tasks) == 1:

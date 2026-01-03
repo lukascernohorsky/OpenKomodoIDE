@@ -9,7 +9,6 @@
 - zip
 - unzip
 - wget
-- mercurial
 - subversion
 - libgtk-2-dev
 - libdbus-glib-1-dev
@@ -17,16 +16,16 @@
 - libasound2-dev
 - libpulse-dev
 - libxt-dev
-- autoconf2.13
+- autoconf 2.69 or higher
 
 <br />
 
 Debian
 
 ```
-sudo apt install git zip unzip wget mercurial subversion autoconf2.13 \
+sudo apt install git zip unzip wget subversion autoconf \
 	libgtk2.0-dev libdbus-glib-1-dev yasm libasound2-dev \
-	libpulse-dev libxt-dev autoconf2.13
+	libpulse-dev libxt-dev autoconf
 ```
 
 <br />
@@ -46,6 +45,18 @@ git clone https://github.com/ActiveState/OpenKomodoIDE.git --branch master --sin
 cd KomodoEdit/mozilla
 python build.py configure --gcc gcc --gxx g++-4.9 -k 12.10
 ```
+
+#### Using Git Instead of Mercurial
+
+By default, the build system uses Mercurial to download Firefox source code. You can configure it to use Git instead:
+
+```bash
+# Set environment variables to use Git
+export MOZ_SOURCE_REPO=https://github.com/mozilla-firefox/firefox.git
+export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+```
+
+This will download the source code from GitHub instead of Mercurial repositories.
 
 <br />
 

@@ -30,7 +30,7 @@ class todo(Task):
 
         path = join(dirname(__file__), "TODO.txt")
         todos = re.compile("^- ", re.M).findall(open(path, 'r').read())
-        print "plus %d TODOs from TODO.txt" % len(todos)
+        print("plus %d TODOs from TODO.txt" % len(todos))
 
     def _dump_todos_from_path(self, path):
         os.system("grep -nH TODO %s" % path)
@@ -158,7 +158,7 @@ def _paths_from_path_patterns(path_patterns, files=True, dirs="never",
     from os.path import basename, exists, isdir, join
     from glob import glob
 
-    assert not isinstance(path_patterns, basestring), \
+    assert not isinstance(path_patterns, str), \
         "'path_patterns' must be a sequence, not a string: %r" % path_patterns
     GLOB_CHARS = '*?['
 

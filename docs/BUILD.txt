@@ -52,6 +52,34 @@ Build steps on Linux and Mac OS X:
     bk run
 
 
+By default, the build system uses Mercurial to download Firefox source code. 
+You can configure it to use Git instead:
+
+    # Set environment variables to use Git
+    export MOZ_SOURCE_REPO=https://github.com/mozilla/gecko-dev.git
+    export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+=======
+Using Git Instead of Mercurial
+===============================
+
+By default, the build system uses Mercurial to download Firefox source code. 
+You can configure it to use Git instead:
+
+    # Set environment variables to use Git
+    export MOZ_SOURCE_REPO=https://github.com/mozilla-firefox/firefox.git
+    export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+===============================
+
+By default, the build system uses Mercurial to download Firefox source code. 
+You can configure it to use Git instead:
+
+    # Set environment variables to use Git
+    export MOZ_SOURCE_REPO=https://github.com/mozilla/gecko-dev.git
+    export MOZ_SOURCE_STAMP=firefox-140.7.0esr
+
+This will download the source code from GitHub instead of Mercurial repositories.
+
+
 
 Getting the Source
 ==================
@@ -72,7 +100,53 @@ The source code is also available (mirrored) on GitHub:
    git clone https://github.com/ActiveState/komodoedit.git
 
 
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+- Visual C++ 11.0 (aka Visual Studio 2012) and all the Platform SDKs for
+  building Mozilla with vc11 as described here:
+    http://developer.mozilla.org/en/docs/Windows_Build_Prerequisites  
+  All of Komodo's core runtime C/C++ is built with Visual C++ 11.0.
+  
+- Install the latest "MozillaBuild-$ver.exe" package into *the default dir*
+  (i.e. "C:\mozilla-build").
+  <http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/>
+
+- Install the latest ActivePerl.
+
+  <http://downloads.activestate.com/ActivePerl/releases/>
+
+  ActivePerl is currently required for the Komodo-part of the build
+  (where the "Mozilla-part of the build" is the other part). The
+  MozillaBuild package (previous step) *does* include a Perl 5.6 build,
+  but it is a mingw-built Perl that the Komodo build system cannot use.
+=======
 Build Prerequisites for Windows
+===============================
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+- Visual C++ 11.0 (aka Visual Studio 2012) and all the Platform SDKs for
+  building Mozilla with vc11 as described here:
+    http://developer.mozilla.org/en/docs/Windows_Build_Prerequisites  
+  All of Komodo's core runtime C/C++ is built with Visual C++ 11.0.
+  
+- Install the latest "MozillaBuild-$ver.exe" package into *the default dir*
+  (i.e. "C:\mozilla-build").
+  <http://ftp.mozilla.org/pub/mozilla.org/mozilla/libraries/win32/>
+
+  Note: You can remove the mercurial directory from MozillaBuild if you want to use Git instead.
+
+- Install the latest ActivePerl.
+
+  <http://downloads.activestate.com/ActivePerl/releases/>
+
+  ActivePerl is currently required for the Komodo-part of the build
+  (where the "Mozilla-part of the build" is the other part). The
+  MozillaBuild package (previous step) *does* include a Perl 5.6 build,
+  but it is a mingw-built Perl that the Komodo build system cannot use.
 ===============================
 
 - Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
@@ -98,6 +172,27 @@ Build Prerequisites for Windows
 
 
 
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+  If you prefer the Python builds from python.org should be sufficient
+  as well.
+
+- Xcode. Install the latest one.
+
+  <http://developer.apple.com/tools/download/>
+
+- Xcode Command Line Tools.
+
+  Open the Xcode preferences, then in the Downloads tab, select and install the
+  Command Line Tools.
+
+- MacPorts (<http://www.macports.org/>).
+
+  (Note: Fink may work too but most of the build testing and instructions is
+  done with MacPorts.)
+=======
 Build Prerequisites for Mac OS X
 ================================
 
@@ -121,9 +216,35 @@ Build Prerequisites for Mac OS X
   (Note: Fink may work too but most of the build testing and instructions is
   done with MacPorts.)
 
-- autoconf v2.13. Once you have MacPorts installed you need just run::
+- Git (optional, if you want to use Git instead of Mercurial):
 
-    sudo port install autoconf213
+  You can install Git using MacPorts: `sudo port install git`
+  Or download it from: <https://git-scm.com/download/mac>
+================================
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+  If you prefer the Python builds from python.org should be sufficient
+  as well.
+
+- Xcode. Install the latest one.
+
+  <http://developer.apple.com/tools/download/>
+
+- Xcode Command Line Tools.
+
+  Open the Xcode preferences, then in the Downloads tab, select and install the
+  Command Line Tools.
+
+- MacPorts (<http://www.macports.org/>).
+
+  (Note: Fink may work too but most of the build testing and instructions is
+  done with MacPorts.)
+
+- autoconf v2.69 or higher. Once you have MacPorts installed you need just run::
+
+    sudo port install autoconf
 
 - ensure you are using clang or gcc 4.2 (or higher)::
 
@@ -144,7 +265,681 @@ under Xcode 8 using a new extra steps.
  * Configure Mozilla with `--options=disable-webrtc`
 
 
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+  If you prefer the Python builds from python.org should be sufficient
+  as well.
+
+- autoconf v2.69 or higher. Once you have MacPorts installed you need just run
+  `sudo port install autoconf`
+
+- Mercurial. Install the latest one.
+
+  <http://mercurial.selenic.com/>
+
+- Subversion. Install the latest one.
+
+  <http://subversion.apache.org/>
+
+- Git. Install the latest one.
+
+  <http://git-scm.com/>
+
+- GCC 4.4 or higher. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- G++. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- Make. Install the latest one.
+
+  <http://www.gnu.org/software/make/>
+
+- CMake. Install the latest one.
+
+  <http://www.cmake.org/>
+
+- YASM. Install the latest one.
+
+  <http://yasm.tortall.net/>
+
+- libstdc++. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- libgtk2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libdbus-glib-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/dbus>
+
+- libasound2-dev. Install the latest one.
+
+  <http://www.alsa-project.org/>
+
+- libpulse-dev. Install the latest one.
+
+  <http://www.pulseaudio.org/>
+
+- libxt-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libx11-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxext-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxrender-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxrandr-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxfixes-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxi-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb1-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-render0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-shm0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-xfixes0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-randr0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-shape0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-keysyms1-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-icccm4-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-image0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-util0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxkbcommon-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxkbcommon-x11-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libwayland-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libegl1-mesa-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libgbm-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libdrm-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libgles2-mesa-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libvpx-dev. Install the latest one.
+
+  <http://www.webmproject.org/>
+
+- libopus-dev. Install the latest one.
+
+  <http://www.opus-codec.org/>
+
+- libwebp-dev. Install the latest one.
+
+  <http://www.webmproject.org/>
+
+- libavcodec-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libavformat-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libavutil-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libswscale-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libevent-dev. Install the latest one.
+
+  <http://www.libevent.org/>
+
+- libnss3-dev. Install the latest one.
+
+  <http://www.mozilla.org/projects/security/pki/nss/>
+
+- libnspr4-dev. Install the latest one.
+
+  <http://www.mozilla.org/projects/nspr/>
+
+- libsqlite3-dev. Install the latest one.
+
+  <http://www.sqlite.org/>
+
+- libffi-dev. Install the latest one.
+
+  <http://www.sourceware.org/libffi/>
+
+- libpixman-1-dev. Install the latest one.
+
+  <http://www.cairographics.org/>
+
+- libharfbuzz-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/HarfBuzz/>
+
+- libgraphite2-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/HarfBuzz/>
+
+- libicu-dev. Install the latest one.
+
+  <http://www.icu-project.org/>
+
+- libhunspell-dev. Install the latest one.
+
+  <http://www.hunspell.com/>
+
+- libhyphen-dev. Install the latest one.
+
+  <http://www.hyphenation.org/>
+
+- libstartup-notification0-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/startup-notification/>
+
+- libsecret-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/libsecret/>
+
+- libjsoncpp-dev. Install the latest one.
+
+  <http://www.jsoncpp.com/>
+
+- libdbus-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/dbus/>
+
+- libatk1.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libatk-bridge2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libepoxy-dev. Install the latest one.
+
+  <http://www.anholt.net/>
+
+- libgudev-1.0-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/systemd/>
+
+- libcolord-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/colord/>
+
+- libgtk-3-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libgdk-pixbuf2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libpango1.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libcairo2-dev. Install the latest one.
+
+  <http://www.cairographics.org/>
+
+- libgstreamer1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-base1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-bad1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-good1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-ugly1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-base. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-good. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-bad. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-ugly. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-libav. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-tools. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-x. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-alsa. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-pulseaudio. Install the latest one.
+
+  <http://www.gstreamer.com/>
+=======
 Build Prerequisites for Linux
+=============================
+
+- Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
+  <http://downloads.activestate.com/ActivePython/releases/>
+
+  If you prefer the Python builds from python.org should be sufficient
+  as well.
+
+- autoconf v2.69 or higher. Once you have MacPorts installed you need just run
+  `sudo port install autoconf`
+
+- Git. Install the latest one.
+
+  <http://git-scm.com/>
+
+  Note: Git is required for downloading Firefox source code. You can use Git instead of Mercurial.
+
+- Subversion. Install the latest one.
+
+  <http://subversion.apache.org/>
+
+- GCC 4.4 or higher. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- G++. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- Make. Install the latest one.
+
+  <http://www.gnu.org/software/make/>
+
+- CMake. Install the latest one.
+
+  <http://www.cmake.org/>
+
+- YASM. Install the latest one.
+
+  <http://yasm.tortall.net/>
+
+- libstdc++. Install the latest one.
+
+  <http://gcc.gnu.org/>
+
+- libgtk2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libdbus-glib-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/dbus>
+
+- libasound2-dev. Install the latest one.
+
+  <http://www.alsa-project.org/>
+
+- libpulse-dev. Install the latest one.
+
+  <http://www.pulseaudio.org/>
+
+- libxt-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libx11-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxext-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxrender-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxrandr-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxfixes-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxi-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb1-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-render0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-shm0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-xfixes0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-randr0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-shape0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-keysyms1-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-icccm4-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-image0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxcb-util0-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxkbcommon-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libxkbcommon-x11-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libwayland-dev. Install the latest one.
+
+  <http://www.x.org/>
+
+- libegl1-mesa-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libgbm-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libdrm-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libgles2-mesa-dev. Install the latest one.
+
+  <http://www.mesa3d.org/>
+
+- libvpx-dev. Install the latest one.
+
+  <http://www.webmproject.org/>
+
+- libopus-dev. Install the latest one.
+
+  <http://www.opus-codec.org/>
+
+- libwebp-dev. Install the latest one.
+
+  <http://www.webmproject.org/>
+
+- libavcodec-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libavformat-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libavutil-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libswscale-dev. Install the latest one.
+
+  <http://www.ffmpeg.org/>
+
+- libevent-dev. Install the latest one.
+
+  <http://www.libevent.org/>
+
+- libnss3-dev. Install the latest one.
+
+  <http://www.mozilla.org/projects/security/pki/nss/>
+
+- libnspr4-dev. Install the latest one.
+
+  <http://www.mozilla.org/projects/nspr/>
+
+- libsqlite3-dev. Install the latest one.
+
+  <http://www.sqlite.org/>
+
+- libffi-dev. Install the latest one.
+
+  <http://www.sourceware.org/libffi/>
+
+- libpixman-1-dev. Install the latest one.
+
+  <http://www.cairographics.org/>
+
+- libharfbuzz-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/HarfBuzz/>
+
+- libgraphite2-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/HarfBuzz/>
+
+- libicu-dev. Install the latest one.
+
+  <http://www.icu-project.org/>
+
+- libhunspell-dev. Install the latest one.
+
+  <http://www.hunspell.com/>
+
+- libhyphen-dev. Install the latest one.
+
+  <http://www.hyphenation.org/>
+
+- libstartup-notification0-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/startup-notification/>
+
+- libsecret-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/libsecret/>
+
+- libjsoncpp-dev. Install the latest one.
+
+  <http://www.jsoncpp.com/>
+
+- libdbus-1-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/dbus/>
+
+- libatk1.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libatk-bridge2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libepoxy-dev. Install the latest one.
+
+  <http://www.anholt.net/>
+
+- libgudev-1.0-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/systemd/>
+
+- libcolord-dev. Install the latest one.
+
+  <http://www.freedesktop.org/wiki/Software/colord/>
+
+- libgtk-3-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libgdk-pixbuf2.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libpango1.0-dev. Install the latest one.
+
+  <http://www.gtk.org/>
+
+- libcairo2-dev. Install the latest one.
+
+  <http://www.cairographics.org/>
+
+- libgstreamer1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-base1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-bad1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-good1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- libgstreamer-plugins-ugly1.0-dev. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-base. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-good. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-bad. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-plugins-ugly. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-libav. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-tools. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-x. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-alsa. Install the latest one.
+
+  <http://www.gstreamer.com/>
+
+- gstreamer1.0-pulseaudio. Install the latest one.
+
+  <http://www.gstreamer.com/>
 =============================
 
 - Python >=2.7 (but not Python 3.x yet). You can install ActivePython from here:
@@ -416,10 +1211,7 @@ Build Troubleshooting Notes
   
     sudo apt-get install automake1.9
 
-- [Linux] On my Ubuntu Dapper box /usr/bin/autoconf is a wrapper that
-  defaults to autoconf2.13. PHP 4.3's "phpize" requires autoconf 2.50. I
-  had to tweak "~/opt/php/4.3.11/bin/phpize" to use "autoconf2.50" instead
-  of bare "autoconf".
+- [Linux] On older Ubuntu systems, /usr/bin/autoconf might default to an older version. Modern builds require autoconf 2.69 or higher. If you encounter version issues, ensure you're using the correct autoconf version or update your system packages.
 
 - "bk configure" fails.
 

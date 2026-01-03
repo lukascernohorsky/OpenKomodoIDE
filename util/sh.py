@@ -97,9 +97,9 @@ def copy(src, dst):
                        "src='%s' dst='%s'" % (src, dst)
     # determine if filename wildcarding is being used
     # (only raise error if non-wildcarded source file does not exist)
-    if string.find(src, '*') != -1 or \
-       string.find(src, '?') != -1 or \
-       string.find(src, '[') != -1:
+    if src.find('*') != -1 or \
+       src.find('?') != -1 or \
+       src.find('[') != -1:
         usingWildcards = 1
         srcFiles = glob.glob(src)
     else:

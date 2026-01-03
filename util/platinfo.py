@@ -85,8 +85,7 @@ import tempfile
 import logging
 import errno
 import subprocess
-from pprint import pprint
-from os.path import exists
+from pprint(import) pprint(from) os.path import exists
 import warnings
 
 
@@ -594,6 +593,9 @@ class PlatInfo(object):
             "distro_codename": re.compile("^Codename:\s+(.*?)\s*$"),
             "lsb_version": re.compile("^LSB Version:\s+(.*?)\s*$"),
         }
+        # Decode stdout to string for Python 3 compatibility
+        if isinstance(stdout, bytes):
+            stdout = stdout.encode()'utf-8', errors='replace')
         for line in stdout.splitlines(0):
             for name, pattern in patterns.items():
                 match = pattern.search(line)
@@ -861,6 +863,10 @@ int main(int argc, char **argv) { exit(0); }
         p = subprocess.Popen("ldd a.out", cwd=tmpdir, shell=True, stdout=subprocess.PIPE)
         ldd, _ = p.communicate()
 
+        # Decode ldd output to string for Python 3 compatibility
+        if isinstance(ldd, bytes):
+            ldd = ldd.encode()'utf-8', errors='replace')
+
         # Parse the lib versions from the object dump.
         # e.g.: libstdc++-libc6.2-2.so.3
         patterns = {
@@ -1118,7 +1124,7 @@ more information."""
         if sys.version_info[:2] >= (2,4):
             pprint(pi.as_dict(), width=WIDTH)
         else:
-            from pprint import PrettyPrinter
+            from pprint(import) PrettyPrinter
             pp = PrettyPrinter(width=WIDTH)
             pp.pprint(pi.as_dict())
     elif opts.format == "xml":
@@ -1132,7 +1138,7 @@ more information."""
         if sys.version_info[:2] >= (2,4):
             pprint(pi.as_dict(), width=WIDTH)
         else:
-            from pprint import PrettyPrinter
+            from pprint(import) PrettyPrinter
             pp = PrettyPrinter(width=WIDTH)
             pp.pprint(pi.as_dict())
         print(_banner("as_xml", '-', length=WIDTH))

@@ -81,8 +81,7 @@ if sys.platform == "win32" and sys.version.startswith("2.3."):
 import getopt
 import re
 import shutil
-import pprint
-import time
+import pprint(import) time
 import glob
 import urllib.request
 import urllib.parse
@@ -93,6 +92,47 @@ import logging
 import subprocess
 import json
 import platform
+
+# Modern version comparison (replacement for distutils.version.LooseVersion)
+try:
+    from packaging.version import parse as parse_version
+except ImportError:
+    # Fallback implementation if packaging is not available
+    def parse_version(version):
+        """Simple version string parser for basic comparison."""
+        if isinstance(version, str):
+            # Simple implementation for basic version comparison
+            parts = []
+            for part in version.split('.'):
+                try:
+                    parts.append(int(part))
+                except ValueError:
+                    parts.append(part)
+            return parts
+        return version
+
+def safe_parse_version(version):
+    """Safe version parsing that handles various version string formats."""
+    if not version:
+        return parse_version("0.0.0")
+    
+    # Clean up version string - remove any non-numeric/non-dot characters
+    cleaned_version = ""
+    for char in str(version):
+        if char.isdigit() or char == '.':
+            cleaned_version += char
+    
+    # If we end up with an empty string or just dots, use 0.0.0
+    if not cleaned_version or cleaned_version.strip() == "":
+        cleaned_version = "0.0.0"
+    
+    # Ensure we have at least 3 parts for proper comparison
+    parts = cleaned_version.split('.')
+    while len(parts) < 3:
+        parts.append('0')
+    cleaned_version = '.'.join(parts[:3])  # Take first 3 parts only
+    
+    return parse_version(cleaned_version)
 
 sys.path.insert(0, join(dirname(__file__), "..", "util"))
 import which
@@ -123,12 +163,12 @@ def _getChangeNum():
         # pull off front number (good enough for our purposes)
         try:
             changenum = int(re.match("(\d+)", changestr).group(1))
-            log.warn("simplifying complex changenum from 'svnversion': %s -> %s"
+            log.warning("simplifying complex changenum from 'svnversion': %s -> %s"
                      " (see `svnversion --help` for details)",
                      changestr, changenum)
         except AttributeError as ex:
             changenum = 0
-            log.warn("Failed to get changenum, using 0 instead")
+            log.warning("Failed to get changenum, using 0 instead")
     return changenum
 
 
@@ -142,6 +182,7 @@ gPlat2BinDir = {
     'win32': os.path.abspath('bin-win32'),
     'sunos5': os.path.abspath('bin-solaris-sun'),
     'linux2': os.path.abspath('bin-linux-x86'),
+    'linux': os.path.abspath('bin-linux-x86'),
     'hp-uxB': os.path.abspath('bin-hpux'),
     'darwin': os.path.abspath('bin-darwin'),
     'freebsd6': os.path.abspath('bin-freebsd-x86'),
@@ -423,6 +464,10 @@ def _setupMozillaEnv():
 
     os.environ["MOZBUILD_STATE_PATH"] = join(config.buildDir, "moz-state")
     
+    # For modern Firefox builds, ensure Python 3 is used
+    if config.mozVer >= 140.0:
+        os.environ["PYTHON3"] = "python3"
+    
     if config.withCrashReportSymbols:
         os.environ['MOZ_DEBUG_SYMBOLS'] = '1'
         if sys.platform == "darwin" or \
@@ -449,9 +494,9 @@ def _setupMozillaEnv():
                     log.info("Placing non-msys perl first on path: %s", alt_perl)
                     break
             else:
-                log.warn("Could not find non-msys perl - Windows SDK check may fail")
+                log.warning("Could not find non-msys perl - Windows SDK check may fail")
         else:
-            log.warn("Could not find msys perl")
+            log.warning("Could not find msys perl")
 
         # This is in conflict with above!
         # Mozilla requires using Msys perl rather than AS perl; use the one
@@ -467,19 +512,28 @@ def _setupMozillaEnv():
                       config.mozObjDir, "dist", "bin")
         os.environ["PATH"] = binDir + os.pathsep + os.environ["PATH"]
         
-        # Ensure have the required autoconf version (use our own).
-        autoconfPrefix = abspath(join(dirname(__file__), "support", "autoconf-2.13"))
-        os.environ["PATH"] = join(autoconfPrefix, "bin") + os.pathsep + os.environ["PATH"]
-        os.environ["AC_MACRODIR"] = join(autoconfPrefix, "share", "autoconf")
-        autoconf = which.which("autoconf")
-        autoconfVer = _getAutoconfVersion(autoconf)
-        if autoconfVer > (2, 13):
-            verStr = '.'.join([str(i) for i in autoconfVer])
-            raise BuildError("Incorrect autoconf version. '%s' is of "
-                             "version '%s'. You must have autoconf "
-                             "version 2.13 or less first on your PATH "
-                             "to build mozilla."
-                             % (autoconf, verStr))
+        # Ensure have the required autoconf version (use our own for older versions).
+        config = _importConfig()
+        if config.mozVer >= 140.0:
+            # For Firefox 140 ESR, use system autoconf
+            log.info("Using system autoconf for Firefox 140 ESR")
+            autoconf = which.which("autoconf")
+            autoconfVer = _getAutoconfVersion(autoconf)
+            log.info("Using modern autoconf version %s for Firefox 140 ESR", '.'.join([str(i) for i in autoconfVer]))
+        else:
+            # For older versions, use bundled autoconf-2.13
+            autoconfPrefix = abspath(join(dirname(__file__), "support", "autoconf-2.13"))
+            os.environ["PATH"] = join(autoconfPrefix, "bin") + os.pathsep + os.environ["PATH"]
+            os.environ["AC_MACRODIR"] = join(autoconfPrefix, "share", "autoconf")
+            autoconf = which.which("autoconf")
+            autoconfVer = _getAutoconfVersion(autoconf)
+            if autoconfVer > (2, 13):
+                verStr = '.'.join([str(i) for i in autoconfVer])
+                raise BuildError("Incorrect autoconf version. '%s' is of "
+                                 "version '%s'. You must have autoconf "
+                                 "version 2.13 or less first on your PATH "
+                                 "to build mozilla."
+                                 % (autoconf, verStr))
 
         # zsh shell fails when configuring mozilla - so force bash instead.
         if "zsh" in os.environ.get("SHELL", ""):
@@ -488,7 +542,8 @@ def _setupMozillaEnv():
 
     # Check for Centos 6, and add appropriate LDFLAGS.
     if sys.platform == "linux" and exists("/etc/redhat-release"):
-        contents = file("/etc/redhat-release").read()
+        with open("/etc/redhat-release", 'r') as f:
+            contents = f.read()
         if "CentOS release 6." in contents:
             ldflags = os.environ.get('LDFLAGS', '').split(' ')
             ldflags.append("-lrt")
@@ -682,24 +737,40 @@ def _getMozSrcInfo(scheme):
 
     elif re.match(r"^(?P<ver>(\d+?)+)(:(?P<tag>\w+))?$", scheme): # VER[:TAG]
         match = re.match(r"^(?P<ver>(\d+?)+)(:(?P<tag>\w+))?$", scheme)
-        config.update(
-            mozSrcType="hg",
-            mozSrcHgRepo=match.group("ver"),
-            mozSrcHgTag=match.group("tag"),
-        )
-        # Determine a nice short name loosely describing this Mercurial
-        # source.
-        config["mozSrcName"] = "moz%s" % (config["mozSrcHgRepo"], )
-        config["mozVer"] = round(int(config["mozSrcHgRepo"]) / 100.0, 2)
+        ver_num = int(match.group("ver"))
+        
+        # For Firefox 140 ESR and later, use Git instead of Mercurial
+        if ver_num >= 14000:
+            config.update(
+                mozSrcType="git",
+                mozSrcGitRev=match.group("ver"),
+            )
+        else:
+            config.update(
+                mozSrcType="hg",
+                mozSrcHgRepo=match.group("ver"),
+                mozSrcHgTag=match.group("tag"),
+            )
+        # Determine a nice short name loosely describing this source.
+        config["mozSrcName"] = "moz%s" % (match.group("ver"), )
+        config["mozVer"] = round(int(match.group("ver")) / 100.0, 2)
 
     elif re.match(r"^FIREFOX_.*_RELEASE$", scheme): # TAG
         # Determine the version from the tag.
         match = re.match(r"^FIREFOX_(?P<ver>\d+\_\d+\_\d+)(?P<type>esr)?_RELEASE$", scheme)
         if not match:
             raise BuildError("Unexpected mozSrc tag %r" % scheme)
-        config["mozSrcType"] = "hg"
-        config["mozSrcHgTag"] = scheme
         ver = match.group("ver").replace("_", "")
+        ver_num = int(ver)
+        
+        # For Firefox 140 ESR and later, use Git instead of Mercurial
+        if ver_num >= 14000:
+            config["mozSrcType"] = "git"
+            config["mozSrcGitRev"] = scheme
+        else:
+            config["mozSrcType"] = "hg"
+            config["mozSrcHgTag"] = scheme
+        
         hgtype = match.group("type") or ""
         config["mozVer"] = round(int(ver) / 100.0, 2)
         config["mozSrcHgRepo"] = ver + hgtype
@@ -1011,7 +1082,7 @@ def target_configure(argv):
         "buildDir": abspath("build"),
         "mozconfig": None,
         "jsStandalone": False,
-        "mozSrcScheme": "3500",
+        "mozSrcScheme": "14000",
         "withCrashReportSymbols": False,
         "withPGOGeneration": False,
         "withPGOCollection": False,
@@ -1026,10 +1097,14 @@ def target_configure(argv):
 
     mozBuildOptions = []
     if sys.platform.startswith("linux"):
-        # Avoid having a dependency on libstdc++
-        mozBuildOptions.append('enable-stdcxx-compat')
-        # Disable gstreamer.
-        mozBuildOptions.append('disable-gstreamer')
+        # Disable gstreamer (only for older Firefox versions).
+        try:
+            old_config = _importConfig()
+            if old_config.mozVer < 140.0:
+                mozBuildOptions.append('disable-gstreamer')
+        except (FileNotFoundError, AttributeError):
+            # No existing config or missing mozVer, use default behavior
+            pass
 
     mozMakeOptions = []
     mozBuildExtensions = []
@@ -1171,6 +1246,37 @@ def target_configure(argv):
         _getMozSrcInfo(config["mozSrcScheme"])
     )
 
+    # Add platform-specific options that depend on mozVer
+    if sys.platform.startswith("linux"):
+        # Avoid having a dependency on libstdc++
+        # Note: --enable-stdcxx-compat is not compatible with gold linker
+        # For Firefox 140 ESR with gold linker, we skip this option
+        if config["mozVer"] < 140.0 and not any("gold" in opt for opt in mozBuildOptions):
+            mozBuildOptions.append('enable-stdcxx-compat')
+        
+
+
+    # Set NASM path in environment for build system
+    nasm_path = "/home/lc/projekty/OpenKomodoIDE/firefox/nasm"
+    if os.path.exists(nasm_path) and os.access(nasm_path, os.X_OK):
+        os.environ["NASM"] = nasm_path
+        log.info("Set NASM environment variable to: %s", nasm_path)
+    
+    # Set Rust path in environment for build system
+    rustc_path = "/home/lc/.cargo/bin/rustc"
+    cargo_path = "/home/lc/.cargo/bin/cargo"
+    cargo_home = "/home/lc/.cargo"
+    
+    if os.path.exists(rustc_path) and os.access(rustc_path, os.X_OK):
+        os.environ["RUSTC"] = rustc_path
+        log.info("Set RUSTC environment variable to: %s", rustc_path)
+    if os.path.exists(cargo_path) and os.access(cargo_path, os.X_OK):
+        os.environ["CARGO"] = cargo_path
+        log.info("Set CARGO environment variable to: %s", cargo_path)
+    if os.path.exists(cargo_home) and os.access(cargo_home, os.R_OK):
+        os.environ["CARGO_HOME"] = cargo_home
+        log.info("Set CARGO_HOME environment variable to: %s", cargo_home)
+    
     # Finish determining the configuration: some defaults depend on user
     # settings.
     buildType = config["buildType"] # shorthand
@@ -1227,8 +1333,7 @@ def target_configure(argv):
         if osx_major_ver >= 10: # aka Snow Leopard or greater
             if is_gcc:
                 version = version_string.split(" ")[2]
-                from distutils.version import LooseVersion
-                if LooseVersion(version) < "4.2":
+                if safe_parse_version(version) < safe_parse_version("4.2"):
                     raise BuildError("GCC 4.2 or higher is required, " \
                                      "you have GCC %s, please install a " \
                                      "newer version." \
@@ -1254,8 +1359,7 @@ def target_configure(argv):
             gcc = which.which("gcc")
             gxx = which.which("g++")
         version = _capture_output("%s --version" % (gcc,)).split(" ")[2]
-        from distutils.version import LooseVersion
-        if LooseVersion(version) < "4.2":
+        if safe_parse_version(version) < safe_parse_version("4.2"):
             machine = _capture_output("%s -dumpmachine" % (gcc,)).split("-")[0]
             if machine == "x86_64":
                 error = "GCC 4.2 or higher is required due to visibility-" \
@@ -1268,13 +1372,17 @@ def target_configure(argv):
                 raise BuildError(error)
             else:
                 # we don't _need_ gcc44 here...
-                log.warn("Using outdated gcc %s", version)
+                log.warning("Using outdated gcc %s", version)
         config["gcc"] = gcc
         config["gxx"] = gxx
         mozRawOptions.append("export CC=%s" % gcc)
         mozRawOptions.append("export CXX=%s" % gxx)
         # Try to enable gold linker where available.
-        mozBuildOptions.append('enable-gold')
+        # Note: --enable-gold is deprecated in Firefox 140 ESR, use --enable-linker=gold
+        if config["mozVer"] < 140.0:
+            mozBuildOptions.append('enable-gold')
+        else:
+            mozBuildOptions.append('enable-linker=gold')
 
     config["changenum"] = _getChangeNum()
     if sys.platform == "win32":
@@ -1306,8 +1414,15 @@ def target_configure(argv):
 
     if config["python"] is None:
         if config["pythonVersion"] is None:
-            config["pythonVersion"] = "2.7"
-        if config["pythonVersion"] in ("2.6", "2.7"):
+            config["pythonVersion"] = "3.11"  # Updated to Python 3.11 for modern compatibility
+        # For Python 3, we don't need prebuilt directories - use system Python 3
+        if config["pythonVersion"].startswith("3."):
+            config["pyVer"] = config["pythonVersion"]
+            # Use system Python 3 instead of prebuilt versions
+            config["python"] = sys.executable  # Use current Python 3 interpreter
+            log.info("Using system Python %s for build" % config["pythonVersion"])
+        elif config["pythonVersion"] in ("2.6", "2.7"):
+            # Legacy Python 2 support (kept for compatibility but not recommended)
             config["pyVer"] = config["pythonVersion"]
             # Extract the prebuilt Python directory.
             if sys.platform == "win32":
@@ -1320,39 +1435,46 @@ def target_configure(argv):
             prebuiltDir = join("prebuilt", "python%s" % config["pyVer"],
                                buildName)
 
-            # If the dirs exists and is out-of-date: remove it.
-            mtime_zip = os.stat(prebuiltDir+".zip").st_mtime
-            if exists(prebuiltDir) \
-               and os.stat(prebuiltDir).st_mtime < mtime_zip:
-                log.info("removing out of date unzip of prebuilt python "
-                         "in `%s'", prebuiltDir)
-                if sys.platform == "win32":
-                    _run('rd /s/q "%s"' % prebuiltDir)
-                else:
-                    _run('rm -rf "%s"' % prebuiltDir)
+            # For Python 3, skip prebuilt directory handling and use system Python
+            if config["pythonVersion"].startswith("3."):
+                # Python 3: use system Python, no prebuilt directory needed
+                pythonExe = config["python"]  # Already set to sys.executable
+            else:
+                # Legacy Python 2: use prebuilt directory
+                # If the dirs exists and is out-of-date: remove it.
+                mtime_zip = os.stat(prebuiltDir+".zip").st_mtime
+                if exists(prebuiltDir) \
+                   and os.stat(prebuiltDir).st_mtime < mtime_zip:
+                    log.info("removing out of date unzip of prebuilt python "
+                             "in `%s'", prebuiltDir)
+                    if sys.platform == "win32":
+                        _run('rd /s/q "%s"' % prebuiltDir)
+                    else:
+                        _run('rm -rf "%s"' % prebuiltDir)
 
-            # If the dir doesn't exist then we need to crack it there.
-            if not exists(prebuiltDir):
-                log.info("unzipping prebuilt python in `%s'", prebuiltDir)
-                prebuiltZip = prebuiltDir + ".zip"
-                if not exists(prebuiltZip):
-                    raise BuildError("prebuilt Python zip doesn't exist: %s"
-                                     % prebuiltZip)
-                _run_in_dir("unzip -q -d %s %s"
-                            % (basename(prebuiltDir), basename(prebuiltZip)),
-                            dirname(prebuiltDir), log.debug)
-        else:
-            raise BuildError("unexpected value for 'pythonVersion' "
-                             "(a.k.a. --python-version): %r"
-                             % config["pythonVersion"])
+                # If the dir doesn't exist then we need to crack it there.
+                if not exists(prebuiltDir):
+                    log.info("unzipping prebuilt python in `%s'", prebuiltDir)
+                    prebuiltZip = prebuiltDir + ".zip"
+                    if not exists(prebuiltZip):
+                        raise BuildError("prebuilt Python zip doesn't exist: %s"
+                                         % prebuiltZip)
+                    _run_in_dir("unzip -q -d %s %s"
+                                % (basename(prebuiltDir), basename(prebuiltZip)),
+                                dirname(prebuiltDir), log.debug)
 
-        # Find the Python binary under here.
-        if sys.platform == "win32":
+        # Find the Python binary
+        if config["pythonVersion"].startswith("3."):
+            # Python 3: use the system Python executable we already set
+            pythonExe = config["python"]
+        elif sys.platform == "win32":
+            # Legacy Python 2 on Windows
             if config["buildType"] == "debug":
                 pythonExe = join(prebuiltDir, "python_d.exe")
             else:
                 pythonExe = join(prebuiltDir, "python.exe")
         elif sys.platform == "darwin":
+            # Legacy Python 2 on macOS
             # we can link against a release version of the python framework just fine
             pattern = join(prebuiltDir, "Python.framework", "Versions", 
                            "?.?", "bin", "python")
@@ -1379,14 +1501,32 @@ def target_configure(argv):
     if config["srcTreeName"] is None:
         config["srcTreeName"] = '-'.join(srcTreeNameBits)
     if config["mozObjDir"] is None:
-        config["mozObjDir"] = '-'.join(mozObjDirBits)
+        if config["mozVer"] >= 140.0:
+            # For Firefox 140 ESR, use the modern object directory format
+            # Modern Firefox uses obj-<platform> format
+            import platform as pltfrm
+            machine = pltfrm.machine()
+            system = pltfrm.system().lower()
+            if system == "linux":
+                objDirFormat = "obj-x86_64-pc-linux-gnu"
+            elif system == "darwin":
+                objDirFormat = "obj-x86_64-apple-darwin"
+            elif system == "win32" or system == "windows":
+                objDirFormat = "obj-x86_64-pc-mingw32"
+            else:
+                objDirFormat = "obj-" + machine + "-unknown-" + system
+            config["mozObjDir"] = objDirFormat
+        else:
+            config["mozObjDir"] = '-'.join(mozObjDirBits)
 
     # Determine the exact mozilla build configuration (i.e. the content
     # of '.mozconfig') -- unless specifically given.
     mozVer = config["mozVer"]
     if config["mozconfig"] is None:
         # help viewer was removed from normal builds, enable it for Komodo
-        mozBuildOptions.append("enable-help-viewer")
+        # Note: --enable-help-viewer was removed in Firefox 140 ESR
+        if mozVer < 140.0:
+            mozBuildOptions.append("enable-help-viewer")
 
         if not config.get("withTests", False):
             mozBuildOptions.append("disable-tests")
@@ -1434,6 +1574,10 @@ def target_configure(argv):
         if config["stripBuild"]:
             mozBuildOptions.append('enable-strip')
 
+        # For modern Firefox, add MOZ_OBJDIR to mozconfig
+        if config["mozVer"] >= 140.0:
+            mozMakeOptions.insert(0, "MOZ_OBJDIR=%s" % config["mozObjDir"])
+        
         for opt in mozMakeOptions:
             config["mozconfig"] += "mk_add_options %s\n" % opt
 
@@ -1536,7 +1680,7 @@ You need to do one or more of the following to work around this problem
 # See "build -h configure" for details.
 
 """)
-    items = config.items()
+    items = list(config.items())  # Convert to list for Python 3 compatibility
     items.sort()
     for name, value in items:
         #XXX Might need to do some type checking here to ensure
@@ -1570,7 +1714,7 @@ def _relocatePyxpcom(config):
             p = os.path.realpath(line.strip())
             if os.path.isfile(p):
                 found[p]=1
-        libs += found.keys()
+        libs += list(found.keys())
     for lib in libs:
         # Ensure the lib was built against a Python of the correct version.
         landmark = "Python.framework/Versions/%s/Python" % config.pyVer
@@ -1626,7 +1770,8 @@ def _disablePythonUserSiteFeature(site_filepath):
     """Turn off the ENABLE_USER_SITE (PEP 370) feature (bug 85725)."""
 
     log.info("Disabling user site feature in: %r", site_filepath)
-    contents = file(site_filepath, "rb").read()
+    with open(site_filepath, "rb") as f:
+        contents = f.read()
     assert "ENABLE_USER_SITE = None" in contents
     contents = contents.replace("ENABLE_USER_SITE = None",
                                 "ENABLE_USER_SITE = False")
@@ -1636,7 +1781,8 @@ def _disablePythonUserSiteFeature(site_filepath):
         assert contents.count('if sys.platform == "darwin":') == 1
         contents = contents.replace('if sys.platform == "darwin":', 'if 0: # disabled for KOMODO')
 
-    file(site_filepath, "wb").write(contents)
+    with open(site_filepath, "wb") as f:
+        f.write(contents)
 
 
 def target_silo_python(argv=["silo_python"]):
@@ -1966,8 +2112,11 @@ def target_pyxpcom(argv=["pyxpcom"]):
         # fail to load pyxpcom components.
         dependentlibs_path = join(moz_obj_dir, "dist", "bin", "dependentlibs.list")
         assert exists(dependentlibs_path)
-        if "libpyxpcom.so" not in file(dependentlibs_path).read():
-            file(dependentlibs_path, "a").write("libpyxpcom.so\n")
+        with open(dependentlibs_path, 'r') as f:
+            content = f.read()
+        if "libpyxpcom.so" not in content:
+            with open(dependentlibs_path, "a") as f:
+                f.write("libpyxpcom.so\n")
             log.info("pyxpcom: added libpyxpcom.so to dependentlibs.list")
 
     _relocatePyxpcom(config)
@@ -2067,8 +2216,82 @@ def target_src(argv=["src"]):
         log.info("mkdir `%s'", buildDir)
         os.makedirs(buildDir)
 
-    if mozSrcType == "hg":
-        supportDir = os.path.abspath("support")
+    # Check if Git is preferred (via environment variables or configuration)
+    use_git = (os.environ.get('MOZ_SOURCE_REPO') is not None or 
+               os.environ.get('MOZ_SOURCE_STAMP') is not None or
+               config.mozSrcType == "git")
+    
+    if use_git:
+        srcRepo = os.path.join(buildDir, "mozilla")
+        # Use environment variables if set, otherwise use default
+        git_repo = os.environ.get('MOZ_SOURCE_REPO', 'https://github.com/mozilla-firefox/firefox.git')
+        git_rev = os.environ.get('MOZ_SOURCE_STAMP', getattr(config, 'mozSrcGitRev', 'esr140'))
+        
+        # For Firefox 140 ESR, we need to map to the correct tag format
+        if git_rev == 'esr140' or git_rev.startswith('firefox-140'):
+            # Firefox 140 ESR uses tags like FIREFOX_140_0_RELEASE
+            git_rev = 'FIREFOX_140_0_RELEASE'
+        
+        _run("git clone --no-checkout --progress -- %s \"%s\"" % (git_repo, srcRepo))
+        _run_in_dir("git fetch --tags", srcRepo)
+        
+        # For Firefox 140 ESR, use the known good tag
+        if config.mozVer == 140.0:
+            branch = "FIREFOX_140_0_RELEASE"
+        else:
+            # Original logic for other versions
+            tags = _capture_output("git --git-dir=\"%s/.git\" tag -l" % (srcRepo,)).splitlines()
+            if git_rev in tags:
+                branch = git_rev
+            elif git_rev.translate(str.maketrans('', '', '0123456789')) == "":
+                versions = []
+                for tag in tags:
+                    if not (tag.startswith("FIREFOX_") and tag.endswith("_RELEASE")):
+                        continue
+                    version = parse_version(".".join(tag.split("_")[1:-1]))
+                    # Skip alphas and betas - check if version string contains 'a' or 'b'
+                    version_str = str(version)
+                    if 'a' in version_str or 'b' in version_str:
+                        continue
+                    versions.append(version)
+                if versions:
+                    lastVerMajor = max(versions)
+                    targetVer = parse_version(".".join(map(str, [int(config.mozVer),
+                                                                int(config.mozVer * 10 % 10),
+                                                                int(config.mozVer * 100 % 10)])))
+                    if lastVerMajor >= targetVer:
+                        if targetVer not in versions:
+                            # try without the last part, for x.0 vs x.0.0
+                            targetVer_str = str(targetVer)
+                            targetVer = parse_version(targetVer_str.rsplit(".", 1)[0])
+                        if targetVer not in versions:
+                            raise BuildError("Can't find version %s" % (config.mozVer,))
+                        branch = "FIREFOX_%s_RELEASE" % (str(targetVer).replace(".", "_"),)
+                else:
+                    for branch in ("beta", "aurora", "master"):
+                        milestone = _capture_output("git --git-dir=\"%s/.git\" show "
+                                                    "origin/%s:config/milestone.txt" %
+                                                    (srcRepo, branch))
+                        for line in milestone.splitlines():
+                            if (line.lstrip() + "#").startswith("#"):
+                                continue # empty or comment
+                            break
+                        else:
+                            continue
+                        version = parse_version(line.strip())
+                        # For simple comparison, we'll compare the first component
+                        version_parts = str(version).split('.')
+                        target_parts = str(targetVer).split('.')
+                        if version_parts[0] == target_parts[0]:
+                            break
+                    else:
+                        raise BuildError("Can't find version %s" % (config.mozVer,))
+            else:
+                branch = git_rev
+        
+        _run("git --git-dir=\"%s/.git\" --work-tree=\"%s\" checkout -f %s" % (srcRepo, srcRepo, branch), log.info)
+    elif mozSrcType == "hg":
+        supportDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "support"))
         try:
             sys.path.append(supportDir)
             from get_mozilla_tree import getTreeFromVersion, getRepoFromTree, fixRemoteRepo
@@ -2093,7 +2316,7 @@ def target_src(argv=["src"]):
             try:
                 internal_url = "http://komodo.nas1.activestate.com/build-support/mozilla-build/%s.hg" % (treeName,)
                 # check that the URL can be opened (not 404, etc.) We don't need to read it.
-                urllib2.urlopen(internal_url, None, 10).close()
+                urllib.request.urlopen(internal_url, None, 10).close()
                 bundleURL = internal_url
             except IOError:
                 # assume we're not in ActiveState's internal network and can't get
@@ -2102,7 +2325,7 @@ def target_src(argv=["src"]):
                          "using Mozilla canonical server")
         if not bundleURL:
             log.info("retrieving available bundles from hg.cdn.mozilla.net")
-            hg_data = json.load(urllib2.urlopen('https://hg.cdn.mozilla.net/bundles.json'))['releases/%s' % (treeName,)]["gzip-v2"]
+            hg_data = json.load(urllib.request.urlopen('https://hg.cdn.mozilla.net/bundles.json'))['releases/%s' % (treeName,)]["gzip-v2"]
             relativebundleURL = hg_data['path']
             bundleURL = "https://hg.cdn.mozilla.net/%s" % (relativebundleURL,)
 
@@ -2114,35 +2337,34 @@ def target_src(argv=["src"]):
         _run("hg --cwd %s pull" % (hgRepo,), log.info)
         if hgTag:
             _run("hg --cwd %s up --rev %s" % (hgRepo, hgTag), log.info)
-
-    elif mozSrcType == "git":
-        srcRepo = os.path.join(buildDir, "mozilla")
-        _run("git clone --no-checkout --progress -- git://github.com/mozilla/mozilla-central.git \"%s\"" % (srcRepo,))
         _run_in_dir("git fetch --tags", srcRepo)
         tags = _capture_output("git --git-dir=\"%s/.git\" tag -l" % (srcRepo,)).splitlines()
-        if config.mozSrcGitRev in tags:
-            branch = config.mozSrcGitRev
-        elif config.mozSrcGitRev.translate(None, "0123456789") == "":
-            from distutils.version import LooseVersion, StrictVersion
+        if git_rev in tags:
+            branch = git_rev
+        elif git_rev.translate(str.maketrans('', '', '0123456789')) == "":
             versions = []
             for tag in tags:
                 if not (tag.startswith("FIREFOX_") and tag.endswith("_RELEASE")):
                     continue
-                version = LooseVersion(".".join(tag.split("_")[1:-1]))
-                if version.version[-2] in ("a", "b"):
-                    continue # skip alphas and betas
+                version = parse_version(".".join(tag.split("_")[1:-1]))
+                # Skip alphas and betas - check if version string contains 'a' or 'b'
+                version_str = str(version)
+                if 'a' in version_str or 'b' in version_str:
+                    continue
                 versions.append(version)
-            lastVerMajor = max(versions).version[0]
-            targetVer = LooseVersion(".".join(map(str, [int(config.mozVer),
-                                                        int(config.mozVer * 10 % 10),
-                                                        int(config.mozVer * 100 % 10)])))
-            if lastVerMajor >= targetVer.version[0]:
-                if not targetVer in versions and targetVer.version[-1] == 0:
-                    # try without the last part, for x.0 vs x.0.0
-                    targetVer = LooseVersion(targetVer.vstring.rsplit(".", 1)[0])
-                if not targetVer in versions:
-                    raise BuildError("Can't find version %s" % (config.mozVer,))
-                branch = "FIREFOX_%s_RELEASE" % (targetVer.vstring.replace(".", "_"),)
+            if versions:
+                lastVerMajor = max(versions)
+                targetVer = parse_version(".".join(map(str, [int(config.mozVer),
+                                                            int(config.mozVer * 10 % 10),
+                                                            int(config.mozVer * 100 % 10)])))
+                if lastVerMajor >= targetVer:
+                    if targetVer not in versions:
+                        # try without the last part, for x.0 vs x.0.0
+                        targetVer_str = str(targetVer)
+                        targetVer = parse_version(targetVer_str.rsplit(".", 1)[0])
+                    if targetVer not in versions:
+                        raise BuildError("Can't find version %s" % (config.mozVer,))
+                    branch = "FIREFOX_%s_RELEASE" % (str(targetVer).replace(".", "_"),)
             else:
                 for branch in ("beta", "aurora", "master"):
                     milestone = _capture_output("git --git-dir=\"%s/.git\" show "
@@ -2154,13 +2376,16 @@ def target_src(argv=["src"]):
                         break
                     else:
                         continue
-                    version = LooseVersion(line.strip())
-                    if version.version[0] == targetVer.version[0]:
+                    version = parse_version(line.strip())
+                    # For simple comparison, we'll compare the first component
+                    version_parts = str(version).split('.')
+                    target_parts = str(targetVer).split('.')
+                    if version_parts[0] == target_parts[0]:
                         break
                 else:
                     raise BuildError("Can't find branch for %s" % targetVer)
         else:
-            raise BuildError("unknown git version \"%s\"" % (config.mozSrcGitRev,))
+            raise BuildError("unknown git version \"%s\"" % (getattr(config, 'mozSrcGitRev', 'unknown'),))
         _run_in_dir("git checkout %s" % (branch,), srcRepo)
 
     elif mozSrcType == "tarball":
@@ -2203,17 +2428,31 @@ def _get_mozilla_objdir(convert_to_native_win_path=False, force_echo_variable=Fa
     old_cwd = os.getcwd()
     os.chdir(srcdir)
     try:
+        # Try modern mach-based approach first for Firefox 140 ESR
+        if config.mozVer >= 140.0:
+            try:
+                # Use python3 explicitly for modern Firefox builds
+                mach_cmd = "python3 ./mach echo-variable-OBJDIR"
+                output = _capture_output(mach_cmd)
+                if output:
+                    objdir = output.strip()
+                    if objdir:
+                        return objdir
+            except OSError:
+                pass  # fall back to legacy approach
+        
+        # Fall back to legacy client.mk approach for older versions
         for cmd in cmds:
             try:
                 output = _capture_output(cmd)
-                objdir = output.splitlines(0)[0].strip()
+                if output:
+                    objdir = output.splitlines(0)[0].strip()
+                    if objdir:
+                        break
             except OSError:
                 pass  # try the next command
-            else:
-                if objdir:
-                    break
         else:
-            raise BuildError("could not determine $OBJDIR using client.mk")
+            raise BuildError("could not determine $OBJDIR using client.mk or mach")
     finally:
         os.chdir(old_cwd)
 
@@ -2247,8 +2486,12 @@ def _get_exe_path(cmd):
     
     Some names are handle specially to point to special versions.
     """
+    config = _importConfig()
     if cmd == "autoconf-2.13":
-        if sys.platform == "win32":
+        if config.mozVer >= 140.0:
+            # For Firefox 140 ESR, use system autoconf
+            return which.which("autoconf")
+        elif sys.platform == "win32":
             return join(os.environ["MOZILLABUILD"], "msys", "local", "bin",
                         "autoconf-2.13")
         else:
@@ -2281,8 +2524,10 @@ def target_configure_mozilla(argv=["configure_mozilla"]):
 
     # get the moz version
     extensions = config.mozBuildExtensions
-    config.mozconfig += "ac_add_options --enable-extensions=%s\n"\
-                           % ','.join(extensions)
+    # Note: --enable-extensions was removed in Firefox 140 ESR
+    if config.mozVer < 140.0:
+        config.mozconfig += "ac_add_options --enable-extensions=%s\n"\
+                               % ','.join(extensions)
     # Copy in .mozconfig and set MOZCONFIG.
     mozconfig = os.path.join(buildDir, ".mozconfig")
     log.info("create '%s' and point MOZCONFIG to it", mozconfig)
@@ -2293,12 +2538,35 @@ def target_configure_mozilla(argv=["configure_mozilla"]):
     
     _setupMozillaEnv()
 
-    autoconf_path = _get_exe_path("autoconf-2.13")
-    if sys.platform == "win32":
-        cmd = "sh -c %s" % _msys_path_from_path(autoconf_path)
+    config = _importConfig()
+    if config.mozVer >= 140.0:
+        # For Firefox 140 ESR, use the modern configure system
+        log.info("Using modern configure system for Firefox 140 ESR")
+        # Modern Firefox requires building in a separate object directory
+        objDir = os.path.join(buildDir, config.mozObjDir.lstrip('@TOPSRCDIR@/'))
+        if not os.path.exists(objDir):
+            os.makedirs(objDir)
+        
+        # Modern Firefox uses Python 3 configure.py script
+        # We need to run configure from the object directory
+        # Ensure Python 3 is used
+        os.environ["PYTHON3"] = "python3"
+        # Set PYTHONPATH to include the mozilla python directory for looseversion module
+        python_path = os.path.join(buildDir, "python")
+        if os.path.exists(python_path):
+            if "PYTHONPATH" in os.environ:
+                os.environ["PYTHONPATH"] = python_path + ":" + os.environ["PYTHONPATH"]
+            else:
+                os.environ["PYTHONPATH"] = python_path
+        cmd = "../configure"
+        _run_in_dir(cmd, objDir, log.info)
     else:
-        cmd = autoconf_path
-    _run_in_dir(cmd, buildDir, log.info)
+        autoconf_path = _get_exe_path("autoconf-2.13")
+        if sys.platform == "win32":
+            cmd = "sh -c %s" % _msys_path_from_path(autoconf_path)
+        else:
+            cmd = autoconf_path
+        _run_in_dir(cmd, buildDir, log.info)
 
     # Clean out the configure cache.
     configCache = os.path.join(buildDir, "config.cache")
@@ -2308,9 +2576,11 @@ def target_configure_mozilla(argv=["configure_mozilla"]):
 
     # Add komodo build dir to .hgignore file.
     hgignore_filepath = join(buildDir, ".hgignore")
-    contents = file(hgignore_filepath).read()
+    with open(hgignore_filepath, 'r') as f:
+        contents = f.read()
     entry = "^" + config.mozObjDir + "/*"
-    file(hgignore_filepath, "w").write(contents + "\n" + entry + "\n")
+    with open(hgignore_filepath, "w") as f:
+        f.write(contents + "\n" + entry + "\n")
 
     return argv[1:]
 
@@ -2365,7 +2635,7 @@ def target_mozilla(argv=["mozilla"]):
         #_run_in_dir("python mach --log-file %s configure %s" %
         #                (join(buildDir, "mach.log"), build_args),
         #            buildDir, log.info)
-        _run_in_dir("python mach --log-file %s build %s" %
+        _run_in_dir("python3 mach --log-file %s build %s" %
                         (join(buildDir, "mach.log"), build_args),
                     buildDir, log.info)
 
@@ -2373,8 +2643,7 @@ def target_mozilla(argv=["mozilla"]):
         # Copy 'dependentlibs.list' into the Resources directory.
         distDir = join(config.buildDir, config.srcTreeName, "mozilla",
                        config.mozObjDir, "dist")
-        komodo_app_name = "Komodo%s" % (config.buildType == 'debug'
-                                        and 'debug' or '')
+        komodo_app_name = "Komodo%s" % ('debug' if config.buildType == 'debug' else '')
         binDepPath = join(distDir, "%s.app" % komodo_app_name, "Contents", "MacOS", "dependentlibs.list")
         resDepPath = join(distDir, "%s.app" % komodo_app_name, "Contents", "Resources", "dependentlibs.list")
         if exists(binDepPath):
@@ -2415,7 +2684,7 @@ def target_komodoapp(argv=["komodoapp"]):
     target_patch(patch_target='komodoapp', logFilename="__patchlog_komodoapp__.py")
     topsrcdir = os.path.join(config.buildDir, config.srcTreeName, "mozilla")
     log.info("building komodo app")
-    _run_in_dir("python mach --log-file %s build komodo" % (join(buildDir, "mach.log")),
+    _run_in_dir("python3 mach --log-file %s build komodo" % (join(config.buildDir, "mach.log")),
                 topsrcdir, log.info)
     return argv[1:]
 
@@ -2559,7 +2828,7 @@ def target_upload(argv=["upload"]):
     for name, filename in packages.items():
         src = join(gPackagesDir, filename)
         if not exists(src):
-            log.warn("could not upload %s package: `%s' does not exist",
+            log.warning("could not upload %s package: `%s' does not exist",
                      name, src)
             continue
         dst = "komodo@mule:/data/komodo/extras/mozilla-build-patches/" + filename
@@ -2703,6 +2972,9 @@ def _capture_output(cmd, capture_stderr=False):
     retval = p.returncode
     if retval:
         raise OSError("error capturing output of `%s': %r" % (cmd, retval))
+    # Decode output to string for Python 3 compatibility
+    if isinstance(output, bytes):
+        output = output.encode()'utf-8', errors='replace')
     return output
 
 def _capture_status(argv):
@@ -2822,7 +3094,7 @@ def _listTargets():
             else:
                 doc = ''
             docmap[target[7:]] = doc
-    targets = docmap.keys()
+    targets = list(docmap.keys())
 
     # Sort the targets into groups
     groupMap = { # mapping of group regex to group order and title
@@ -2944,7 +3216,7 @@ def main(argv):
 
     # Process arguments.
     if len(args) == 0:
-        log.warn("no targets given")
+        log.warning("no targets given")
         return 0
 
     _validateEnv()

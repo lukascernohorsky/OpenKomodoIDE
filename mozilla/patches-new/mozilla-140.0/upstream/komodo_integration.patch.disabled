@@ -1,0 +1,67 @@
+--- browser/app/nsBrowserApp.cpp.orig	2024-01-01 00:00:00.000000000 +0000
++++ browser/app/nsBrowserApp.cpp	2024-01-01 00:00:00.000000000 +0000
+@@ -25,6 +25,10 @@
+ #include "mozilla/StartupTimeline.h"
+ #include "BaseProfiler.h"
+ 
++#ifdef MOZ_KOMODO
++#include "komodo/KomodoIntegration.h"
++#endif
++
+ #ifdef LIBFUZZER
+ #  include "FuzzerDefs.h"
+ #endif
+@@ -195,6 +199,12 @@ int main(int argc, char* argv[], char* envp[])
+   gBootstrap.reset();
+ 
+   return result;
++#ifdef MOZ_KOMODO
++  // Firefox 140 ESR: Komodo integration
++  if (NS_SUCCEEDED(result)) {
++    KomodoIntegration::Shutdown();
++  }
++#endif
+ }
+ 
+ #endif
+--- browser/confvars.sh.orig	2024-01-01 00:00:00.000000000 +0000
++++ browser/confvars.sh	2024-01-01 00:00:00.000000000 +0000
+@@ -1,5 +1,9 @@
+ # This file is normally empty
+ 
++# Komodo integration for Firefox 140 ESR
++MOZ_KOMODO=1
++ACDEFINE(MOZ_KOMODO)
++
+ # Enable additional features required by Komodo
+ MOZ_EXTENSIONS=1
+ ACDEFINE(MOZ_EXTENSIONS)
+--- toolkit/moz.configure.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/moz.configure	2024-01-01 00:00:00.000000000 +0000
+@@ -123,6 +123,12 @@ def komodo_integration(value):
+     return True
+ 
++# Komodo integration options
++option('--enable-komodo', env='MOZ_KOMODO',
++       help='Enable Komodo IDE integration')
++
++set_config('MOZ_KOMODO', depends_if('--enable-komodo')(lambda _: True))
++set_define('MOZ_KOMODO', depends_if('--enable-komodo')(lambda _: True))
++
+ # WebExtensions support
+ option('--enable-webextensions',
+        help='Enable WebExtensions support')
+--- toolkit/toolkit.mozbuild.orig	2024-01-01 00:00:00.000000000 +0000
++++ toolkit/toolkit.mozbuild	2024-01-01 00:00:00.000000000 +0000
+@@ -45,6 +45,12 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'cocoa':
+     DEFINES['MOZ_WIDGET_COCOA'] = True
+ 
++if CONFIG['MOZ_KOMODO']:
++    DEFINES['MOZ_KOMODO'] = True
++    DEFINES['MOZ_KOMODO_INTEGRATION'] = True
++    SOURCES += ['komodo/KomodoIntegration.cpp']
++    EXPORTS += ['komodo/KomodoIntegration.h']
++
+ # WebExtensions support
+ if CONFIG['MOZ_WEBEXTENSIONS']:
+     DEFINES['MOZ_WEBEXTENSIONS'] = True
