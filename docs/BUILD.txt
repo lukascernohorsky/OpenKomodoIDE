@@ -22,32 +22,38 @@ I'm lazy, just show me how to build it
 If any of these steps break, please first look at the full instructions
 below (especially the "prerequisites" sections).
 
-Build steps on Windows (creating a Komodo 10.10 version):
+Build steps on Windows (creating a Komodo 14.0 version with Firefox 140 ESR):
 
     REM ---- Build Mozilla
     cd openkomodo\mozilla
     setenv-moz-msvc11.bat
-    python build.py configure -k 10.10
+    python build.py configure -k 14.0
     python build.py distclean all
     cd ..
-    REM ---- Build Komodo, version (10.10) must match between Komodo and Mozilla
+    REM ---- Build Komodo, version (14.0) must match between Komodo and Mozilla
     set PATH=util\black;%PATH%
-    bk configure -V 10.10.0-devel
+    bk configure -V 14.0.0-devel
     bk build
     REM ---- Run Komodo
     bk run
 
+Note: Python 2.x build scripts (mk24, mk25, mk26) have been removed.
+Only Python 3.11+ is supported for building this project.
+
 Build steps on Linux and Mac OS X:
 
-    #---- Build Mozilla
+    #---- Build Mozilla (Firefox 140 ESR)
     cd openkomodo/mozilla
-    python build.py configure -k 10.10
+    python build.py configure -k 14.0
     python build.py distclean all
     cd ..
-    #---- Build Komodo, version (10.10) must match between Komodo and Mozilla
+    #---- Build Komodo, version (14.0) must match between Komodo and Mozilla
     export PATH=`pwd`/util/black:$PATH   # Komodo's "bk" build tool
-    bk configure -V 10.10.0-devel
+    bk configure -V 14.0.0-devel
     bk build
+
+Note: Python 2.x build scripts (mk24, mk25, mk26) have been removed.
+Only Python 3.11+ is supported for building this project.
     #---- Run Komodo
     bk run
 

@@ -48,6 +48,25 @@ src/
 ├── main/              # Main application code
 │   ├── application/   # Application entry point
 │   └── core/          # Core functionality
+```
+
+## Migration Notes
+
+This project has been migrated from Python 2.x to Python 3.11 and from older Firefox versions to Firefox 140 ESR. The following legacy files have been removed:
+
+### Removed Python 2.x Files
+- Build scripts: `mk24`, `mk25`, `mk26`
+- Python 2.x specific UDL files
+- Platform-specific Python 2.7 libraries
+- Prebuilt Python 2.7 binaries
+
+### Removed Firefox 35.0 Files
+- All patches in `mozilla/patches-new/komodo-35.0/`
+- All patches in `mozilla/patches-new/mozilla-35.0/`
+- All patches in `mozilla/patches-new/mozilla-35.0-pyxpcom/`
+
+### Updated Files
+- `src/install/wix/feature-core.ini` - Removed Python 2.7 DLL references
 ├── components/        # Reusable components
 ├── integrations/      # Integration layers
 │   └── firefox/       # Firefox integration
