@@ -126,7 +126,8 @@ import tempfile
 import logging
 import getopt
 import imp
-import pprint(import) glob
+import pprint
+import glob
 import types
 try:
     from hashlib import md5
@@ -581,7 +582,7 @@ def _applyPatch(patchExe, baseDir, patchRelPath, sourceDir, reverse=0,
     log.debug("run %s in '%s' (stdin '%s')", argv, sourceDir, patchFile)
     stdout, stderr, retval = _run(argv, cwd=sourceDir, stdin=patchContent)
     if isinstance(stdout, bytes):
-        stdout = stdout.encode()'utf-8', errors='replace')
+        stdout = stdout.decode('utf-8', errors='replace')
     sys.stdout.write(stdout)
     sys.stdout.flush()
     if retval:

@@ -81,7 +81,8 @@ if sys.platform == "win32" and sys.version.startswith("2.3."):
 import getopt
 import re
 import shutil
-import pprint(import) time
+import pprint
+import time
 import glob
 import urllib.request
 import urllib.parse
@@ -2974,7 +2975,7 @@ def _capture_output(cmd, capture_stderr=False):
         raise OSError("error capturing output of `%s': %r" % (cmd, retval))
     # Decode output to string for Python 3 compatibility
     if isinstance(output, bytes):
-        output = output.encode()'utf-8', errors='replace')
+        output = output.decode('utf-8', errors='replace')
     return output
 
 def _capture_status(argv):
