@@ -1,0 +1,23 @@
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Starting complete build process...
+2026-01-12 07:24:02,696 - BuildSystem - INFO - ============================================================
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Setting up build environment...
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Environment set up for linux
+2026-01-12 07:24:02,696 - BuildSystem - INFO - Checking dependencies...
+2026-01-12 07:24:02,721 - BuildSystem - INFO - All required dependencies are available
+2026-01-12 07:24:02,721 - BuildSystem - INFO - Checking Firefox source code...
+2026-01-12 07:24:02,721 - BuildSystem - INFO - Verifying Firefox source code...
+2026-01-12 07:24:02,721 - BuildSystem - INFO - ✓ Firefox source code verified and ready at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-12 07:24:02,721 - BuildSystem - INFO - ✓ Firefox source code found at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-12 07:24:02,721 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-12 07:24:02,721 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
+2026-01-12 07:24:10,392 - BuildSystem - INFO - ✓ Build configuration successful
+2026-01-12 07:24:10,392 - BuildSystem - INFO - Building targets: all
+2026-01-12 07:24:10,392 - BuildSystem - INFO - 
+Building target: all
+2026-01-12 07:24:10,392 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach build
+2026-01-12 07:24:11,182 - BuildSystem - WARNING - ⚠ Target all completed with warnings (non-critical)
+2026-01-12 07:24:11,182 - BuildSystem - INFO - ✓ Target all built successfully
+2026-01-12 07:24:11,182 - BuildSystem - INFO - Creating packages using mach...
+2026-01-12 07:24:12,799 - BuildSystem - ERROR - ✗ Package creation failed: 
