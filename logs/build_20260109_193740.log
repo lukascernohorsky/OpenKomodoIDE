@@ -1,0 +1,10 @@
+2026-01-09 19:37:40,966 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-09 19:37:40,967 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-09 19:37:40,967 - BuildSystem - INFO - Performing complete cleanup...
+2026-01-09 19:37:40,967 - BuildSystem - INFO - Cleaning build directory using mach...
+2026-01-09 19:37:40,992 - BuildSystem - INFO - ✓ Build directory cleaned
+2026-01-09 19:37:40,992 - BuildSystem - INFO - Removing temporary download directory: /home/lc/projekty/OpenKomodoIDE/temp_download
+2026-01-09 19:37:40,993 - BuildSystem - INFO - Removing build directory: /home/lc/projekty/OpenKomodoIDE/build
+2026-01-09 19:37:40,993 - BuildSystem - INFO - Removing distribution directory: /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-09 19:37:40,993 - BuildSystem - INFO - Removing Python cache files...
+2026-01-09 19:37:41,041 - BuildSystem - INFO - ✓ Complete cleanup finished

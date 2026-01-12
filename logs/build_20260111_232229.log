@@ -1,0 +1,305 @@
+2026-01-11 23:22:29,126 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 23:22:29,126 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 23:22:29,126 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-11 23:22:29,126 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
+2026-01-11 23:22:37,040 - BuildSystem - ERROR - ✗ Build configuration failed: /home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/mach/lib/python3.13/site-packages/psutil/_pslinux.py:513: RuntimeWarning: shared, active, inactive memory stats couldn't be determined and were set to 0
+  warnings.warn(msg, RuntimeWarning)
+
+2026-01-11 23:22:37,041 - BuildSystem - ERROR - stdout:  0:00.45 Using Python 3.13.5 from /home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/build/bin/python
+ 0:00.45 Adding configure options from /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/.mozconfig
+ 0:00.45   --enable-release
+ 0:00.45   --disable-tests
+ 0:00.45   --enable-optimize
+ 0:00.45   --with-system-libvpx
+ 0:00.45   --with-system-icu
+ 0:00.45 checking for vcs source checkout... no
+ 0:00.48 checking for a shell... /bin/sh
+ 0:00.51 checking for host system type... x86_64-pc-linux-gnu
+ 0:00.51 checking for target system type... x86_64-pc-linux-gnu
+ 0:00.69 checking whether cross compiling... no
+ 0:00.73 checking if configuration file confvars.sh exists... /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/browser/confvars.sh
+ 0:00.73 checking if configuration file configure.sh exists... /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/browser/branding/unofficial/configure.sh
+ 0:00.75 checking for the target C compiler... /bin/clang
+ 0:00.75 checking for ccache... not found
+ 0:00.78 checking whether the target C compiler can be used... yes
+ 0:00.78 checking for the target C++ compiler... /bin/clang++
+ 0:00.82 checking whether the target C++ compiler can be used... yes
+ 0:00.85 checking for unwind.h... yes
+ 0:00.88 checking for target linker... lld
+ 0:00.93 checking for _Unwind_Backtrace... yes
+ 0:00.94 checking for Python 3... /home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/build/bin/python (3.13.5)
+ 0:00.94 checking for wget... /bin/wget
+ 0:00.94 checking the target C compiler version... 19.1.7
+ 0:00.96 checking the target C compiler works... yes
+ 0:00.96 checking the target C++ compiler version... 19.1.7
+ 0:00.98 checking the target C++ compiler works... yes
+ 0:00.98 checking for the host C compiler... /bin/clang
+ 0:00.98 checking whether the host C compiler can be used... yes
+ 0:00.98 checking the host C compiler version... 19.1.7
+ 0:00.98 checking the host C compiler works... yes
+ 0:00.98 checking for the host C++ compiler... /bin/clang++
+ 0:00.98 checking whether the host C++ compiler can be used... yes
+ 0:00.98 checking the host C++ compiler version... 19.1.7
+ 0:00.99 checking the host C++ compiler works... yes
+ 0:01.02 checking for host linker... lld
+ 0:01.04 checking for 64-bit OS... yes
+ 0:01.06 checking for new enough STL headers from libstdc++... yes
+ 0:01.13 checking for __thread keyword for TLS variables... yes
+ 0:01.14 checking for the assembler... /bin/clang
+ 0:01.15 checking for llvm-objdump... /usr/lib/llvm-19/bin/llvm-objdump
+ 0:01.17 checking for ar... /usr/lib/llvm-19/bin/llvm-ar
+ 0:01.20 checking whether ar supports response files... no
+ 0:01.22 checking for host_ar... /usr/lib/llvm-19/bin/llvm-ar
+ 0:01.24 checking for nm... /usr/lib/llvm-19/bin/llvm-nm
+ 0:01.26 checking for -mavxvnni support... yes
+ 0:01.28 checking for -mavx512bw support... yes
+ 0:01.30 checking for -mavx512vnni support... yes
+ 0:01.30 checking for pkg_config... /bin/pkg-config
+ 0:01.30 checking for pkg-config version... 1.8.1
+ 0:01.31 checking whether pkg-config is pkgconf... yes
+ 0:01.37 checking for strndup... yes
+ 0:01.42 checking for posix_memalign... yes
+ 0:01.48 checking for memalign... yes
+ 0:01.53 checking for malloc_usable_size... yes
+ 0:01.56 checking for malloc.h... yes
+ 0:01.58 checking whether malloc_usable_size definition can use const argument... no
+ 0:01.61 checking for stdint.h... yes
+ 0:01.63 checking for inttypes.h... yes
+ 0:01.65 checking for alloca.h... yes
+ 0:01.67 checking for sys/byteorder.h... no
+ 0:01.70 checking for getopt.h... yes
+ 0:01.72 checking for unistd.h... yes
+ 0:01.74 checking for nl_types.h... yes
+ 0:01.77 checking for cpuid.h... yes
+ 0:01.79 checking for fts.h... yes
+ 0:01.81 checking for sys/statvfs.h... yes
+ 0:01.84 checking for sys/statfs.h... yes
+ 0:01.86 checking for sys/vfs.h... yes
+ 0:01.89 checking for sys/mount.h... yes
+ 0:01.91 checking for sys/quota.h... yes
+ 0:01.94 checking for linux/quota.h... yes
+ 0:01.97 checking for linux/if_addr.h... yes
+ 0:02.00 checking for linux/rtnetlink.h... yes
+ 0:02.02 checking for sys/queue.h... yes
+ 0:02.05 checking for sys/types.h... yes
+ 0:02.07 checking for netinet/in.h... yes
+ 0:02.10 checking for byteswap.h... yes
+ 0:02.12 checking for memfd_create in sys/mman.h... yes
+ 0:02.18 checking for clock_gettime(CLOCK_MONOTONIC)... yes
+ 0:02.26 checking for res_ninit()... yes
+ 0:02.31 checking for dladdr... yes
+ 0:02.34 checking for dlfcn.h... yes
+ 0:02.39 checking for dlopen in -ldl... yes
+ 0:02.44 checking for gethostbyname_r in -lc_r... no
+ 0:02.50 checking for socket in -lsocket... no
+ 0:02.55 checking for pthread_create... yes
+ 0:02.58 checking for pthread.h... yes
+ 0:02.60 checking whether the C compiler supports -pthread... yes
+ 0:02.70 checking whether 64-bits std::atomic requires -latomic... no
+ 0:02.72 checking whether the C compiler supports -Wbitfield-enum-conversion... yes
+ 0:02.74 checking whether the C++ compiler supports -Wbitfield-enum-conversion... yes
+ 0:02.76 checking whether the C compiler supports -Wformat-type-confusion... yes
+ 0:02.79 checking whether the C++ compiler supports -Wformat-type-confusion... yes
+ 0:02.81 checking whether the C compiler supports -Wshadow-field-in-constructor-modified... yes
+ 0:02.83 checking whether the C++ compiler supports -Wshadow-field-in-constructor-modified... yes
+ 0:02.86 checking whether the C compiler supports -Wtautological-constant-in-range-compare... yes
+ 0:02.88 checking whether the C++ compiler supports -Wtautological-constant-in-range-compare... yes
+ 0:02.90 checking whether the C compiler supports -Wno-error=tautological-type-limit-compare... yes
+ 0:02.92 checking whether the C++ compiler supports -Wno-error=tautological-type-limit-compare... yes
+ 0:02.95 checking whether the C compiler supports -Wunreachable-code-return... yes
+ 0:02.97 checking whether the C++ compiler supports -Wunreachable-code-return... yes
+ 0:02.99 checking whether the C compiler supports -Wunused-but-set-parameter... yes
+ 0:03.02 checking whether the C++ compiler supports -Wunused-but-set-parameter... yes
+ 0:03.05 checking whether the C compiler supports -Wclass-varargs... yes
+ 0:03.07 checking whether the C++ compiler supports -Wclass-varargs... yes
+ 0:03.09 checking whether the C++ compiler supports -Wempty-init-stmt... yes
+ 0:03.12 checking whether the C compiler supports -Wfloat-overflow-conversion... yes
+ 0:03.14 checking whether the C++ compiler supports -Wfloat-overflow-conversion... yes
+ 0:03.16 checking whether the C compiler supports -Wfloat-zero-conversion... yes
+ 0:03.19 checking whether the C++ compiler supports -Wfloat-zero-conversion... yes
+ 0:03.21 checking whether the C compiler supports -Wloop-analysis... yes
+ 0:03.24 checking whether the C++ compiler supports -Wloop-analysis... yes
+ 0:03.26 checking whether the C compiler supports -Wno-range-loop-analysis... yes
+ 0:03.29 checking whether the C++ compiler supports -Wno-range-loop-analysis... yes
+ 0:03.31 checking whether the C++ compiler supports -Wcomma-subscript... no
+ 0:03.34 checking whether the C compiler supports -Wenum-compare-conditional... yes
+ 0:03.36 checking whether the C++ compiler supports -Wenum-compare-conditional... yes
+ 0:03.39 checking whether the C compiler supports -Wenum-float-conversion... yes
+ 0:03.41 checking whether the C++ compiler supports -Wenum-float-conversion... yes
+ 0:03.43 checking whether the C++ compiler supports -Wvolatile... no
+ 0:03.46 checking whether the C++ compiler supports -Wno-deprecated-anon-enum-enum-conversion... yes
+ 0:03.49 checking whether the C++ compiler supports -Wno-deprecated-enum-enum-conversion... yes
+ 0:03.51 checking whether the C++ compiler supports -Wno-deprecated-this-capture... yes
+ 0:03.53 checking whether the C++ compiler supports -Wcomma... yes
+ 0:03.55 checking whether the C compiler supports -Wduplicated-cond... no
+ 0:03.57 checking whether the C++ compiler supports -Wduplicated-cond... no
+ 0:03.60 checking whether the C++ compiler supports -Wimplicit-fallthrough... yes
+ 0:03.62 checking whether the C compiler supports -Wlogical-op... no
+ 0:03.64 checking whether the C++ compiler supports -Wlogical-op... no
+ 0:03.67 checking whether the C compiler supports -Wstring-conversion... yes
+ 0:03.69 checking whether the C++ compiler supports -Wstring-conversion... yes
+ 0:03.72 checking whether the C++ compiler supports -Wno-inline-new-delete... yes
+ 0:03.74 checking whether the C compiler supports -Wno-error=maybe-uninitialized... no
+ 0:03.76 checking whether the C++ compiler supports -Wno-error=maybe-uninitialized... no
+ 0:03.78 checking whether the C compiler supports -Wno-error=deprecated-declarations... yes
+ 0:03.80 checking whether the C++ compiler supports -Wno-error=deprecated-declarations... yes
+ 0:03.82 checking whether the C compiler supports -Wno-error=array-bounds... yes
+ 0:03.85 checking whether the C++ compiler supports -Wno-error=array-bounds... yes
+ 0:03.87 checking whether the C compiler supports -Wno-error=free-nonheap-object... yes
+ 0:03.90 checking whether the C++ compiler supports -Wno-error=free-nonheap-object... yes
+ 0:03.92 checking whether the C compiler supports -Wno-multistatement-macros... no
+ 0:03.94 checking whether the C++ compiler supports -Wno-multistatement-macros... no
+ 0:03.96 checking whether the C compiler supports -Wno-error=class-memaccess... no
+ 0:03.98 checking whether the C++ compiler supports -Wno-error=class-memaccess... no
+ 0:04.00 checking whether the C compiler supports -Wno-error=atomic-alignment... yes
+ 0:04.02 checking whether the C++ compiler supports -Wno-error=atomic-alignment... yes
+ 0:04.04 checking whether the C compiler supports -Wno-error=deprecated-builtins... yes
+ 0:04.07 checking whether the C++ compiler supports -Wno-error=deprecated-builtins... yes
+ 0:04.09 checking whether the C compiler supports -Wformat... yes
+ 0:04.11 checking whether the C++ compiler supports -Wformat... yes
+ 0:04.13 checking whether the C compiler supports -Wformat-security... yes
+ 0:04.15 checking whether the C++ compiler supports -Wformat-security... yes
+ 0:04.17 checking whether the C compiler supports -Wformat-overflow=2... no
+ 0:04.19 checking whether the C++ compiler supports -Wformat-overflow=2... no
+ 0:04.22 checking whether the C compiler supports -Werror=implicit-function-declaration... yes
+ 0:04.24 checking whether the C compiler supports -Wno-psabi... yes
+ 0:04.26 checking whether the C++ compiler supports -Wno-psabi... yes
+ 0:04.28 checking whether the C compiler supports -Wthread-safety... yes
+ 0:04.30 checking whether the C++ compiler supports -Wthread-safety... yes
+ 0:04.32 checking whether the C compiler supports -Wno-error=builtin-macro-redefined... yes
+ 0:04.35 checking whether the C++ compiler supports -Wno-error=builtin-macro-redefined... yes
+ 0:04.37 checking whether the C++ compiler supports -Wno-vla-cxx-extension... yes
+ 0:04.39 checking whether the C compiler supports -Wno-unknown-warning-option... yes
+ 0:04.41 checking whether the C++ compiler supports -Wno-unknown-warning-option... yes
+ 0:04.43 checking whether the C compiler supports -Wno-character-conversion... no
+ 0:04.45 checking whether the C++ compiler supports -Wno-character-conversion... no
+ 0:04.47 checking whether the C++ compiler supports -fno-sized-deallocation... yes
+ 0:04.50 checking whether the C++ compiler supports -fno-aligned-new... yes
+ 0:04.79 checking whether we're trying to statically link with libstdc++... no
+ 0:04.86 checking whether the linker supports Identical Code Folding... yes
+ 0:04.92 checking whether the C linker supports -Wl,--build-id=sha1... yes
+ 0:04.94 checking whether the C assembler supports -Wa,--noexecstack... yes
+ 0:05.00 checking whether the C linker supports -Wl,-z,noexecstack... yes
+ 0:05.05 checking whether the C linker supports -Wl,-z,text... yes
+ 0:05.11 checking whether the C linker supports -Wl,-z,relro... yes
+ 0:05.17 checking whether the C linker supports -Wl,-z,now... yes
+ 0:05.22 checking whether the C linker supports -Wl,-z,nocopyreloc... yes
+ 0:05.24 checking whether the C assembler supports -fPIC... yes
+ 0:05.27 checking whether the C compiler supports -fPIC... yes
+ 0:05.29 checking whether the C++ compiler supports -fPIC... yes
+ 0:05.35 checking what kind of list files are supported by the linker... linkerlist
+ 0:05.35 checking for llvm_profdata... /bin/llvm-profdata
+ 0:05.39 checking for readelf... /usr/lib/llvm-19/bin/llvm-readelf
+ 0:05.42 checking for objcopy... /usr/lib/llvm-19/bin/llvm-objcopy
+ 0:05.42 checking for alsa... yes
+ 0:05.42 checking MOZ_ALSA_CFLAGS...
+ 0:05.42 checking MOZ_ALSA_LIBS... -lasound
+ 0:05.43 checking for libpulse... yes
+ 0:05.43 checking MOZ_PULSEAUDIO_CFLAGS... -D_REENTRANT
+ 0:05.43 checking MOZ_PULSEAUDIO_LIBS... -lpulse -pthread
+ 0:05.43 checking for rustc... /home/lc/.cargo/bin/rustc
+ 0:05.43 checking for cargo... /home/lc/.cargo/bin/cargo
+ 0:05.47 Actually using '/home/lc/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustc'
+ 0:05.52 Actually using '/home/lc/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo'
+ 0:05.53 checking rustc version... 1.92.0
+ 0:05.54 checking cargo version... 1.92.0
+ 0:05.58 checking for rust host triplet... x86_64-unknown-linux-gnu
+ 0:05.61 checking for rust target triplet... x86_64-unknown-linux-gnu
+ 0:05.61 checking for rustdoc... /home/lc/.cargo/bin/rustdoc
+ 0:05.62 checking for cbindgen... /home/lc/.cargo/bin/cbindgen
+ 0:05.62 checking for rustfmt... /home/lc/.cargo/bin/rustfmt
+ 0:05.62 checking for clang for bindgen... /bin/clang++
+ 0:05.63 checking for libclang for bindgen... /usr/lib/llvm-19/lib/libclang.so
+ 0:05.65 checking that libclang is new enough... yes
+ 0:05.65 checking bindgen cflags... ['-x', 'c++', '-fno-sized-deallocation', '-fno-aligned-new', '-DTRACING=1', '-DIMPL_LIBXUL', '-DMOZILLA_INTERNAL_API', '-DRUST_BINDGEN']
+ 0:05.65 checking for icu-uc icu-i18n >= 76.1... yes
+ 0:05.65 checking MOZ_ICU_CFLAGS...
+ 0:05.65 checking MOZ_ICU_LIBS... -licui18n -licuuc -licudata
+ 0:05.68 checking for tm_zone and tm_gmtoff in struct tm... yes
+ 0:05.74 checking for getpagesize... yes
+ 0:05.79 checking for gmtime_r... yes
+ 0:05.85 checking for localtime_r... yes
+ 0:05.90 checking for gettid... yes
+ 0:05.96 checking for setpriority... yes
+ 0:06.01 checking for syscall... yes
+ 0:06.07 checking for getc_unlocked... yes
+ 0:06.12 checking for pthread_getname_np... yes
+ 0:06.18 checking for pthread_get_name_np... no
+ 0:06.23 checking for strerror... yes
+ 0:06.29 checking for nl_langinfo and CODESET... yes
+ 0:06.34 checking for __cxa_demangle... yes
+ 0:06.40 checking for _getc_nolock... no
+ 0:06.45 checking for localeconv... yes
+ 0:06.47 checking for nodejs... /bin/node (20.19.2)
+ 0:06.47 checking for gtk+-wayland-3.0 >= 3.14 xkbcommon >= 0.4.1... yes
+ 0:06.48 checking MOZ_WAYLAND_CFLAGS... -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/sysprof-6 -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/x86_64-linux-gnu -I/usr/include/webp -I/usr/include/gio-unix-2.0 -I/usr/include/cloudproviders -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -pthread
+ 0:06.48 checking MOZ_WAYLAND_LIBS... -lgtk-3 -lgdk-3 -lz -lpangocairo-1.0 -lpango-1.0 -lharfbuzz -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lxkbcommon
+ 0:06.48 checking for pango >= 1.22.0... yes
+ 0:06.48 checking MOZ_PANGO_CFLAGS... -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/sysprof-6 -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -pthread
+ 0:06.48 checking MOZ_PANGO_LIBS... -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lharfbuzz
+ 0:06.48 checking for fontconfig >= 2.7.0... yes
+ 0:06.48 checking _FONTCONFIG_CFLAGS... -I/usr/include/freetype2 -I/usr/include/libpng16
+ 0:06.48 checking _FONTCONFIG_LIBS... -lfontconfig -lfreetype
+ 0:06.49 checking for freetype2 >= 9.10.3... yes
+ 0:06.49 checking _FT2_CFLAGS... -I/usr/include/freetype2 -I/usr/include/libpng16
+ 0:06.49 checking _FT2_LIBS... -lfreetype
+ 0:06.49 checking for tar... /bin/tar
+ 0:06.49 checking for unzip... /bin/unzip
+ 0:06.49 checking for the Mozilla API key... no
+ 0:06.49 checking for the Google Location Service API key... no
+ 0:06.49 checking for the Google Safebrowsing API key... no
+ 0:06.49 checking for the Bing API key... no
+ 0:06.49 checking for the Adjust SDK key... no
+ 0:06.49 checking for the Leanplum SDK key... no
+ 0:06.49 checking for the Pocket API key... no
+ 0:06.49 checking for x11 xcb xcb-shm x11-xcb xext xrandr >= 1.4.0 xcomposite xcursor xdamage xfixes xi... yes
+ 0:06.49 checking MOZ_X11_CFLAGS...
+ 0:06.49 checking MOZ_X11_LIBS... -lxcb-shm -lX11-xcb -lX11 -lxcb -lXext -lXrandr -lXcomposite -lXcursor -lXdamage -lXfixes -lXi
+ 0:06.49 checking for ice sm... yes
+ 0:06.49 checking MOZ_X11_SM_CFLAGS... -I/usr/include/uuid
+ 0:06.55 checking for stat64... yes
+ 0:06.60 checking for lstat64... yes
+ 0:06.65 checking for truncate64... yes
+ 0:06.71 checking for statvfs64... yes
+ 0:06.76 checking for statvfs... yes
+ 0:06.82 checking for statfs64... yes
+ 0:06.87 checking for statfs... yes
+ 0:06.92 checking for lutimes... yes
+ 0:06.98 checking for posix_fadvise... yes
+ 0:07.04 checking for posix_fallocate... yes
+ 0:07.09 checking for eventfd... yes
+ 0:07.15 checking for arc4random... yes
+ 0:07.20 checking for arc4random_buf... yes
+ 0:07.26 checking for mallinfo... yes
+ 0:07.28 checking for sys/ioccom.h... no
+ 0:07.36 checking for -z pack-relative-relocs option to ld... yes
+ 0:07.36 checking for vpx >= 1.10.0... yes
+ 0:07.36 checking MOZ_LIBVPX_CFLAGS...
+ 0:07.37 checking MOZ_LIBVPX_LIBS... -lvpx -lm
+ 0:07.39 checking for vpx/vpx_decoder.h... yes
+ 0:07.45 checking for vpx_codec_dec_init_ver... yes
+ 0:07.45 checking for nasm... /bin/nasm
+ 0:07.45 checking nasm version... 2.16.03
+ 0:07.45 checking for the wasm C compiler... /bin/clang
+ 0:07.47 checking whether the wasm C compiler can be used... yes
+ 0:07.47 checking the wasm C compiler version... 19.1.7
+ 0:07.49 checking the wasm C compiler works... yes
+ 0:07.52 checking the wasm C compiler can find wasi headers... yes
+ 0:07.58 checking the wasm C linker can find wasi libraries...
+ 0:07.58 DEBUG: Creating `/tmp/conftest4w4mt6u8.c` with content:
+ 0:07.58 DEBUG: | int
+ 0:07.58 DEBUG: | main(void)
+ 0:07.58 DEBUG: | {
+ 0:07.58 DEBUG: |
+ 0:07.58 DEBUG: |   ;
+ 0:07.58 DEBUG: |   return 0;
+ 0:07.58 DEBUG: | }
+ 0:07.58 DEBUG: Executing: `/bin/clang --target=wasm32-wasi /tmp/conftest4w4mt6u8.c`
+ 0:07.58 DEBUG: The command returned non-zero exit status 1.
+ 0:07.58 DEBUG: Its error output was:
+ 0:07.58 DEBUG: | wasm-ld-19: error: cannot open /usr/lib/llvm-19/lib/clang/19/lib/wasm32-unknown-wasi/libclang_rt.builtins.a: No such file or directory
+ 0:07.58 DEBUG: | clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ 0:07.58 ERROR: Cannot find wasi libraries or problem with the wasm linker. Please fix the problem. Or build with --without-wasm-sandboxed-libraries.
+*** Fix above errors and then restart with "./mach build"
+
+2026-01-11 23:22:37,042 - BuildSystem - ERROR - Please check the configuration and try again

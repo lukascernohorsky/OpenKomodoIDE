@@ -1,0 +1,5 @@
+2026-01-11 09:23:08,819 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 09:23:08,819 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 09:23:08,819 - BuildSystem - INFO - Delegating to legacy mozilla build system: configure_mozilla
+2026-01-11 09:23:08,819 - BuildSystem - INFO - Running: python3 /home/lc/projekty/OpenKomodoIDE/mozilla/build.py configure_mozilla
+2026-01-11 09:23:16,440 - BuildSystem - INFO - ✓ Legacy build command 'configure_mozilla' completed successfully

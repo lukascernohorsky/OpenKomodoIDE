@@ -1,0 +1,7 @@
+2026-01-11 22:40:23,007 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 22:40:23,008 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 22:40:23,008 - BuildSystem - INFO - Building targets: faster
+2026-01-11 22:40:23,008 - BuildSystem - INFO - 
+Building target: faster
+2026-01-11 22:40:23,008 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach build faster
+2026-01-11 22:40:23,037 - BuildSystem - ERROR - ✗ Target faster failed: 

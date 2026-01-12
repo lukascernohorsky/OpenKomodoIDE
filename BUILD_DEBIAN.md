@@ -67,7 +67,7 @@ python3 -m pip install --upgrade pip setuptools wheel
 
 ```bash
 # Install Mozilla build dependencies
-sudo apt install -y autoconf2.13 yasm libgtk-3-dev libdbus-glib-1-dev 
+sudo apt install -y autoconf2.71 yasm libgtk-3-dev libdbus-glib-1-dev 
     libasound2-dev libcurl4-openssl-dev libiw-dev libxt-dev 
     mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libx11-xcb-dev 
     libxcb-shm0-dev libxcb-render0-dev libxcb-render-util0-dev 

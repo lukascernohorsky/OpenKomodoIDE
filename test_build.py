@@ -13,7 +13,13 @@ def test_mach_available():
     """Test if Firefox mach build system is available"""
     print("Testing Firefox mach availability...")
     
-    mach_path = os.path.join(os.getcwd(), 'firefox', 'mach')
+    # Try new structure first (mozilla/build/...)
+    mach_path = os.path.join(os.getcwd(), 'mozilla', 'build', 'moz1400-ko120', 'mozilla', 'mach')
+    
+    # Fallback to old structure (firefox/mach)
+    if not os.path.exists(mach_path):
+        mach_path = os.path.join(os.getcwd(), 'firefox', 'mach')
+    
     if not os.path.exists(mach_path):
         print(f"✗ Firefox mach not found at {mach_path}")
         return False
@@ -39,12 +45,18 @@ def test_mozconfig():
     """Test if mozconfig file exists and is valid"""
     print("Testing mozconfig...")
     
-    mozconfig_path = 'mozconfig'
+    # Try new structure first
+    mozconfig_path = os.path.join('mozilla', 'build', 'moz1400-ko120', 'mozilla', '.mozconfig')
+    
+    # Fallback to old structure
+    if not os.path.exists(mozconfig_path):
+        mozconfig_path = '.mozconfig'
+    
     if not os.path.exists(mozconfig_path):
         print(f"✗ mozconfig not found at {mozconfig_path}")
         return False
     
-    print(f"✓ mozconfig found")
+    print(f"✓ mozconfig found at {mozconfig_path}")
     
     # Check if it contains basic required options
     with open(mozconfig_path, 'r') as f:
@@ -93,7 +105,13 @@ def test_firefox_source():
     """Test if Firefox source is properly integrated"""
     print("Testing Firefox source integration...")
     
-    firefox_dir = 'firefox'
+    # Try new structure first
+    firefox_dir = os.path.join('mozilla', 'build', 'moz1400-ko120', 'mozilla')
+    
+    # Fallback to old structure
+    if not os.path.exists(firefox_dir):
+        firefox_dir = 'firefox'
+    
     if not os.path.exists(firefox_dir):
         print(f"✗ Firefox directory not found")
         return False
@@ -119,7 +137,7 @@ def test_firefox_source():
         print("✗ No key Firefox files found")
         return False
     
-    print(f"✓ Found {len(found_files)} key Firefox files")
+    print(f"✓ Found {len(found_files)} key Firefox files at {firefox_dir}")
     return True
 
 def main():

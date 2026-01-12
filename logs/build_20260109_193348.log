@@ -1,0 +1,7 @@
+2026-01-09 19:33:48,338 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-09 19:33:48,339 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-09 19:33:48,339 - BuildSystem - INFO - Checking binary outputs...
+2026-01-09 19:33:48,339 - BuildSystem - INFO - ✓ Found binary: firefox
+2026-01-09 19:33:48,339 - BuildSystem - INFO - ✓ Found binary: xul
+2026-01-09 19:33:48,339 - BuildSystem - INFO - ✓ Found binary: libxul.so
+2026-01-09 19:33:48,339 - BuildSystem - INFO - ✓ Found 3 binary files

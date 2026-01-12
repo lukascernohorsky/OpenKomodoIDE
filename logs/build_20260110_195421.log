@@ -1,0 +1,44 @@
+2026-01-10 19:54:21,304 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-10 19:54:21,304 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-10 19:54:21,304 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-10 19:54:21,304 - BuildSystem - INFO - Creating .mozconfig file...
+2026-01-10 19:54:21,304 - BuildSystem - INFO - Creating .mozconfig in /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla
+2026-01-10 19:54:21,305 - BuildSystem - INFO - ✓ Created .mozconfig at /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/.mozconfig
+2026-01-10 19:54:21,305 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/mach configure
+2026-01-10 19:54:22,918 - BuildSystem - ERROR - ✗ Build configuration failed: /home/lc/.mozbuild/srcdirs/mozilla-a75811c90ce1/_virtualenvs/mach/lib/python3.11/site-packages/psutil/_pslinux.py:513: RuntimeWarning: shared, active, inactive memory stats couldn't be determined and were set to 0
+  warnings.warn(msg, RuntimeWarning)
+
+2026-01-10 19:54:22,918 - BuildSystem - ERROR - stdout:  0:00.39 Using Python 3.11.2 from /home/lc/.mozbuild/srcdirs/mozilla-a75811c90ce1/_virtualenvs/build/bin/python
+ 0:00.39 Adding configure options from /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/.mozconfig
+ 0:00.39   --enable-release
+ 0:00.39   --disable-tests
+ 0:00.39   --enable-optimize
+ 0:00.39   --enable-crashreport-symbols
+ 0:00.39   --with-system-libvpx
+ 0:00.39   --with-system-icu
+ 0:00.39 checking for vcs source checkout... git
+ 0:00.42 checking for a shell... /bin/sh
+ 0:00.44 checking for host system type... x86_64-pc-linux-gnu
+ 0:00.44 checking for target system type... x86_64-pc-linux-gnu
+ 0:00.63 checking whether cross compiling... no
+ 0:00.68 checking if configuration file confvars.sh exists... /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/browser/confvars.sh
+ 0:00.68 checking if configuration file configure.sh exists... /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/browser/branding/unofficial/configure.sh
+ 0:00.71 checking for the target C compiler... /bin/clang
+ 0:00.71 checking for ccache... not found
+ 0:01.00 checking whether the target C compiler can be used... yes
+ 0:01.01 checking for the target C++ compiler... /bin/clang++
+ 0:01.06 checking whether the target C++ compiler can be used... yes
+ 0:01.12 checking for unwind.h... yes
+ 0:01.15 checking for target linker... bfd
+ 0:01.20 checking for _Unwind_Backtrace... yes
+ 0:01.21 Traceback (most recent call last):
+ 0:01.21   File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/configure.py", line 328, in <module>
+ 0:01.21     sys.exit(main(sys.argv))
+ 0:01.21              ^^^^^^^^^^^^^^
+ 0:01.21   File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/configure.py", line 136, in main
+ 0:01.21     sandbox.run()
+ 0:01.21   File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/python/mozbuild/mozbuild/configure/__init__.py", line 569, in run
+ 0:01.21     raise InvalidOptionError(msg)
+ 0:01.21 mozbuild.configure.options.InvalidOptionError: Unknown option: --enable-crashreport-symbols
+*** Fix above errors and then restart with "./mach build"
+

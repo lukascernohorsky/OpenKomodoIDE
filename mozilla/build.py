@@ -275,12 +275,18 @@ def _run_in_dir(cmd, cwd, logstream=_RUN_DEFAULT_LOGSTREAM):
 
 
 def _importConfig():
-    import imp
-    f = open(gConfigFileName)
+    import importlib.util
+    import sys
+    
+    spec = importlib.util.spec_from_file_location("config", gConfigFileName)
+    config = importlib.util.module_from_spec(spec)
+    
     try:
-        config = imp.load_source("config", gConfigFileName, f)
-    finally:
-        f.close()
+        spec.loader.exec_module(config)
+    except Exception as e:
+        print(f"Error loading config file {gConfigFileName}: {e}")
+        sys.exit(1)
+    
     return config
 
 def _validateEnv():
@@ -326,9 +332,9 @@ def _validateEnv():
 
         # Ensure have sufficient MozillaBuild version.
         autoconf_213_path = join(mozilla_build_dir, "msys", "local", "bin",
-                                 "autoconf-2.13")
+                                 "autoconf-2.71+")
         if not exists(autoconf_213_path):
-            raise BuildError("couldn't find autoconf 2.13 at '%s': you "
+            raise BuildError("couldn't find autoconf 2.71+ at '%s': you "
                              "need to install MozillaBuild version 1.1 "
                              "or later" % autoconf_213_path)
 
@@ -2518,10 +2524,18 @@ def target_configure_mozilla(argv=["configure_mozilla"]):
     buildDir = os.path.join(config.buildDir, config.srcTreeName, "mozilla")
     
     # Bail if source isn't there.
-    landmark = os.path.join(buildDir, "client.mk")
-    if not os.path.exists(landmark):
-        raise BuildError("There is no mozilla source at '%s'. (landmark='%s')"\
-                         % (buildDir, landmark))
+    # For modern Firefox 140 ESR, check for different landmarks
+    landmarks = ["client.mk", "mach", "configure", "browser/confvars.sh"]
+    found_landmark = False
+    for landmark_name in landmarks:
+        landmark = os.path.join(buildDir, landmark_name)
+        if os.path.exists(landmark):
+            found_landmark = True
+            break
+    
+    if not found_landmark:
+        raise BuildError("There is no mozilla source at '%s'. (checked landmarks: %s)"\
+                         % (buildDir, ", ".join(landmarks)))
 
     # get the moz version
     extensions = config.mozBuildExtensions
@@ -2529,6 +2543,15 @@ def target_configure_mozilla(argv=["configure_mozilla"]):
     if config.mozVer < 140.0:
         config.mozconfig += "ac_add_options --enable-extensions=%s\n"\
                                % ','.join(extensions)
+    
+    # For Firefox 140 ESR, replace komodo application with browser
+    if config.mozVer >= 140.0:
+        config.mozconfig = config.mozconfig.replace("ac_add_options --enable-application=komodo", "ac_add_options --enable-application=browser")
+        # Remove gold linker option for Firefox 140 ESR as it's not available on all systems
+        config.mozconfig = config.mozconfig.replace("ac_add_options --enable-linker=gold\n", "")
+        # Disable WASM sandboxed libraries to avoid missing wasm-ld linker
+        config.mozconfig += "ac_add_options --without-wasm-sandboxed-libraries\n"
+    
     # Copy in .mozconfig and set MOZCONFIG.
     mozconfig = os.path.join(buildDir, ".mozconfig")
     log.info("create '%s' and point MOZCONFIG to it", mozconfig)
@@ -2602,10 +2625,18 @@ def target_mozilla(argv=["mozilla"]):
     native_objdir = _get_mozilla_objdir(convert_to_native_win_path=True)
 
     # Bail if source isn't there.
-    landmark = os.path.join(buildDir, "client.mk")
-    if not os.path.exists(landmark):
-        raise BuildError("There is no mozilla source at '%s'. (landmark='%s')"\
-                         % (buildDir, landmark))
+    # For modern Firefox 140 ESR, check for different landmarks
+    landmarks = ["client.mk", "mach", "configure", "browser/confvars.sh"]
+    found_landmark = False
+    for landmark_name in landmarks:
+        landmark = os.path.join(buildDir, landmark_name)
+        if os.path.exists(landmark):
+            found_landmark = True
+            break
+    
+    if not found_landmark:
+        raise BuildError("There is no mozilla source at '%s'. (checked landmarks: %s)"\
+                         % (buildDir, ", ".join(landmarks)))
 
     _validatePython(config)
 

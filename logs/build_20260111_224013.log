@@ -1,0 +1,9 @@
+2026-01-11 22:40:13,221 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 22:40:13,221 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-11 22:40:13,221 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-11 22:40:13,221 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
+2026-01-11 22:40:13,247 - BuildSystem - ERROR - ✗ Build configuration failed: 
+2026-01-11 22:40:13,248 - BuildSystem - ERROR - stdout: Running Firefox configuration...
+✗ configure script not found
+
+2026-01-11 22:40:13,248 - BuildSystem - ERROR - Please check the configuration and try again

@@ -28,7 +28,7 @@ mozSrcName = 'moz14000'
 mozSrcScheme = '14000'
 mozSrcType = 'git'
 mozVer = 140.0
-mozconfig = "# Options for 'configure' (same as command-line options).\nmk_add_options MOZ_OBJDIR=obj-x86_64-pc-linux-gnu\nmk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-x86_64-pc-linux-gnu\nexport CC=/bin/gcc\nexport CXX=/bin/g++\nac_add_options --enable-linker=gold\nac_add_options --disable-tests\nac_add_options --enable-optimize\nac_add_options --disable-debug\nac_add_options --enable-application=komodo\n"
+mozconfig = "# Options for 'configure' (same as command-line options).\nmk_add_options MOZ_OBJDIR=obj-x86_64-pc-linux-gnu\nmk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-x86_64-pc-linux-gnu\nexport CC=/bin/gcc\nexport CXX=/bin/g++\nac_add_options --disable-tests\nac_add_options --enable-optimize\nac_add_options --disable-debug\nac_add_options --enable-application=browser\nac_add_options --without-wasm-sandboxed-libraries\nac_add_options --with-rust-simd=none\nac_add_options --with-ccache=none\n"
 patchesDirs = ['patches-new']
 platform = 'linux-x86_64'
 platinfo = {'os': 'linux', 'os_ver': '5.15.0', 'arch': 'x86_64', 'distro': 'Debian', 'distro_desc': 'Debian GNU/Linux 12 (bookworm)', 'distro_ver': '12', 'distro_codename': 'bookworm', 'libcpp': 'libcpp6', 'libc': 'libc6', 'glibc': 'glibc', 'glibc_ver': '2.36', 'name': 'linux-x86_64'}

@@ -1,9 +1,0 @@
-"""Apply these patches to the Mozilla Mercurial checkout."""
-
-def applicable(config):
-    return config.mozVer == 140.0 and \
-           config.patch_target == "mozilla"
-
-def patch_args(config):
-    # use default patch arguments
-    return []
