@@ -149,8 +149,8 @@ my @toExport = (
     'msiVccrtPolicyMsmPath',
     'komodoUpdateManualURL',
 
-    'macKomodoAppInstallName',
-    'macKomodoAppBuildName',
+    # 'macKomodoAppInstallName',  # Legacy - now handled in modern build system
+    # 'macKomodoAppBuildName',    # Legacy - now handled in modern build system
 
     'gnomeDesktopName',
     'gnomeDesktopGenericName',

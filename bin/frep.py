@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # ***** BEGIN LICENSE BLOCK *****
 # Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -98,11 +98,11 @@ import sys
 import re
 import traceback
 import datetime
-import optparse
+import argparse
 import logging
-from pprint(import) pprint, pformat
+from pprint import pprint, pformat
 from glob import glob
-import cPickle as pickle
+import pickle
 import codecs
 from hashlib import md5
 import difflib
@@ -242,10 +242,9 @@ def _query_yes_no_quit(question, default="yes"):
             sys.stdout.write("Please respond with 'yes', 'no' or 'quit'.\n")
 
 
-class _NoReflowFormatter(optparse.IndentedHelpFormatter):
-    """An optparse formatter that does NOT reflow the description."""
-    def format_description(self, description):
-        return description or ""
+class _NoReflowFormatter(argparse.RawDescriptionHelpFormatter):
+    """An argparse formatter that does NOT reflow the description."""
+    pass
 
 # Recipe: pretty_logging (0.1) in C:\trentm\tm\recipes\cookbook
 class _PerLevelFormatter(logging.Formatter):
@@ -293,24 +292,20 @@ def _setup_logging(stream=None):
     log.setLevel(logging.INFO)
 
 
-def _optparse_undo_arg(option, opt_str, value, parser):
-    """Add optparse option callback that will gobble the next token if
-    it looks like an arg to -u|--undo (8 letter chars, or "last").
-
-    Based on recipe zero_or_one_arg (0.1).
-
-    After parsing, 'options.undo' will be:
+def _parse_undo_arg(arg_value):
+    """Handle the -u|--undo argument parsing.
+    
+    After parsing, 'args.undo' will be:
         None        option was not specified
         True        option was specified, no argument
         <string>    option was specified, the value is the argument string
     """
-    value = True
-    if parser.rargs:
-        arg = parser.rargs[0]
-        if arg == "last" or re.match("^[a-z]{8}$", arg):
-            value = arg
-            del parser.rargs[0]
-    setattr(parser.values, option.dest, value)
+    if arg_value is None:
+        return True
+    elif arg_value == "last" or re.match("^[a-z]{8}$", arg_value):
+        return arg_value
+    else:
+        return True
 
 def _chomp(s):
     return s.rstrip('\r\n')
@@ -466,7 +461,7 @@ def main_replace(regex, repl, paths, includes, excludes, confirm, argv, opts):
 
         if confirm_mode == "all" and rgroups:
             while True:
-                print(answer) = _query_custom_answers(
+                answer = _query_custom_answers(
                     "Make replacements (%d changes in %d files)?"
                         % (sum(g.length for g in rgroups), len(rgroups)),
                     ["&yes", "&no", "&diff"],
@@ -493,7 +488,7 @@ def main_replace(regex, repl, paths, includes, excludes, confirm, argv, opts):
 
     if num_repls:
         if log.isEnabledFor(logging.DEBUG):
-            print(s_str) = (num_repls > 1 and "s" or "")
+            s_str = (num_repls > 1 and "s" or "")
             if confirm_mode:
                 log.debug("Made %d replacement%s%s.", num_repls,
                           s_str, dry_run_str)
@@ -533,60 +528,56 @@ def main(argv):
 
     usage = "usage: %prog PATTERN FILES..."
     version = "%prog "+__version__
-    parser = optparse.OptionParser(usage=usage,
-        version=version, description=__doc__,
-        formatter=_NoReflowFormatter())
-    parser.add_option("-q", "--quiet", dest="log_level",
+    parser = argparse.ArgumentParser(description=__doc__,
+        formatter_class=_NoReflowFormatter)
+    parser.add_argument("-q", "--quiet", dest="log_level",
         action="store_const", const=logging.WARNING,
         help="quieter output")
-    parser.add_option("-v", "--verbose", dest="log_level",
+    parser.add_argument("-v", "--verbose", dest="log_level",
         action="store_const", const=logging.INFO-1,
         help="more verbose output")
-    parser.add_option("-d", "--debug", dest="log_level",
+    parser.add_argument("-d", "--debug", dest="log_level",
         action="store_const", const=logging.DEBUG,
         help="verbose debugging output")
-    parser.add_option("-w", "--word", action="store_true",
+    parser.add_argument("-w", "--word", action="store_true",
         help="restrict pattern match to whole words")
-    parser.add_option("-l", "--list", action="store_true",
+    parser.add_argument("-l", "--list", action="store_true",
         help="list matching files (instead of the matches within them)")
-#TODO: Need to handle grouping contiguous blocks for this. Use the
-#      Provided hit.lines_with_context(n) for this.
-#    parser.add_option("-C", "--context", type="int", metavar="NUM",
-#         help="Print NUM lines of context.")
-    parser.add_option("-r", "--recursive", action="store_true",
+    parser.add_argument("-r", "--recursive", action="store_true",
         help="find files recursively")
-    parser.add_option("-n", dest="show_line_number", action="store_true",
+    parser.add_argument("-n", dest="show_line_number", action="store_true",
         help="show line numbers for each hit")
-    parser.add_option("-u", "--undo", metavar="[ID]", dest="undo",
-        action="callback", callback=_optparse_undo_arg,
+    parser.add_argument("-u", "--undo", nargs="?", const=True,
+        metavar="[ID]", dest="undo",
         help="Without an argument this will list replacements that can "
              "be undone (the last 5, most recent first). Specify a "
              "replacement id to undo it.")
-    parser.add_option("-i", "--include", dest="includes",
+    parser.add_argument("-i", "--include", dest="includes",
         action="append", metavar="PATTERN",
         help="Path patterns to include. Alternatively, the argument can "
              "be of the form FIELD:VALUE to filter based on textinfo "
              "attributes of a file; for example, '-i lang:Python'.")
-    parser.add_option("-x", "--exclude", dest="excludes",
+    parser.add_argument("-x", "--exclude", dest="excludes",
         action="append", metavar="PATTERN",
         help="Path patterns to exclude. Alternatively, the argument can "
              "be of the form FIELD:VALUE to filter based on textinfo "
              "attributes of a file; for example, '-x encoding:ascii'.")
-    parser.add_option("-f", "--force", dest="confirm", action="store_false",
+    parser.add_argument("-f", "--force", dest="confirm", action="store_false",
         help="Make replacements without confirmation.")
-    parser.add_option("-c", "--confirm", action="store_true",
+    parser.add_argument("-c", "--confirm", action="store_true",
         help="Confirm replacements before making any changes on disk "
              "(the default).")
-    parser.add_option("--first-on-line", action="store_true",
+    parser.add_argument("--first-on-line", action="store_true",
         help="When replacing, only replace first instance on a line. (This "
              "is to support Vi's replacement without 'g' flag.)")
-    parser.add_option("--dry-run", action="store_true",
+    parser.add_argument("--dry-run", action="store_true",
         help="Do a dry-run replacement.")
     parser.set_defaults(log_level=logging.INFO, recursive=False,
         show_line_number=False, word=False, list=False, context=0,
         includes=[], excludes=[], confirm=True, first_on_line=False,
         dry_run=False)
-    opts, args = parser.parse_args()
+    args = parser.parse_args()
+    opts = args
     log.setLevel(opts.log_level)
     findlib2.log.setLevel(opts.log_level)
 

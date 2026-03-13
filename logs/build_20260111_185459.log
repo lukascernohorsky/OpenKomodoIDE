@@ -1,4 +1,0 @@
-2026-01-11 18:54:59,539 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-11 18:54:59,540 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-11 18:54:59,540 - BuildSystem - INFO - Configuring build using Firefox mach system...
-2026-01-11 18:54:59,540 - BuildSystem - ERROR - ✗ Firefox mach not found at /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/mach

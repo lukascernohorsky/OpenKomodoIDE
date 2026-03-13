@@ -31,7 +31,7 @@ class BuildAutomation:
         # Default configuration (needed for path calculation)
         self.config = {
             'platform': self.detect_platform(),
-            'version': '12.0',
+            'version': '14.10',
             'firefox_version': '140.0',
         }
 
@@ -157,7 +157,7 @@ class BuildAutomation:
     def get_mach_path(self):
         """Get the path to mach (always uses modern structure)"""
         version_suffix = self.config.get('firefox_version', '140.0').replace('.', '')
-        komodo_suffix = self.config.get('version', '12.0').replace('.', '')
+        komodo_suffix = self.config.get('version', '14.10').replace('.', '')
         
         # Check if the modern structure exists
         modern_path = os.path.join(
@@ -194,7 +194,7 @@ class BuildAutomation:
             self.base_dir,
             'mozilla',
             'build',
-            f'moz{self.config.get("firefox_version", "140.0").replace(".", "")}-ko{self.config.get("version", "12.0").replace(".", "")}',
+            f'moz{self.config.get("firefox_version", "140.0").replace(".", "")}-ko{self.config.get("version", "14.10").replace(".", "")}',
             'mozilla'
         )
         os.makedirs(mozilla_path, exist_ok=True)
@@ -204,7 +204,7 @@ class BuildAutomation:
         if not os.path.exists(self.config_file):
             default_config = {
                 'platform': self.detect_platform(),
-                'version': '12.0',
+                'version': '14.10',
                 'firefox_version': '140.0',
                 'build_type': 'release',
                 'jobs': max(1, os.cpu_count() - 2) if os.cpu_count() else 1,
@@ -975,7 +975,7 @@ Examples:
     
     parser.add_argument('command', nargs='?', default='status',
                        help='Command to run (configure, build, complete, test, status)')
-    parser.add_argument('--version', default='12.0',
+    parser.add_argument('--version', default='14.10',
                        help='Komodo version to build')
     parser.add_argument('--firefox', default='140.0',
                        help='Firefox version to use')

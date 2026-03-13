@@ -649,7 +649,7 @@ configuration = {
     "activePerlBuild": black.configure.std.ActivePerlBuild(perlBinDirItemName="unsiloedPerlBinDir"),
     "python24": PythonExe(version=(2,4)),
     "python25": PythonExe(version=(2,5)),
-    "python26": PythonExe(version=(2,6)),
+    # "python26": PythonExe(version=(2,6)),  # Legacy Python 2.6 - removed
     "python27": PythonExe(version=(2,7)),
     "python31": PythonExe(version=(3,1)),
     "python32": PythonExe(version=(3,2)),
@@ -716,7 +716,7 @@ configuration = {
     "komodoPrettyVersion": KomodoPrettyVersion(),                   #   3.X Alpha 1
     "komodoFullPrettyVersion": KomodoFullPrettyVersion(),           #   Komodo IDE 3.X Alpha 1 (Build 123456)
     "komodoTitleBarName": KomodoTitleBarName(),                     #   ActiveState Komodo IDE 3.X
-    "komodoAppDataDirName": KomodoAppDataDirName(),                 #   KomodoIDE or komodoide (plat-dep)
+    # "komodoAppDataDirName": KomodoAppDataDirName(),               # Legacy - now handled in modern build system
     "version": Version(),                                           # alias for 'komodoVersion' (kept for compat)
     "trialGoobeProductKey": TrialGoobeProductKey(),                 #   komodo-ide-3.10.0-alpha1
     # - MSI variables:
@@ -725,8 +725,8 @@ configuration = {
     "msiKomodoVersion": MSIKomodoVersion(),                         #   3.10.0 (XXX need to have more differentiation here!)
     "msiKomodoId": MSIKomodoId(),                                   #   Komod310 (XXX has to be max 8 chars!)
     "msiRegistryId": MSIRegistryId(),                               #   3.10-ide
-    "macKomodoAppBuildName": MacKomodoAppBuildName(),               # e.g. "Komodo.app"
-    "macKomodoAppInstallName": MacKomodoAppInstallName(),           # e.g. "Komodo IDE.app"
+    # "macKomodoAppBuildName": MacKomodoAppBuildName(),             # Legacy - now handled in modern build system
+    # "macKomodoAppInstallName": MacKomodoAppInstallName(),         # Legacy - now handled in modern build system
     "msiKomodoPrettyId": MSIKomodoPrettyId(),
     "msiVccrtMsmPath": MSIVccrtMsmPath(),
     "msiVccrtRedistPath": MSIVccrtRedistPath(),

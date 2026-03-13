@@ -1,0 +1,13 @@
+2026-03-12 20:02:45,129 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-03-12 20:02:45,129 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-03-12 20:02:45,129 - BuildSystem - INFO - Building targets: all
+2026-03-12 20:02:45,130 - BuildSystem - INFO - 
+Building target: all
+2026-03-12 20:02:45,130 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach build
+2026-03-12 20:02:45,939 - BuildSystem - WARNING - ⚠ Target all completed with warnings (non-critical)
+2026-03-12 20:02:45,939 - BuildSystem - INFO - ✓ Target all built successfully
+2026-03-12 20:02:45,939 - BuildSystem - INFO - 
+Building Komodo-specific components...
+2026-03-12 20:02:45,939 - BuildSystem - INFO - Starting Komodo components build...
+2026-03-12 20:02:45,939 - BuildSystem - INFO - Delegating to legacy mozilla build system: komodoapp
+2026-03-12 20:02:45,939 - BuildSystem - INFO - Running: python3 /home/lc/projekty/OpenKomodoIDE/mozilla/build.py komodoapp

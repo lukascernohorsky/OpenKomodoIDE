@@ -130,8 +130,9 @@ compile-win:
 	c:/python23/python setup.py $(WINBPREFIX) --compile=mingw32 $(WINBSUFFIX) $(WINBINST)
 	c:/python24/python setup.py $(WINBPREFIX) --compile=mingw32 $(WINBSUFFIX) $(WINBINST)
 	c:/python25/python setup.py $(WINBPREFIX) --compile=mingw32 $(WINBSUFFIX) $(WINBINST)
-	c:/python26/python setup.py $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
-	c:/python26-64/python setup.py $(WIN64HACK) $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
+	# c:/python26/python setup.py $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
+	# c:/python26-64/python setup.py $(WIN64HACK) $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
+	# Legacy Python 2.6 builds removed - use modern Python 3.11+
 	c:/python27/python setup.py $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
 	c:/python27-64/python setup.py  $(WIN64HACK) $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)
 	c:/python31/python setup.py $(WINBPREFIX) $(WINBSUFFIX) $(WINBINST)

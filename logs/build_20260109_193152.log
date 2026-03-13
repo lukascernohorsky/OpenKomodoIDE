@@ -1,4 +1,0 @@
-2026-01-09 19:31:52,540 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-09 19:31:52,541 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-09 19:31:52,541 - BuildSystem - INFO - Cleaning build directory using mach...
-2026-01-09 19:31:52,569 - BuildSystem - INFO - ✓ Build directory cleaned

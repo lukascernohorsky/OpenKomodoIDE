@@ -25,7 +25,7 @@ from os.path import join, exists, abspath, dirname, normcase
 import sys
 import optparse
 import logging
-import imp
+import importlib.util
 import re
 import shutil
 from glob import glob
@@ -159,11 +159,13 @@ class _MozBuildRegistry:
             try:
                 f = open(config_path)
                 try:
-                    config = imp.load_source(
-                        "_mozbuild_config_%d_" % build_num, config_path, f)
+                    spec = importlib.util.spec_from_file_location(
+                        "_mozbuild_config_%d_" % build_num, config_path)
+                    config = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(config)
                 finally:
                     f.close()
-            except (EnvironmentError, ImportError), ex:
+            except (EnvironmentError, ImportError) as ex:
                 log.warn("could not import registered `%s': skipping",
                          config_path)
             else:
@@ -238,11 +240,13 @@ class _MozBuildRegistry:
         try:
             f = open(config_path)
             try:
-                new_config = imp.load_source("_mozbuild_config_",
-                                             config_path, f)
+                spec = importlib.util.spec_from_file_location(
+                    "_mozbuild_config_", config_path)
+                new_config = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(new_config)
             finally:
                 f.close()
-        except (EnvironmentError, ImportError), ex:
+        except (EnvironmentError, ImportError) as ex:
             raise Error("cannot register moz build: %s", ex)
         new_moz_obj_dir = join(new_config.buildDir,
                                _srcTreeName_from_config(new_config),
@@ -269,8 +273,10 @@ class _MozBuildRegistry:
         shutil.copy(config_path, new_config_path)
         f = open(new_config_path)
         try:
-            new_config = imp.load_source(
-                "_mozbuild_config_%d_" % new_build_num, new_config_path, f)
+            spec = importlib.util.spec_from_file_location(
+                "_mozbuild_config_%d_" % new_build_num, new_config_path)
+            new_config = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(new_config)
         finally:
             f.close()
         self.configs[new_build_num] = new_config
@@ -293,7 +299,8 @@ class _MozBuildRegistry:
 
     def unregister_zombies(self):
         """Unregister zombie builds (those whose builddir is gone)."""
-        from pprint(import) pprint(pprint)(self.configs)
+        from pprint import pprint
+        pprint(self.configs)
         for build_num, config in self.configs.items():
             obj_dir_path = join(config.buildDir, 
                                 _srcTreeName_from_config(config),

@@ -1,0 +1,13 @@
+2026-01-18 23:43:37,283 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-18 23:43:37,283 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-18 23:43:37,283 - BuildSystem - INFO - Performing complete cleanup...
+2026-01-18 23:43:37,283 - BuildSystem - INFO - Cleaning build directory using mach...
+2026-01-18 23:43:37,283 - BuildSystem - ERROR - ✗ Firefox mach not found at /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach
+2026-01-18 23:43:37,283 - BuildSystem - WARNING - ⚠ Mach clean failed, continuing with manual cleanup
+2026-01-18 23:43:37,284 - BuildSystem - INFO - Removing build directory: /home/lc/projekty/OpenKomodoIDE/build
+2026-01-18 23:43:37,284 - BuildSystem - INFO - Removing distribution directory: /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-18 23:43:37,284 - BuildSystem - INFO - ✓ Firefox source code was removed (will be re-downloaded)
+2026-01-18 23:43:37,284 - BuildSystem - INFO - Removing Python cache files...
+2026-01-18 23:43:37,353 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-18 23:43:37,353 - BuildSystem - INFO - ✓ Set flag for Firefox source re-download
+2026-01-18 23:43:37,353 - BuildSystem - INFO - ✓ Complete cleanup finished

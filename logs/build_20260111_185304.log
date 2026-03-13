@@ -1,7 +1,0 @@
-2026-01-11 18:53:04,810 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-11 18:53:04,810 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-01-11 18:53:04,810 - BuildSystem - INFO - Configuring build using Firefox mach system...
-2026-01-11 18:53:04,810 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz14000-ko14.10/mozilla/mach configure
-2026-01-11 18:53:04,840 - BuildSystem - ERROR - ✗ Build configuration failed: 
-2026-01-11 18:53:04,841 - BuildSystem - ERROR - stdout: Could not run mach: No mach source directory found.
-

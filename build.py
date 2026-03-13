@@ -163,6 +163,8 @@ class BuildSystem:
             self.config['jobs'] = args.jobs
         if hasattr(args, 'verbose') and args.verbose:
             self.config['verbose'] = True
+        if hasattr(args, 'test') and args.test:
+            self.config['run_tests'] = True
         
         # Update paths after config change
         self.setup_paths()
@@ -282,6 +284,20 @@ class BuildSystem:
         
         mach_path = self.get_mach_path()
         expected_dir = os.path.dirname(mach_path)
+        
+        # Check if force download is requested
+        if self.config.get('force_download', False):
+            self.logger.info("✓ Force download requested - will download fresh source code")
+            # Remove existing source if it exists
+            if os.path.exists(expected_dir):
+                self.logger.info(f"Removing existing source at {expected_dir}...")
+                try:
+                    shutil.rmtree(expected_dir)
+                    self.logger.info("✓ Successfully removed existing source")
+                except Exception as e:
+                    self.logger.error(f"✗ Could not remove existing source: {e}")
+                    return False
+            return self._download_firefox_source_fresh()
         
         # Check if source code already exists
         if os.path.exists(mach_path):
@@ -403,6 +419,18 @@ class BuildSystem:
             
             # Move contents to expected location
             self.logger.info(f"Moving source code to: {expected_dir}")
+            
+            # Ensure target directory exists and is empty
+            if os.path.exists(expected_dir):
+                self.logger.info(f"Cleaning existing directory: {expected_dir}")
+                try:
+                    shutil.rmtree(expected_dir)
+                except Exception as e:
+                    self.logger.error(f"✗ Could not clean directory {expected_dir}: {e}")
+                    return False
+            
+            os.makedirs(expected_dir, exist_ok=True)
+            
             for item in os.listdir(source_dir):
                 src = os.path.join(source_dir, item)
                 dst = os.path.join(expected_dir, item)
@@ -474,6 +502,14 @@ class BuildSystem:
         self.logger.info(f"✓ Firefox source code verified and ready at: {base_dir}")
         return True
     
+    def _download_firefox_source_fresh(self) -> bool:
+        """Download fresh Firefox source code (used when force_download is set)"""
+        self.logger.info("Downloading fresh Firefox source code...")
+        # Reset the force_download flag
+        self.config['force_download'] = False
+        self.save_config()
+        return self.download_firefox_source()
+    
     def create_mozconfig(self, firefox_dir: str) -> bool:
         """Create .mozconfig file for Firefox build"""
         self.logger.info(f"Creating .mozconfig in {firefox_dir}")
@@ -543,9 +579,15 @@ ac_add_options --disable-tests
         mach_path = self.get_mach_path()
         if not os.path.exists(mach_path):
             self.logger.error(f"✗ Firefox mach not found at {mach_path}")
-            self.logger.info("Attempting to download Firefox source code...")
+            
+            # Check if this is expected (force_download was set)
+            if self.config.get('force_download', False):
+                self.logger.info("✓ Source not found as expected (force_download was set)")
+            else:
+                self.logger.info("✗ Source not found unexpectedly")
             
             # Try to download Firefox source
+            self.logger.info("Attempting to download Firefox source code...")
             if not self.download_firefox_source():
                 self.logger.error("✗ Failed to download Firefox source code")
                 return False
@@ -554,7 +596,24 @@ ac_add_options --disable-tests
             mach_path = self.get_mach_path()
             if not os.path.exists(mach_path):
                 self.logger.error(f"✗ Firefox mach still not found at {mach_path} after download")
-                return False
+                
+                # Last resort: Try to find mach in any location
+                self.logger.info("Attempting to find mach in alternative locations...")
+                alternative_paths = [
+                    os.path.join(self.base_dir, 'mozilla', 'build', 'moz1400-ko1410', 'mozilla', 'mach'),
+                    os.path.join(self.base_dir, 'mozilla', 'build', 'moz14000-ko14.10', 'mozilla', 'mach'),
+                    os.path.join(self.base_dir, 'build', 'moz1400-ko1410', 'mozilla', 'mach'),
+                ]
+                
+                for alt_path in alternative_paths:
+                    if os.path.exists(alt_path):
+                        self.logger.info(f"✓ Found mach at alternative location: {alt_path}")
+                        mach_path = alt_path
+                        break
+                
+                if not os.path.exists(mach_path):
+                    self.logger.error("✗ Could not find mach in any location")
+                    return False
         
         # Ensure .mozconfig exists
         mozconfig_path = os.path.join(os.path.dirname(mach_path), '.mozconfig')
@@ -638,15 +697,63 @@ ac_add_options --disable-tests
             # Update mach_path after download
             mach_path = self.get_mach_path()
         
+        # First ensure complete Mozilla build for 'all' target
+        if 'all' in self.config['targets']:
+            self.logger.info("\nEnsuring complete Mozilla build first...")
+            
+            # Force complete build
+            complete_build_cmd = f"{mach_path} build"
+            self.logger.info(f"Running complete build: {complete_build_cmd}")
+            
+            # Set up environment for complete build
+            env = os.environ.copy()
+            env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
+            env['PATH'] = f"{os.path.dirname(mach_path)}:{env['PATH']}"
+            env['MOZ_MAKE_FLAGS'] = f"-j{self.config['jobs']}"
+            
+            # Set PYTHONPATH for mozbuild
+            firefox_python_dir = os.path.join(self.firefox_src_dir, 'python')
+            firefox_mozbuild_dir = os.path.join(self.firefox_src_dir, 'python', 'mozbuild')
+            if os.path.exists(firefox_python_dir):
+                env['PYTHONPATH'] = f"{firefox_python_dir}:{firefox_mozbuild_dir}:{env.get('PYTHONPATH', '')}"
+            
+            success, stdout, stderr = self.run_command(complete_build_cmd, cwd=self.base_dir, env=env)
+            
+            # Verify complete build - check for critical components
+            libxul_path = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'libxul.so')
+            xul_path = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'XUL')
+            
+            if not success:
+                self.logger.error("❌ Complete Mozilla build failed")
+                self.logger.error("STDOUT: " + stdout)
+                self.logger.error("STDERR: " + stderr)
+                raise BuildError("Mozilla build failed - cannot proceed")
+            
+            # Check for critical components
+            missing_components = []
+            if not os.path.exists(libxul_path):
+                missing_components.append('libxul.so')
+            if not os.path.exists(xul_path):
+                missing_components.append('XUL')
+            
+            if missing_components:
+                self.logger.error(f"❌ Mozilla build incomplete - missing critical components: {', '.join(missing_components)}")
+                self.logger.error("STDOUT: " + stdout)
+                self.logger.error("STDERR: " + stderr)
+                raise BuildError(f"Mozilla build incomplete - missing: {', '.join(missing_components)}")
+            
+            self.logger.info("✓ Complete Mozilla build successful with all core components")
+        
         all_success = True
         
         for target in self.config['targets']:
-            self.logger.info(f"\nBuilding target: {target}")
+            # Skip 'all' target if we already built it above
+            if target == 'all':
+                self.logger.info(f"\nTarget 'all' already built during complete build phase")
+                continue
             
             # Map target names to mach commands
-            if target == 'all':
-                cmd = f"{mach_path} build"
-            elif target == 'faster':
+            if target == 'faster':
                 cmd = f"{mach_path} build faster"
             elif target == 'debug':
                 cmd = f"{mach_path} build --debug"
@@ -655,265 +762,168 @@ ac_add_options --disable-tests
             else:
                 cmd = f"{mach_path} build {target}"
             
+            self.logger.info(f"\nBuilding target: {target}")
+            
+            # Execute the build command
             self.logger.info(f"Running: {cmd}")
+            result = subprocess.run(cmd, shell=True, cwd=self.config['mozillaSrcDir'], 
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             
-            # Set up environment for mach
-            env = os.environ.copy()
-            env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
-            env['PATH'] = f"{os.path.dirname(mach_path)}:{env['PATH']}"
-            env['MOZ_MAKE_FLAGS'] = f"-j{self.config['jobs']}"  # Uses exactly 2 jobs
+            if result.returncode != 0:
+                self.logger.error(f"Build failed for target '{target}':")
+                self.logger.error("STDOUT: " + result.stdout)
+                self.logger.error("STDERR: " + result.stderr)
+                all_success = False
+                continue
             
-            # Set PYTHONPATH to include mozbuild modules
-            firefox_python_dir = os.path.join(self.firefox_src_dir, 'python')
-            firefox_mozbuild_dir = os.path.join(self.firefox_src_dir, 'python', 'mozbuild')
-            if os.path.exists(firefox_python_dir):
-                env['PYTHONPATH'] = f"{firefox_python_dir}:{firefox_mozbuild_dir}:{env.get('PYTHONPATH', '')}"
+            self.logger.info(f"✓ Target '{target}' built successfully")
             
-            success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
+            # Verify critical components exist for this target
+            target_components = self._get_target_components(target)
+            missing_components = self._verify_components(target_components)
             
-            # For mach build, ignore non-critical warnings (like psutil warnings)
-            if success:
-                self.logger.info(f"✓ Target {target} built successfully")
+            if missing_components:
+                self.logger.error(f"Target '{target}' missing components: {', '.join(missing_components)}")
+                all_success = False
             else:
-                # Check if the error is just warnings (non-critical)
-                if "RuntimeWarning" in stderr and "psutil" in stderr:
-                    self.logger.warning(f"⚠ Target {target} completed with warnings (non-critical)")
-                    self.logger.info(f"✓ Target {target} built successfully")
-                else:
-                    self.logger.error(f"✗ Target {target} failed: {stderr}")
-                    all_success = False
-                    if not self.config.get('continue_on_error', False):
-                        break
+                self.logger.info(f"✓ Target '{target}' has all required components")
         
-        return all_success
-    
-    def create_packages(self) -> bool:
-        """Create distribution packages using mach"""
-        self.logger.info("Creating packages using mach...")
-        
-        mach_path = self.get_mach_path()
-        if not os.path.exists(mach_path):
-            self.logger.error(f"✗ Firefox mach not found at {mach_path}")
-            return False
-        
-        cmd = f"{mach_path} package"
-        
-        # Set up environment for mach
-        env = os.environ.copy()
-        env['MOZCONFIG'] = os.path.join(self.base_dir, 'mozconfig')
-        env['PATH'] = f"{os.path.dirname(mach_path)}:{env['PATH']}"
-        
-        success, stdout, stderr = self.run_command(cmd, cwd=self.base_dir, env=env)
-        
-        if success:
-            self.logger.info("✓ Packages created successfully")
+        if all_success:
+            self.logger.info("\n✓✓✓ ALL BUILD TARGETS COMPLETED SUCCESSFULLY ✓✓✓")
             return True
         else:
-            self.logger.error(f"✗ Package creation failed: {stderr}")
+            self.logger.error("\n✗✗✗ SOME BUILD TARGETS FAILED ✗✗✗")
             return False
-    
-    def check_binary_outputs(self) -> bool:
-        """Check if binary outputs were created successfully"""
-        self.logger.info("Checking binary outputs...")
+            
+    def _get_target_components(self, target):
+        """Get the list of components required for a specific build target."""
+        # Base components that should exist for any target
+        components = [
+            os.path.join(self.config['mozillaObjDir'], 'dist', 'bin', 'libxul.so'),
+            os.path.join(self.config['mozillaObjDir'], 'dist', 'bin', 'XUL'),
+        ]
         
-        # Check build directory
-        if not os.path.exists(self.build_dir):
-            self.logger.error("✗ Build directory not found")
-            return False
+        # Target-specific components
+        if target == 'debug':
+            components.extend([
+                os.path.join(self.config['mozillaObjDir'], 'dist', 'bin', 'xpcshell'),
+                os.path.join(self.config['mozillaObjDir'], 'dist', 'bin', 'mozglue'),
+            ])
+        elif target == 'release':
+            components.extend([
+                os.path.join(self.config['mozillaObjDir'], 'dist', 'bin', 'plugin-container'),
+            ])
         
-        # Check dist directory
-        if not os.path.exists(self.dist_dir):
-            self.logger.error("✗ Distribution directory not found")
-            return False
+        return components
         
-        # Check Firefox build outputs
-        firefox_build_dir = self.get_firefox_build_dir()
-        if not os.path.exists(firefox_build_dir):
-            self.logger.error(f"✗ Firefox build directory not found: {firefox_build_dir}")
-            return False
+    def _verify_components(self, components):
+        """Verify that all specified components exist."""
+        missing = []
+        for component in components:
+            if not os.path.exists(component):
+                missing.append(component)
+        return missing
         
-        # Check for binary files
-        binary_dir = os.path.join(firefox_build_dir, 'dist', 'bin')
-        if not os.path.exists(binary_dir):
-            self.logger.error(f"✗ Binary output directory not found: {binary_dir}")
-            return False
+    def target_komodoapp(self):
+        """Build the komodoapp target."""
+        self.logger.info("\n=== Building komodoapp target ===")
         
-        # Check for expected binaries
-        expected_binaries = ['firefox', 'xul', 'libxul.so']
-        found_binaries = []
-        
-        for binary in expected_binaries:
-            binary_path = os.path.join(binary_dir, binary)
-            if os.path.exists(binary_path):
-                found_binaries.append(binary)
-                self.logger.info(f"✓ Found binary: {binary}")
-        
-        if not found_binaries:
-            self.logger.error("✗ No expected binaries found")
-            return False
-        
-        self.logger.info(f"✓ Found {len(found_binaries)} binary files")
-        return True
-    
-    def run_mozilla_build_command(self, command: str, args: List[str] = None) -> bool:
-        """Run a command from the legacy mozilla build system"""
-        if args is None:
-            args = []
-        
-        self.logger.info(f"Delegating to legacy mozilla build system: {command}")
-        
-        # Check if mozilla/build.py exists
-        mozilla_build_script = os.path.join(self.base_dir, 'mozilla', 'build.py')
-        if not os.path.exists(mozilla_build_script):
-            self.logger.error(f"✗ Legacy build script not found: {mozilla_build_script}")
+        # First check if we have the required Mozilla components
+        mozilla_objdir = self._get_mozilla_objdir()
+        if not mozilla_objdir:
+            self.logger.error("Cannot determine Mozilla object directory")
             return False
         
-        # Build the command
-        cmd_parts = ['python3', mozilla_build_script, command]
-        if args:
-            cmd_parts.extend(args)
+        # Check for critical components
+        libxul_path = os.path.join(mozilla_objdir, 'dist', 'bin', 'libxul.so')
+        xul_path = os.path.join(mozilla_objdir, 'dist', 'bin', 'XUL')
         
-        cmd = ' '.join(cmd_parts)
+        if not os.path.exists(libxul_path):
+            self.logger.error(f"Critical component missing: {libxul_path}")
+            self.logger.error("Please build Mozilla first with a complete build target")
+            return False
         
+        if not os.path.exists(xul_path):
+            self.logger.error(f"Critical component missing: {xul_path}")
+            self.logger.error("Please build Mozilla first with a complete build target")
+            return False
+        
+        self.logger.info("✓ All required Mozilla components found")
+        
+        # Proceed with komodoapp build
+        cmd = f"{self.config['machPath']} build komodoapp"
         self.logger.info(f"Running: {cmd}")
         
-        # Set up environment
-        env = os.environ.copy()
-        env['PATH'] = f"{os.path.join(self.base_dir, 'bin')}:{env['PATH']}"
+        result = subprocess.run(cmd, shell=True, cwd=self.config['mozillaSrcDir'], 
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
-        # Run the command
-        success, stdout, stderr = self.run_command(cmd, cwd=os.path.join(self.base_dir, 'mozilla'), env=env)
-        
-        if success:
-            self.logger.info(f"✓ Legacy build command '{command}' completed successfully")
-            return True
-        else:
-            self.logger.error(f"✗ Legacy build command '{command}' failed: {stderr}")
-            if stdout:
-                self.logger.error(f"stdout: {stdout}")
+        if result.returncode != 0:
+            self.logger.error("komodoapp build failed:")
+            self.logger.error("STDOUT: " + result.stdout)
+            self.logger.error("STDERR: " + result.stderr)
             return False
+        
+        self.logger.info("✓ komodoapp built successfully")
+        return True
+        
+    def _get_mozilla_objdir(self):
+        """Get the Mozilla object directory using mach."""
+        try:
+            cmd = f"{self.config['machPath']} environment --format json"
+            result = subprocess.run(cmd, shell=True, cwd=self.config['mozillaSrcDir'], 
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            
+            if result.returncode != 0:
+                self.logger.error("Failed to get Mozilla environment:")
+                self.logger.error("STDERR: " + result.stderr)
+                return None
+            
+            # Parse JSON output to get the object directory
+            import json
+            env_data = json.loads(result.stdout)
+            return env_data.get('topobjdir', '')
+        
+        except Exception as e:
+            self.logger.error(f"Error getting Mozilla object directory: {e}")
+            return None
 
-    def clean_all(self) -> bool:
-        """Perform complete cleaning including temporary files"""
-        self.logger.info("Performing complete cleanup...")
-        
-        # Clean build using mach
-        if not self.clean_build():
-            self.logger.warning("⚠ Mach clean failed, continuing with manual cleanup")
-        
-        # Remove temporary download directory
-        temp_dir = os.path.join(self.base_dir, 'temp_download')
-        if os.path.exists(temp_dir):
-            self.logger.info(f"Removing temporary download directory: {temp_dir}")
-            shutil.rmtree(temp_dir)
-        
-        # Remove build directory
-        if os.path.exists(self.build_dir):
-            self.logger.info(f"Removing build directory: {self.build_dir}")
-            shutil.rmtree(self.build_dir)
-        
-        # Remove dist directory
-        if os.path.exists(self.dist_dir):
-            self.logger.info(f"Removing distribution directory: {self.dist_dir}")
-            shutil.rmtree(self.dist_dir)
-        
-        # Remove Python cache files
-        self.logger.info("Removing Python cache files...")
-        for root, dirs, files in os.walk(self.base_dir):
-            for dir_name in dirs:
-                if dir_name == '__pycache__':
-                    dir_path = os.path.join(root, dir_name)
-                    shutil.rmtree(dir_path)
-            for file_name in files:
-                if file_name.endswith('.pyc'):
-                    file_path = os.path.join(root, file_name)
-                    os.remove(file_path)
-        
-        self.logger.info("✓ Complete cleanup finished")
-        return True
+
+def run_build_automation(args):
+    """Run the build automation script with given arguments"""
+    build_automation_path = os.path.join(os.path.dirname(__file__), 'build_automation.py')
     
-    def complete_build(self) -> bool:
-        """Perform a complete build from start to finish"""
-        self.logger.info("Starting complete build process...")
-        self.logger.info("=" * 60)
-        
-        # Set up environment
-        if not self.setup_environment():
-            return False
-        
-        # Check dependencies
-        if not self.check_dependencies():
-            return False
-        
-        # Clean if requested
-        if self.config['clean_build']:
-            if not self.clean_build():
-                self.logger.warning("⚠ Clean failed, but continuing with build...")
-        
-        # Download Firefox source if needed
-        if not self.download_firefox_source():
-            return False
-        
-        # Configure
-        if not self.configure_build():
-            return False
-        
-        # Build
-        if not self.build_targets():
-            return False
-        
-        # Create packages
-        if not self.create_packages():
-            return False
-        
-        self.logger.info("\n" + "=" * 60)
-        self.logger.info("✓ COMPLETE BUILD SUCCESSFUL!")
-        self.logger.info(f"\nBuild artifacts available in:")
-        self.logger.info(f"  Build directory: {self.build_dir}")
-        self.logger.info(f"  Distribution: {self.dist_dir}")
-        self.logger.info(f"  Logs: {self.log_dir}")
-        
-        return True
+    if not os.path.exists(build_automation_path):
+        print(f"Error: build automation script not found at {build_automation_path}")
+        return False
     
-    def show_status(self):
-        """Show current build status and configuration"""
-        print("Current Build Configuration:")
-        print("=" * 40)
-        
-        for key, value in self.config.items():
-            print(f"  {key:20}: {value}")
-        
-        print("\nPlatform Information:")
-        print(f"  System: {platform.system()}")
-        print(f"  Release: {platform.release()}")
-        print(f"  Machine: {platform.machine()}")
-        print(f"  Python: {sys.version}")
-        print(f"  CPU Cores: {os.cpu_count()}")
+    # Run the build automation script
+    cmd = [sys.executable, build_automation_path] + args
+    
+    try:
+        result = subprocess.run(cmd, cwd=os.path.dirname(__file__))
+        return result.returncode == 0
+    except Exception as e:
+        print(f"Error running build automation: {e}")
+        return False
+
 
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(
-        description='OpenKomodoIDE Complete Build System',
+        description='OpenKomodoIDE Build System',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Examples:
   python3 build.py configure
   python3 build.py build
   python3 build.py complete
-  python3 build.py check-binaries
-  python3 build.py clean-all
+  python3 build.py test
   python3 build.py status
-  
-  Legacy Mozilla build commands:
-  python3 build.py configure_mozilla
-  python3 build.py mozilla
-  python3 build.py pyxpcom
-  python3 build.py silo_python
         '''
     )
     
     parser.add_argument('command', nargs='?', default='status',
-                       help='Command to run: configure, build, complete, check-binaries, clean, clean-all, status, configure_mozilla, mozilla, pyxpcom, silo_python')
+                       help='Command to run (configure, build, complete, test, status)')
     parser.add_argument('--version', default='14.10',
                        help='Komodo version to build')
     parser.add_argument('--firefox', default='140.0',
@@ -927,49 +937,47 @@ Examples:
                        help='Clean build before starting')
     parser.add_argument('--targets', nargs='+', default=['all'],
                        help='Specific targets to build')
-    parser.add_argument('--jobs', type=int, default=2,
-                       help='Number of parallel jobs (default: 2)')
+    parser.add_argument('--jobs', type=int,
+                       help='Number of parallel jobs')
     parser.add_argument('--verbose', action='store_true',
                        help='Verbose output')
     
     args = parser.parse_args()
     
-    # Create build system instance
-    builder = BuildSystem()
+    # Build argument list for build_automation.py
+    build_args = [args.command]
     
-    # Update configuration from arguments
-    builder.update_config_from_args(args)
+    if args.version:
+        build_args.extend(['--version', args.version])
+    if args.firefox:
+        build_args.extend(['--firefox', args.firefox])
+    if args.platform:
+        build_args.extend(['--platform', args.platform])
+    if args.debug:
+        build_args.append('--debug')
+    if args.symbols is not None:
+        if not args.symbols:
+            build_args.append('--no-symbols')
+    if args.clean:
+        build_args.append('--clean')
+    if args.targets:
+        build_args.extend(['--targets'] + args.targets)
+    if args.jobs:
+        build_args.extend(['--jobs', str(args.jobs)])
+    if args.verbose:
+        build_args.append('--verbose')
     
-    # Execute command
-    if args.command == 'configure':
-        success = builder.configure_build()
-    elif args.command == 'build':
-        success = builder.build_targets()
-    elif args.command == 'complete':
-        success = builder.complete_build()
-    elif args.command == 'check-binaries':
-        success = builder.check_binary_outputs()
-    elif args.command == 'clean':
-        success = builder.clean_build()
-    elif args.command == 'clean-all':
-        success = builder.clean_all()
-    elif args.command == 'status':
-        builder.show_status()
-        success = True
-    elif args.command == 'configure_mozilla':
-        success = builder.run_mozilla_build_command('configure_mozilla')
-    elif args.command == 'mozilla':
-        success = builder.run_mozilla_build_command('mozilla')
-    elif args.command == 'pyxpcom':
-        success = builder.run_mozilla_build_command('pyxpcom')
-    elif args.command == 'silo_python':
-        success = builder.run_mozilla_build_command('silo_python')
+    print(f"Running build automation: {' '.join(build_args)}")
+    
+    success = run_build_automation(build_args)
+    
+    if success:
+        print("Build completed successfully!")
+        return 0
     else:
-        print(f"Unknown command: {args.command}")
-        parser.print_help()
-        success = False
-    
-    return 0 if success else 1
+        print("Build failed!")
+        return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

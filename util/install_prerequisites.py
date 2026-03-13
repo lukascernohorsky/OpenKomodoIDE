@@ -252,8 +252,8 @@ class Python30(PythonLanguage):
     version_str = "3.0.1"
 class Python27(PythonLanguage):
     version_str = "2.7.8"
-class Python26(PythonLanguage):
-    version_str = "2.6.8"
+# class Python26(PythonLanguage):
+#     version_str = "2.6.8"  # Legacy Python 2.6 - removed
 class Python25(PythonLanguage):
     version_str = "2.5.6"
     if sys.platform == "darwin":
@@ -551,7 +551,7 @@ def main():
         Python32(),
         Python31(),
         Python27(),
-        Python26(),
+        # Python26(),  # Legacy Python 2.6 - removed
         Python25(),
         Python24(),
         # Ruby

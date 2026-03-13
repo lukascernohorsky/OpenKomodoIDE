@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2006-2009 ActiveState Software Inc.
 
 r"""Make a Komodo RC, i.e. copy the bits from the latest release-branch
@@ -46,7 +46,7 @@ import re
 from pprint(import) pprint(from) glob import glob
 import traceback
 import logging
-import optparse
+import argparse
 import urllib
 import tempfile
 import socket
@@ -860,44 +860,44 @@ def _setup_logging():
     hdlr.setLevel(logging.DEBUG)
     logging.root.addHandler(hdlr)
 
-class _NoReflowFormatter(optparse.IndentedHelpFormatter):
-    """An optparse formatter that does NOT reflow the description."""
-    def format_description(self, description):
-        return description or ""
+class _NoReflowFormatter(argparse.RawDescriptionHelpFormatter):
+    """An argparse formatter that does NOT reflow the description."""
+    pass
 
 def main(argv):
     usage = "usage: %prog [OPTIONS...]"
     version = "%prog "+__version__
-    parser = optparse.OptionParser(prog="mkrc", usage=usage,
-        version=version, description=__doc__,
-        formatter=_NoReflowFormatter())
-    parser.add_option("-v", "--verbose", dest="log_level",
+    parser = argparse.ArgumentParser(prog="mkrc", usage=usage,
+        description=__doc__,
+        formatter_class=_NoReflowFormatter)
+    parser.add_argument("-v", "--verbose", dest="log_level",
         action="store_const", const=logging.DEBUG,
         help="more verbose output")
-    parser.add_option("-q", "--quiet", dest="log_level",
+    parser.add_argument("-q", "--quiet", dest="log_level",
         action="store_const", const=logging.WARNING,
         help="quieter output")
-    parser.add_option("-n", "--dry-run", action="store_true",
+    parser.add_argument("-n", "--dry-run", action="store_true",
         help="do a dry-run")
-    parser.add_option("--skip-announcement", action="store_true",
+    parser.add_argument("--skip-announcement", action="store_true",
         help="skip sending announcement emails (for debugging)")
-    parser.add_option("-b", "--branch",
+    parser.add_argument("-b", "--branch",
         help="Komodo source tree branch builds to use: 'rel' (the latest "
             "release branch, default), 'trunk', '5.2.0a1', '5.1.x', etc.")
-    parser.add_option("-i", "--ide-revision",
+    parser.add_argument("-i", "--ide-revision",
         help="Use this specific IDE devbuild revision instead of the latest available.")
-    parser.add_option("-e", "--edit-revision",
+    parser.add_argument("-e", "--edit-revision",
         help="Use this specific Edit devbuild revision instead of the latest available.")
-    parser.add_option("--exclude-edit", dest="exclude_edit",
+    parser.add_argument("--exclude-edit", dest="exclude_edit",
         action="store_true", help="exclude Komodo Edit bits")
-    parser.add_option("--exclude-auto-update", dest="exclude_auto_update",
+    parser.add_argument("--exclude-auto-update", dest="exclude_auto_update",
         action="store_true", help="exclude auto-update bits")
-    parser.add_option("--force", dest="force_release",
+    parser.add_argument("--force", dest="force_release",
         action="store_true", help="force mkrc to run even when missing bits")
     parser.set_defaults(log_level=logging.INFO, ide_revision=None,
                         edit_revision=None, dry_run=False, branch="rel",
                         exclude_edit=False, exclude_auto_update=False)
-    opts, args = parser.parse_args()
+    args = parser.parse_args()
+    opts = args
     console.setLevel(opts.log_level)
 
     mkrc(branch=opts.branch,

@@ -1,0 +1,53 @@
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Starting complete build process...
+2026-01-23 16:02:38,346 - BuildSystem - INFO - ============================================================
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Setting up build environment...
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Environment set up for linux
+2026-01-23 16:02:38,346 - BuildSystem - INFO - Checking dependencies...
+2026-01-23 16:02:38,381 - BuildSystem - INFO - All required dependencies are available
+2026-01-23 16:02:38,381 - BuildSystem - INFO - Checking Firefox source code...
+2026-01-23 16:02:38,381 - BuildSystem - INFO - Verifying Firefox source code...
+2026-01-23 16:02:38,381 - BuildSystem - INFO - ✓ Firefox source code verified and ready at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-23 16:02:38,381 - BuildSystem - INFO - ✓ Firefox source code found at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-23 16:02:38,381 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-23 16:02:38,381 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
+2026-01-23 16:02:48,682 - BuildSystem - INFO - ✓ Build configuration successful
+2026-01-23 16:02:48,682 - BuildSystem - INFO - Building targets: all
+2026-01-23 16:02:48,682 - BuildSystem - INFO - 
+Building target: all
+2026-01-23 16:02:48,683 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach build
+2026-01-23 16:02:49,491 - BuildSystem - WARNING - ⚠ Target all completed with warnings (non-critical)
+2026-01-23 16:02:49,492 - BuildSystem - INFO - ✓ Target all built successfully
+2026-01-23 16:02:49,492 - BuildSystem - INFO - 
+Building Komodo-specific components...
+2026-01-23 16:02:49,492 - BuildSystem - INFO - Starting Komodo components build...
+2026-01-23 16:02:49,492 - BuildSystem - INFO - Delegating to legacy mozilla build system: komodoapp
+2026-01-23 16:02:49,492 - BuildSystem - INFO - Running: python3 /home/lc/projekty/OpenKomodoIDE/mozilla/build.py komodoapp
+2026-01-23 16:03:00,122 - BuildSystem - INFO - ✓ Legacy build command 'komodoapp' completed successfully
+2026-01-23 16:03:00,122 - BuildSystem - INFO - ✓ Komodo app components built successfully
+2026-01-23 16:03:00,122 - BuildSystem - INFO - Creating packages using modern mach approach...
+2026-01-23 16:03:00,945 - BuildSystem - WARNING - ⚠ Modern package creation failed: /home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/mach/lib/python3.13/site-packages/psutil/_pslinux.py:513: RuntimeWarning: shared, active, inactive memory stats couldn't be determined and were set to 0
+  warnings.warn(msg, RuntimeWarning)
+/home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/mach/lib/python3.13/site-packages/psutil/_pslinux.py:547: RuntimeWarning: 'sin' and 'sout' swap memory stats couldn't be determined and were set to 0 ([Errno 2] No such file or directory: '/proc/vmstat')
+  warnings.warn(msg, RuntimeWarning)
+/home/lc/.mozbuild/srcdirs/mozilla-9bd3f734fd8c/_virtualenvs/mach/lib/python3.13/site-packages/psutil/_pslinux.py:513: RuntimeWarning: shared, active, inactive memory stats couldn't be determined and were set to 0
+  warnings.warn(msg, RuntimeWarning)
+
+2026-01-23 16:03:00,946 - BuildSystem - INFO - Trying legacy 'mach package' approach...
+2026-01-23 16:03:02,514 - BuildSystem - WARNING - ⚠ Legacy package creation also failed: 
+2026-01-23 16:03:02,514 - BuildSystem - INFO - Collecting existing build artifacts...
+2026-01-23 16:03:02,515 - BuildSystem - INFO - ✓ Found 2 build artifacts:
+2026-01-23 16:03:02,515 - BuildSystem - INFO -   - /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/obj-x86_64-pc-linux-gnu/dist/include
+2026-01-23 16:03:02,515 - BuildSystem - INFO -   - /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/obj-x86_64-pc-linux-gnu/dist/xpcrs
+2026-01-23 16:03:03,027 - BuildSystem - INFO - ✓ Copied directory include to /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-23 16:03:03,028 - BuildSystem - INFO - ✓ Copied directory xpcrs to /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-23 16:03:03,028 - BuildSystem - INFO - ✓ Build artifacts collected successfully
+2026-01-23 16:03:03,028 - BuildSystem - INFO - 
+============================================================
+2026-01-23 16:03:03,028 - BuildSystem - INFO - ✓ COMPLETE BUILD SUCCESSFUL!
+2026-01-23 16:03:03,028 - BuildSystem - INFO - 
+Build artifacts available in:
+2026-01-23 16:03:03,028 - BuildSystem - INFO -   Build directory: /home/lc/projekty/OpenKomodoIDE/build
+2026-01-23 16:03:03,028 - BuildSystem - INFO -   Distribution: /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-23 16:03:03,028 - BuildSystem - INFO -   Logs: /home/lc/projekty/OpenKomodoIDE/logs

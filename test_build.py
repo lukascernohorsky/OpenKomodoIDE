@@ -14,7 +14,7 @@ def test_mach_available():
     print("Testing Firefox mach availability...")
     
     # Try new structure first (mozilla/build/...)
-    mach_path = os.path.join(os.getcwd(), 'mozilla', 'build', 'moz1400-ko120', 'mozilla', 'mach')
+    mach_path = os.path.join(os.getcwd(), 'mozilla', 'build', 'moz1400-ko1410', 'mozilla', 'mach')
     
     # Fallback to old structure (firefox/mach)
     if not os.path.exists(mach_path):
@@ -46,7 +46,7 @@ def test_mozconfig():
     print("Testing mozconfig...")
     
     # Try new structure first
-    mozconfig_path = os.path.join('mozilla', 'build', 'moz1400-ko120', 'mozilla', '.mozconfig')
+    mozconfig_path = os.path.join('mozilla', 'build', 'moz1400-ko1410', 'mozilla', '.mozconfig')
     
     # Fallback to old structure
     if not os.path.exists(mozconfig_path):
@@ -106,7 +106,7 @@ def test_firefox_source():
     print("Testing Firefox source integration...")
     
     # Try new structure first
-    firefox_dir = os.path.join('mozilla', 'build', 'moz1400-ko120', 'mozilla')
+    firefox_dir = os.path.join('mozilla', 'build', 'moz1400-ko1410', 'mozilla')
     
     # Fallback to old structure
     if not os.path.exists(firefox_dir):

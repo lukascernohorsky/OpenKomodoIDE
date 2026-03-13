@@ -7,7 +7,7 @@
 # See "build -h configure" for details.
 
 blessed = False
-buildDir = '/home/lc/projekty/OpenKomodoIDE/build'
+buildDir = '/home/lc/projekty/OpenKomodoIDE/mozilla/build'
 buildOpt = []
 buildTag = None
 buildType = 'release'
@@ -35,7 +35,7 @@ platinfo = {'os': 'linux', 'os_ver': '5.15.0', 'arch': 'x86_64', 'distro': 'Debi
 pyVer = '3.11'
 python = '/bin/python3'
 pythonVersion = '3.11'
-srcTreeName = 'moz14000-ko14.0'
+srcTreeName = 'moz1400-ko1410'
 stripBuild = False
 universal = False
 withCrashReportSymbols = False

@@ -408,7 +408,7 @@ class PlatInfo(object):
         o.close()
         if arch == "ia64":
             self.arch = "ia64"
-        elif re.match("i\d86", arch):
+        elif re.match(r"i\d86", arch):
             self.arch = "x86"
         elif arch == "x86_64":
             self.arch = "x86_64"
@@ -588,11 +588,11 @@ class PlatInfo(object):
         if retval:
             return {} # Running lsb_release failed
         patterns = {
-            "distro": re.compile("^Distributor ID:\s+(.*?)\s*$"),
-            "distro_desc": re.compile("^Description:\s+(.*?)\s*$"),
-            "distro_ver": re.compile("^Release:\s+(.*?)\s*$"),
-            "distro_codename": re.compile("^Codename:\s+(.*?)\s*$"),
-            "lsb_version": re.compile("^LSB Version:\s+(.*?)\s*$"),
+            "distro": re.compile(r"^Distributor ID:\s+(.*?)\s*$"),
+            "distro_desc": re.compile(r"^Description:\s+(.*?)\s*$"),
+            "distro_ver": re.compile(r"^Release:\s+(.*?)\s*$"),
+            "distro_codename": re.compile(r"^Codename:\s+(.*?)\s*$"),
+            "lsb_version": re.compile(r"^LSB Version:\s+(.*?)\s*$"),
         }
         # Decode stdout to string for Python 3 compatibility
         if isinstance(stdout, bytes):
@@ -625,19 +625,19 @@ class PlatInfo(object):
             return {}
 
         patterns = {
-            "redhat": re.compile("^Red Hat Linux release ([\d\.]+)"),
+            "redhat": re.compile(r"^Red Hat Linux release ([\d\.]+)"),
             # As of release 7, "Fedora Core" is not called "Fedora".
-            "fedora": re.compile("^Fedora release ([\d\.]+)"),
-            "fedoracore": re.compile("^Fedora Core release ([\d\.]+)"),
-            "mandrake": re.compile("^Mandrake Linux release ([\d\.]+)"),
+            "fedora": re.compile(r"^Fedora release ([\d\.]+)"),
+            "fedoracore": re.compile(r"^Fedora Core release ([\d\.]+)"),
+            "mandrake": re.compile(r"^Mandrake Linux release ([\d\.]+)"),
             # Ignoring the different RHEL flavours (AS, ES, WS) for now.
-            "rhel": re.compile("^Red Hat Enterprise Linux \w{2} release ([\d\.]+)"),
-            "centos": re.compile("^CentOS release ([\d\.]+)"),
-            "suse": re.compile("^SuSE Linux ([\d\.]+)"),
-            "opensuse": re.compile("^openSUSE ([\d\.]+)"),
-            "debian": re.compile("^([\d\.]+)"),
-            "slackware": re.compile("^Slackware ([\d\.]+)"),
-            "gentoo": re.compile("^Gentoo Base System release ([\d\.]+)"),
+            "rhel": re.compile(r"^Red Hat Enterprise Linux \w{2} release ([\d\.]+)"),
+            "centos": re.compile(r"^CentOS release ([\d\.]+)"),
+            "suse": re.compile(r"^SuSE Linux ([\d\.]+)"),
+            "opensuse": re.compile(r"^openSUSE ([\d\.]+)"),
+            "debian": re.compile(r"^([\d\.]+)"),
+            "slackware": re.compile(r"^Slackware ([\d\.]+)"),
+            "gentoo": re.compile(r"^Gentoo Base System release ([\d\.]+)"),
         }
 
         errmsgs = []
@@ -797,7 +797,7 @@ def _split_ver(ver_str):
         >>> _split_ver("1.3a2")
         ('1', '3', 'a', '2')
     """
-    bits = [b for b in re.split("(\.|[a-z])", ver_str) if b != '.']
+    bits = [b for b in re.split(r"(\.|[a-z])", ver_str) if b != '.']
     return tuple(bits)
 
 def _join_ver(ver_tuple):
