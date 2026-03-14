@@ -158,7 +158,7 @@ class Makefile(object):
             source = open(self.path).read()
             code = compile(source, self.path, 'exec')
             globs = {
-                '__builtins__': sys.modules['__builtin__'],
+                '__builtins__': __builtins__,
                 '__file__': str(self.path),
                 '__name__': splitext(basename(self.path))[0],
                 '_mk_makefile_': self,

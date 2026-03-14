@@ -9,7 +9,8 @@ from os.path import join, dirname, normpath, abspath, isabs, exists, \
                     splitext, basename
 import re
 import sys
-from pprint(import) pprint(from) glob import glob
+from pprint import pprint
+from glob import glob
 
 from mklib import Task, Alias
 from mklib import sh

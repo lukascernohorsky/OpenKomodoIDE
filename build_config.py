@@ -96,6 +96,7 @@ class BuildConfig:
         # Version information (will be loaded from version info)
         self._config['komodoVersion'] = '12.0.0'
         self._config['buildNum'] = '0'
+        self._config['buildType'] = 'ide'  # or 'edit'
         self._config['productType'] = 'ide'  # or 'edit'
         
         # Directories
@@ -136,6 +137,30 @@ class BuildConfig:
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(self._config, f, indent=2, default=str)
     
+    def set_build_type(self, build_type: str):
+        """Set the build type (edit or ide)"""
+        if build_type not in ['edit', 'ide']:
+            raise ValueError(f"Invalid build type: {build_type}. Must be 'edit' or 'ide'")
+        self._config['buildType'] = build_type
+        # Update productType based on buildType
+        self._config['productType'] = build_type
+        
+        # Adjust feature flags based on build type
+        if build_type == 'edit':
+            # Komodo Edit typically disables these features
+            self._config['withDatabaseExplorer'] = False
+            self._config['withPublishing'] = False
+            self._config['withSCC'] = False
+            self._config['withCollaboration'] = False
+            self._config['withSSO'] = False
+        else:  # ide
+            # Komodo IDE enables all features
+            self._config['withDatabaseExplorer'] = True
+            self._config['withPublishing'] = True
+            self._config['withSCC'] = True
+            self._config['withCollaboration'] = True
+            self._config['withSSO'] = True
+
     def configure(self, **kwargs):
         """Configure build options"""
         for key, value in kwargs.items():

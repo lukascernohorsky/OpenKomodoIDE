@@ -7,7 +7,7 @@ import os
 from os.path import isfile, basename, splitext, join, dirname, normpath, \
                     exists, abspath
 from pprint import pprint
-import imp
+import importlib.util
 import types
 
 from mklib.common import *
@@ -113,12 +113,14 @@ class Configuration(object, metaclass=ConfigurationType):
             os.remove(conf_pyc)
         try:
             cfg_dir = dirname(abspath(self._path))
-            file, path, desc = imp.find_module(name, [cfg_dir])
+            spec = importlib.util.spec_from_file_location(name, join(cfg_dir, name + '.py'))
             curr_dir = os.getcwd()
             if curr_dir != cfg_dir:
                 os.chdir(cfg_dir)
             try:
-                self._mod = imp.load_module(name, file, path, desc)
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                self._mod = module
             finally:
                 if curr_dir != cfg_dir:
                     os.chdir(curr_dir)

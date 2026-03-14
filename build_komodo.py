@@ -30,6 +30,8 @@ def parse_arguments():
                        help='Clean build directory before building')
     parser.add_argument('--verbose', action='store_true',
                        help='Verbose output')
+    parser.add_argument('--package', action='store_true',
+                       help='Create installable package')
     return parser.parse_args()
 
 
@@ -58,12 +60,25 @@ def clean_build():
         print("Build directory cleaned")
 
 
-def run_make_target(target):
-    """Run a make target with the configured build type"""
-    cmd = [sys.executable, str(PROJECT_ROOT / 'Makefile.py'), target, f'--build-type={build_config.buildType}']
+def run_modern_build():
+    """Run the modern build system"""
+    # Use the modern build.py script
+    cmd = [sys.executable, str(PROJECT_ROOT / 'build.py')]
     
     if build_config.verbose:
-        print(f"Running: {' '.join(cmd)}")
+        print(f"Running modern build: {' '.join(cmd)}")
+    
+    result = subprocess.run(cmd)
+    return result.returncode
+
+
+def create_package():
+    """Create installable package"""
+    # Use the langpack task as a template for packaging
+    cmd = [sys.executable, str(PROJECT_ROOT / 'Makefile.py'), 'langpack']
+    
+    if build_config.verbose:
+        print(f"Creating package: {' '.join(cmd)}")
     
     result = subprocess.run(cmd)
     return result.returncode
@@ -80,20 +95,25 @@ def main():
     if args.clean:
         clean_build()
     
-    # Run the build
-    print(f"\nStarting {args.build_type} build...")
+    # Run the modern build
+    print(f"\nStarting {args.build_type} build with modern build system...")
+    return_code = run_modern_build()
     
-    # Example build targets - adjust based on actual Makefile targets
-    targets = ['configure', 'build']
+    if return_code != 0:
+        print(f"Error: Build failed with return code {return_code}")
+        sys.exit(return_code)
     
-    for target in targets:
-        print(f"\nRunning target: {target}")
-        return_code = run_make_target(target)
+    # Create package if requested
+    if args.package:
+        print(f"\nCreating {args.build_type} package...")
+        return_code = create_package()
         if return_code != 0:
-            print(f"Error: Target {target} failed with return code {return_code}")
+            print(f"Error: Package creation failed with return code {return_code}")
             sys.exit(return_code)
+        print(f"\n{args.build_type.capitalize()} package created successfully!")
+    else:
+        print(f"\n{args.build_type.capitalize()} build completed successfully!")
     
-    print(f"\n{args.build_type.capitalize()} build completed successfully!")
     return 0
 
 

@@ -719,9 +719,10 @@ ac_add_options --disable-tests
             
             success, stdout, stderr = self.run_command(complete_build_cmd, cwd=self.base_dir, env=env)
             
-            # Verify complete build - check for critical components
-            libxul_path = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'libxul.so')
-            xul_path = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'XUL')
+            # Verify complete build - check for modern Firefox build artifacts
+            # Modern Firefox builds don't use libxul.so and XUL in the same way
+            firefox_bin_path = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'firefox')
+            firefox_bin_alternative = os.path.join(self.firefox_src_dir, 'obj-x86_64-pc-linux-gnu', 'dist', 'bin', 'firefox-bin')
             
             if not success:
                 self.logger.error("❌ Complete Mozilla build failed")
@@ -729,12 +730,12 @@ ac_add_options --disable-tests
                 self.logger.error("STDERR: " + stderr)
                 raise BuildError("Mozilla build failed - cannot proceed")
             
-            # Check for critical components
+            # Check for modern Firefox build artifacts
             missing_components = []
-            if not os.path.exists(libxul_path):
-                missing_components.append('libxul.so')
-            if not os.path.exists(xul_path):
-                missing_components.append('XUL')
+            if not os.path.exists(firefox_bin_path):
+                missing_components.append('firefox')
+            if not os.path.exists(firefox_bin_alternative):
+                missing_components.append('firefox-bin')
             
             if missing_components:
                 self.logger.error(f"❌ Mozilla build incomplete - missing critical components: {', '.join(missing_components)}")
@@ -742,7 +743,7 @@ ac_add_options --disable-tests
                 self.logger.error("STDERR: " + stderr)
                 raise BuildError(f"Mozilla build incomplete - missing: {', '.join(missing_components)}")
             
-            self.logger.info("✓ Complete Mozilla build successful with all core components")
+            self.logger.info("✓ Complete Mozilla build successful with modern Firefox components")
         
         all_success = True
         

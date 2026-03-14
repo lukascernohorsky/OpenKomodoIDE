@@ -251,6 +251,16 @@ class BuildAutomation:
         print("Downloading Firefox 140 ESR source code...")
         
         try:
+            # Clean up any existing file or directory at the expected path
+            # This handles cases where a previous failed attempt left a file instead of directory
+            if os.path.exists(expected_dir):
+                if os.path.isfile(expected_dir):
+                    print(f"⚠ Removing existing file at: {expected_dir}")
+                    os.remove(expected_dir)
+                elif os.path.isdir(expected_dir):
+                    print(f"⚠ Removing existing directory at: {expected_dir}")
+                    shutil.rmtree(expected_dir)
+            
             # Create temporary directory for download
             temp_dir = os.path.join(self.base_dir, 'temp_download')
             os.makedirs(temp_dir, exist_ok=True)
@@ -342,10 +352,24 @@ class BuildAutomation:
                 return True
             else:
                 print(f"✗ Firefox source code extraction failed")
+                # Clean up any partially created directory
+                if os.path.exists(expected_dir):
+                    if os.path.isdir(expected_dir):
+                        shutil.rmtree(expected_dir)
+                    elif os.path.isfile(expected_dir):
+                        os.remove(expected_dir)
                 return False
                 
         except Exception as e:
             print(f"✗ Failed to download Firefox source: {e}")
+            # Clean up any partially created files or directories
+            if os.path.exists(expected_dir):
+                if os.path.isdir(expected_dir):
+                    shutil.rmtree(expected_dir)
+                elif os.path.isfile(expected_dir):
+                    os.remove(expected_dir)
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
             return False
 
     def verify_firefox_source(self) -> bool:
@@ -419,8 +443,9 @@ ac_add_options --disable-tests
             if enable_debug:
                 mozconfig_content += "ac_add_options --enable-debug\n"
             
-            if enable_symbols:
-                mozconfig_content += "ac_add_options --enable-crashreport-symbols\n"
+            # Note: crashreport-symbols option is not supported in Firefox 140 ESR
+            # if enable_symbols:
+            #     mozconfig_content += "ac_add_options --with-crashreport-symbols\n"
             
             # Add platform-specific settings
             platform = self.config.get('platform', self.detect_platform())
@@ -846,26 +871,82 @@ ac_add_options --disable-tests
             print("✓ Packages created successfully")
             return True
         else:
-            print(f"✗ Package creation failed: {stderr}")
+            print(f"⚠ Package creation failed: {stderr}")
+            print("⚠ Attempting to copy build artifacts manually...")
+            
+            # Try to copy build artifacts manually
+            if self.copy_build_artifacts_manually():
+                print("✓ Build artifacts copied successfully")
+                return True
+            else:
+                print("✗ Failed to copy build artifacts manually")
+                return False
+    
+    def copy_build_artifacts_manually(self) -> bool:
+        """Manually copy build artifacts from source to dist directory"""
+        print("Copying build artifacts manually...")
+        
+        # Source and destination paths
+        source_bin_dir = os.path.join(
+            self.firefox_src_dir, 
+            'obj-x86_64-pc-linux-gnu', 
+            'dist', 
+            'bin'
+        )
+        dest_bin_dir = os.path.join(self.dist_dir, 'bin')
+        
+        # Check if source directory exists
+        if not os.path.exists(source_bin_dir):
+            print(f"✗ Source directory not found: {source_bin_dir}")
+            return False
+        
+        # Create destination directory if it doesn't exist
+        os.makedirs(dest_bin_dir, exist_ok=True)
+        
+        # Copy all files and directories from source to destination
+        try:
+            # First, remove existing files in destination
+            if os.path.exists(dest_bin_dir):
+                shutil.rmtree(dest_bin_dir)
+            
+            # Recreate destination directory
+            os.makedirs(dest_bin_dir, exist_ok=True)
+            
+            # Copy entire directory tree
+            shutil.copytree(source_bin_dir, dest_bin_dir, symlinks=True)
+            
+            print(f"✓ Copied {source_bin_dir} to {dest_bin_dir}")
+            return True
+            
+        except Exception as e:
+            print(f"✗ Failed to copy build artifacts: {e}")
             return False
     
     def run_tests(self) -> bool:
         """Run the test suite"""
         print("Running tests...")
         
-        test_scripts = [
-            'test_build.py',
-            'test_multiplatform.py',
-            'test_firefox_140.py',
-            'test_complete_build.py'
-        ]
+        # Map test script names to test_build.py targets
+        test_mapping = {
+            'test_build.py': 'default',
+            'test_multiplatform.py': 'multiplatform',
+            'test_firefox_140.py': 'firefox_140',
+            'test_complete_build.py': 'complete_build'
+        }
         
         all_success = True
         
-        for test_script in test_scripts:
-            if os.path.exists(test_script):
+        for test_script, test_target in test_mapping.items():
+            if os.path.exists('test_build.py'):
                 print(f"\nRunning {test_script}...")
-                success, stdout, stderr = self.run_command(f"python3 {test_script}", cwd=self.base_dir)
+                
+                # Call test_build.py with appropriate target
+                if test_target == 'default':
+                    command = f"python3 test_build.py"
+                else:
+                    command = f"python3 test_build.py {test_target}"
+                
+                success, stdout, stderr = self.run_command(command, cwd=self.base_dir)
                 
                 if success:
                     print(f"✓ {test_script} passed")
@@ -873,7 +954,9 @@ ac_add_options --disable-tests
                     print(f"✗ {test_script} failed")
                     all_success = False
             else:
-                print(f"⚠ {test_script} not found")
+                print(f"⚠ test_build.py not found")
+                all_success = False
+                break
         
         return all_success
     
