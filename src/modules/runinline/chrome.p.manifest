@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content runinline content/
-# #else
-content runinline jar:runinline.jar!/content/
-# #endif

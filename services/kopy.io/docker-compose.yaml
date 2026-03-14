@@ -1,8 +1,0 @@
-version: '3'
-services:
-  kopy:
-    build: .
-    ports:
-      - "7777:7777"
-  redis:
-    image: "redis:alpine"

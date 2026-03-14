@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content clipboardmanager content/
-# #else
-content clipboardmanager jar:clipboard_manager.jar!/content/
-# #endif

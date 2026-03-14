@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-pip content/
-# #else
-content scope-shell-pip jar:scope-shell-pip.jar!/content/
-# #endif

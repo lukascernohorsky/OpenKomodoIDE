@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-docker content/
-# #else
-content scope-shell-docker jar:scope-shell-docker.jar!/content/
-# #endif

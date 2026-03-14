@@ -1,9 +1,0 @@
-applications:
-- name: kopy
-  mem: 128M
-  services:
-    kopy-backing:
-      type: redis
-  url:
-    - kopy.io
-    - kopy.activestate.com

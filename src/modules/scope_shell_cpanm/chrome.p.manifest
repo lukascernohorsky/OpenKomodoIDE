@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-cpanm content/
-# #else
-content scope-shell-cpanm jar:scope-shell-cpanm.jar!/content/
-# #endif

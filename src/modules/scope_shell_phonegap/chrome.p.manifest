@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-phonegap content/
-# #else
-content scope-shell-phonegap jar:scope-shell-phonegap.jar!/content/
-# #endif

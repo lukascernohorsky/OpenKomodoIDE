@@ -1,7 +1,0 @@
-<!ENTITY cmd.accept.label "Push">
-<!ENTITY cmd.history.open.label "History »">
-<!ENTITY txtRepo.label "Remote Repo:">
-<!ENTITY lstBranches.label "Branches:">
-<!ENTITY lstTags.label "Tags:">
-<!ENTITY options.groupbox.label "Options:">
-<!ENTITY commandline.groupbox.label "Command Line:">

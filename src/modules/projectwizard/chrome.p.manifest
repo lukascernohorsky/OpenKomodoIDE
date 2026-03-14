@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content projectwizard content/
-# #else
-content projectwizard jar:projectwizard.jar!/content/
-# #endif

@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content unittest content/
-# #else
-content unittest jar:unittest.jar!/content/
-# #endif

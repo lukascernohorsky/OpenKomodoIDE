@@ -1,5 +1,0 @@
-2026-03-12 20:13:57,018 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-03-12 20:13:57,019 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
-2026-03-12 20:13:57,019 - BuildSystem - INFO - Configuring build using Firefox mach system...
-2026-03-12 20:13:57,019 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
-2026-03-12 20:14:19,919 - BuildSystem - INFO - ✓ Build configuration successful

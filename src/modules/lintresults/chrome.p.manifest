@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content lintresults content/
-# #else
-content lintresults jar:lintresults.jar!/content/
-# #endif

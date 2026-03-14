@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-bower content/
-# #else
-content scope-shell-bower jar:scope-shell-bower.jar!/content/
-# #endif

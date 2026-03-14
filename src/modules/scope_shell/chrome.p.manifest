@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell content/
-# #else
-content scope-shell jar:scope-shell.jar!/content/
-# #endif

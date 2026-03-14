@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-composer content/
-# #else
-content scope-shell-composer jar:scope-shell-composer.jar!/content/
-# #endif

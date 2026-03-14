@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-ppm content/
-# #else
-content scope-shell-ppm jar:scope-shell-ppm.jar!/content/
-# #endif

@@ -1,5 +1,0 @@
-# #if MODE == "dev"
-content scope-shell-cordova content/
-# #else
-content scope-shell-cordova jar:scope-shell-cordova.jar!/content/
-# #endif
