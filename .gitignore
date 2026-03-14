@@ -34,7 +34,6 @@ src/modules/codeintel/tools
 /mozilla/build/moz1400-ko1410/mozilla/obj-x86_64-pc-linux-gnu/
 
 # Documentation and build summary files
-*.md
 BUILD_FIXES_SUMMARY.md
 BUILD_MIGRATION_COMPLETE.md
 BUILD_SYSTEM_INTEGRATION.md
