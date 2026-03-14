@@ -1,0 +1,11 @@
+2026-01-19 07:46:16,240 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-19 07:46:16,240 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-19 07:46:16,240 - BuildSystem - INFO - Performing complete cleanup...
+2026-01-19 07:46:16,240 - BuildSystem - INFO - Cleaning build directory using mach...
+2026-01-19 07:46:16,264 - BuildSystem - ERROR - ✗ Clean failed: 
+2026-01-19 07:46:16,265 - BuildSystem - WARNING - ⚠ Mach clean failed, continuing with manual cleanup
+2026-01-19 07:46:16,265 - BuildSystem - INFO - Removing build directory: /home/lc/projekty/OpenKomodoIDE/build
+2026-01-19 07:46:16,266 - BuildSystem - INFO - Removing distribution directory: /home/lc/projekty/OpenKomodoIDE/dist
+2026-01-19 07:46:16,266 - BuildSystem - INFO - ✓ Firefox source code still exists
+2026-01-19 07:46:16,266 - BuildSystem - INFO - Removing Python cache files...
+2026-01-19 07:46:17,243 - BuildSystem - INFO - ✓ Complete cleanup finished

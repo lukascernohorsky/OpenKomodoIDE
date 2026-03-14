@@ -1,0 +1,50 @@
+{
+  "name": "openkomodoide",
+  "version": "12.0.0",
+  "description": "OpenKomodoIDE - Komodo IDE based on Firefox 140 ESR",
+  "main": "src/main/application/App.js",
+  "scripts": {
+    "start": "node src/main/application/App.js",
+    "build": "python3 build_simple.py simple",
+    "build:configure": "python3 build.py configure",
+    "build:complete": "python3 build.py complete",
+    "build:simple": "python3 build_simple.py simple",
+    "build:components": "python3 build_simple.py components",
+    "build:package": "python3 build_simple.py package",
+    "build:clean": "python3 build.py clean",
+    "build:test": "python3 build.py test",
+    "test": "python3 test_build.py",
+    "lint": "echo 'Lint script will go here'"
+  },
+  "keywords": [
+    "komodo",
+    "ide",
+    "firefox",
+    "editor",
+    "development"
+  ],
+  "author": "OpenKomodoIDE Team",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "commander": "^10.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "jest": "^29.7.0",
+    "babel-jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenKomodo/OpenKomodoIDE.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OpenKomodo/OpenKomodoIDE/issues"
+  },
+  "homepage": "https://github.com/OpenKomodo/OpenKomodoIDE#readme"
+}

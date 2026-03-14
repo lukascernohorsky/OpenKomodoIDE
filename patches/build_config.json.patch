@@ -1,0 +1,9 @@
+--- a/build_config.json
++++ b/build_config.json
+@@ -2,7 +2,7 @@
+   "platform": "linux",
+-  "version": "12.0",
++  "version": "14.10",
+   "firefox_version": "140.0",
+   "build_type": "release",
+   "jobs": 2,

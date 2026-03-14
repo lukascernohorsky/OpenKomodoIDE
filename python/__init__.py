@@ -1,0 +1,1 @@
+# PyXPCOM dummy module

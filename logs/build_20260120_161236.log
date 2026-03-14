@@ -1,0 +1,49 @@
+2026-01-20 16:12:36,619 - BuildSystem - INFO - Loaded configuration from /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-20 16:12:36,619 - BuildSystem - INFO - Saved configuration to /home/lc/projekty/OpenKomodoIDE/build_config.json
+2026-01-20 16:12:36,620 - BuildSystem - INFO - Starting complete build process...
+2026-01-20 16:12:36,620 - BuildSystem - INFO - ============================================================
+2026-01-20 16:12:36,620 - BuildSystem - INFO - Setting up build environment...
+2026-01-20 16:12:36,620 - BuildSystem - INFO - Environment set up for linux
+2026-01-20 16:12:36,620 - BuildSystem - INFO - Checking dependencies...
+2026-01-20 16:12:36,647 - BuildSystem - INFO - All required dependencies are available
+2026-01-20 16:12:36,647 - BuildSystem - INFO - Checking Firefox source code...
+2026-01-20 16:12:36,647 - BuildSystem - INFO - Verifying Firefox source code...
+2026-01-20 16:12:36,647 - BuildSystem - INFO - ✓ Firefox source code verified and ready at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-20 16:12:36,647 - BuildSystem - INFO - ✓ Firefox source code found at: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla
+2026-01-20 16:12:36,647 - BuildSystem - INFO - Configuring build using Firefox mach system...
+2026-01-20 16:12:36,647 - BuildSystem - INFO - Running: /home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/mach configure
+2026-01-20 16:12:36,843 - BuildSystem - ERROR - ✗ Build configuration failed: 
+2026-01-20 16:12:36,843 - BuildSystem - ERROR - stdout: Error running mach:
+
+    mach configure
+
+The error occurred in code that was called by the mach command. This is either
+a bug in the called code itself or in the way that mach is calling it.
+You can invoke ``./mach busted`` to check if this issue is already on file. If it
+isn't, please use ``./mach busted file configure`` to report it. If ``./mach busted`` is
+misbehaving, you can also inspect the dependencies of bug 1543241.
+
+If filing a bug, please include the full output of mach, including this error
+message.
+
+The details of the failure are as follows:
+
+AssertionError: A Mach-managed site must be active before doing work with command sites
+
+  File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/build/../python/mozbuild/mozbuild/base.py", line 906, in activate_virtualenv
+    self.virtualenv_manager.activate()
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/build/../python/mozbuild/mozbuild/base.py", line 273, in virtualenv_manager
+    self._virtualenv_manager = CommandSiteManager.from_environment(
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.topsrcdir,
+        ^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        get_virtualenv_base_dir(self.topsrcdir),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/lc/projekty/OpenKomodoIDE/mozilla/build/moz1400-ko1410/mozilla/build/../python/mach/mach/site.py", line 600, in from_environment
+    active_metadata
+
+2026-01-20 16:12:36,843 - BuildSystem - ERROR - Please check the configuration and try again
