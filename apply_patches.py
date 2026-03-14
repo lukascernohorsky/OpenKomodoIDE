@@ -10,7 +10,7 @@ import sys
 
 def apply_patches():
     """Apply all dependency patches"""
-    patch_dir = 'build_patches'
+    patch_dir = 'patches-new'
     
     if not os.path.exists(patch_dir):
         print(f"❌ Patch directory not found: {patch_dir}")
